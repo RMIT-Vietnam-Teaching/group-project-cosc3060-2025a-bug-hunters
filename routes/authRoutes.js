@@ -1,7 +1,12 @@
 const router = require("express").Router();
 
+// Server-side rendering
 router.get("/", (req, res) => {
     res.render("authentication");
+});
+
+router.get("/register", (req, res) => {
+    res.json({ message: "Register page" });
 });
 
 router.post("/login", (req, res) => {
