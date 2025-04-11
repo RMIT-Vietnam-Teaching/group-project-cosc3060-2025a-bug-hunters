@@ -24,9 +24,12 @@ connectDB();
 // Import Routes
 const authRoutes = require("./routes/authRoutes");
 const homeRoutes = require("./routes/homeRoutes");
+const adminRoutes = require("./routes/adminRoutes");
+const { session } = require("passport");
 
 app.use("/", homeRoutes);
 app.use("/auth", authRoutes);
+app.use("/admin", adminRoutes);
 
 app.listen(port, () => {
     console.log(chalk.green(`Server is running on port ${port}`));
