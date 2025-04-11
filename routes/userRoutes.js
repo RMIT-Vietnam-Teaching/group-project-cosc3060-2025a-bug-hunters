@@ -20,7 +20,7 @@ router.get("/displayTheme", (req, res) => { //link theme
     headline: "Hello, I'm Joanna!",
     about: "I am a student at the University of Toronto.",
   };
-  res.render("displayTheme", {  });
+  res.render("displayTheme", { user });
 });
 
 router.get("/accountSecurity", (req, res) => { //link accsecurity
@@ -31,16 +31,23 @@ router.get("/accountSecurity", (req, res) => { //link accsecurity
     headline: "Hello, I'm Joanna!",
     about: "I am a student at the University of Toronto.",
   };
-  res.render("accountSecurity", { user: 'joanna' });
+  res.render("accountSecurity", { user });
 }
 );
 
-router.get("/accountBalance", (req, res) => { //link accbalance
-  res.render("accountBalance", {user: 'joanna'});
+router.get("/accountBalance", (req, res) => { // accbalance
+  const user = {
+    username: "joanna",
+    picture: "images/defaultAvatar.png",
+    theme: "light",
+    headline: "Hello, I'm Joanna!",
+    about: "I am a student at the University of Toronto.",
+  };
+  res.render("accountBalance", { user });
 }
 );
 
-router.get("/:usernameProfile", async (req, res) => { //link userprofile
+router.get("/:usernameProfile", async (req, res) => { // userprofile
   const raw = req.params.usernameProfile;
   const username = raw.replace("Profile", "");
   const picture = req.query.picture || "images/defaultAvatar.png";

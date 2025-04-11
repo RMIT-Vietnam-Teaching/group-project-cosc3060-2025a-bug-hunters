@@ -29,7 +29,7 @@ const getProfilePreferences = (req, res) => {
   res.render("/profilePreferences", { user:  'joanna', picture: 'images/defaultAvatar.png', theme: 'light', headline: "Hello, I'm Joanna!", about: 'I am a student at the University of Toronto.' });
 };
 const loadDisplayTheme = (req, res) => {
-  res.render("/displayTheme", { user: 'joanna', picture: 'images/defaultAvatar.png', theme: 'light', headline: "Hello, I'm Joanna!", about: 'I am a student at the University of Toronto.' });
+  res.render("/displayTheme");
 }
 const getAccountSecurity = (req, res) => {
   res.render("/profilePreferences");
