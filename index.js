@@ -28,6 +28,16 @@ const homeRoutes = require("./routes/homeRoutes");
 app.use("/", homeRoutes);
 app.use("/auth", authRoutes);
 
+
+
+
+app.use('/navbar', (req,res) => {
+    res.render('partials/navbar');
+});
+
+
 app.listen(port, () => {
     console.log(chalk.green(`Server is running on port ${port}`));
 });
+
+
