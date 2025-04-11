@@ -1,0 +1,201 @@
+<main class="col-md-10 px-5 py-2 bg-white min-vh-100">
+    <!-- Header: Back Button + Page Title (Centered) -->
+    <div class="d-flex align-items-center justify-content-between mb-3">
+        <!-- Left: Back Button -->
+        <div>
+            <a
+                href="/admin/user"
+                class="btn btn-light rounded-pill shadow-sm px-3 py-2 d-inline-flex align-items-center gap-2"
+            >
+                <i class="bi bi-arrow-left"></i> Back
+            </a>
+        </div>
+
+        <!-- Center: Page Title -->
+        <div class="flex-grow-1 text-center">
+            <h3 class="fw-semibold m-0" style="font-size: 1.8rem">
+                User Profile
+            </h3>
+        </div>
+
+        <!-- Right: Empty for alignment -->
+        <div style="width: 150px"></div>
+    </div>
+
+    <!-- Security Section -->
+    <hr class="my-4" />
+
+    <!-- Profile Section -->
+    <div class="row mb-5">
+        <!-- Left: Form -->
+        <div class="col-md-8">
+            <h5 class="mb-3 fw-semibold text-muted">Basic</h5>
+            <form>
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold"
+                        >First Name</label
+                    >
+                    <input
+                        type="text"
+                        class="form-control rounded-3 shadow-sm"
+                        placeholder="First Name"
+                        value="<%= user.firstName %>"
+                    />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold"
+                        >Last Name</label
+                    >
+                    <input
+                        type="text"
+                        class="form-control rounded-3 shadow-sm"
+                        placeholder="Last Name"
+                        value="<%= user.lastName %>"
+                    />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold">Email</label>
+                    <input
+                        type="email"
+                        class="form-control rounded-3 shadow-sm"
+                        placeholder="Email"
+                        value="<%= user.email %>"
+                    />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold">Password</label>
+                    <input
+                        type="text"
+                        class="form-control rounded-3 shadow-sm"
+                        placeholder="Password"
+                        value="SomePassword"
+                        readonly
+                    />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold">Role</label>
+                    <select class="form-select rounded-3 shadow-sm">
+                        <option value="Student" <%= user.role === 'Student' ? 'selected' : '' %>>Student</option>
+                        <option value="Instructor" <%= user.role === 'Instructor' ? 'selected' : '' %>>Instructor</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold"
+                        >Date Joined</label
+                    >
+                    <input
+                        type="text"
+                        class="form-control rounded-3 shadow-sm"
+                        placeholder="Date Joined"
+                        value="<%= user.date %>"
+                    />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold">Headline</label>
+                    <input
+                        type="text"
+                        class="form-control rounded-3 shadow-sm"
+                        placeholder='Like "Professional Data Analyst"'
+                        value="<%= user.headline || '' %>"
+                    />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold"
+                        >Description</label
+                    >
+                    <textarea
+                        class="form-control rounded-3 shadow-sm"
+                        rows="3"
+                        placeholder="Tell us about yourself..."
+                    >
+<%= user.description || '' %></textarea
+                    >
+                </div>
+            </form>
+        </div>
+
+        <!-- Right: Avatar + Update Button -->
+        <div
+            class="col-md-4 d-flex flex-column align-items-center justify-content-start"
+        >
+            <img
+                src="<%= user.avatar || 'https://via.placeholder.com/150' %>"
+                alt="User Avatar"
+                class="img-fluid rounded-circle mb-3 shadow-sm"
+                style="width: 150px; height: 150px"
+            />
+            <button
+                class="btn btn-outline-dark rounded-pill shadow-sm px-4 py-2 w-75 fw-semibold"
+            >
+                Update
+            </button>
+        </div>
+    </div>
+
+    <!-- Courses Studying Section -->
+    <% if (user.coursesStudying && user.coursesStudying.length > 0) { %>
+    <hr class="my-4" />
+    <h5 class="mb-3 fw-semibold text-muted">Courses Studying</h5>
+    <div class="table-responsive">
+        <table class="table table-bordered text-center align-middle shadow-sm">
+            <thead class="table-light">
+                <tr>
+                    <th class="fw-semibold small text-uppercase">Course</th>
+                    <th class="fw-semibold small text-uppercase">Author</th>
+                    <th class="fw-semibold small text-uppercase">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% user.coursesStudying.forEach(course => { %>
+                <tr>
+                    <td><%= course.name %></td>
+                    <td><%= course.author %></td>
+                    <td>
+                        <span
+                            class="badge rounded-pill text-bg-<%= course.status === 'On Going' ? 'warning' : course.status === 'Finished' ? 'success' : 'secondary' %> px-3 py-2"
+                            style="font-size: 0.85rem"
+                        >
+                            <%= course.status %>
+                        </span>
+                    </td>
+                </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+    <% } %>
+
+    <!-- Courses Instructing Section (ONLY if Instructor) -->
+    <% if (user.role === 'Instructor' && user.coursesInstructing &&
+    user.coursesInstructing.length > 0) { %>
+    <hr class="my-4" />
+    <h5 class="mb-3 fw-semibold text-muted">Courses Instructing</h5>
+    <div class="table-responsive">
+        <table class="table table-bordered text-center align-middle shadow-sm">
+            <thead class="table-light">
+                <tr>
+                    <th class="fw-semibold small text-uppercase">Course</th>
+                    <th class="fw-semibold small text-uppercase">Author</th>
+                    <th class="fw-semibold small text-uppercase">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% user.coursesInstructing.forEach(course => { %>
+                <tr>
+                    <td><%= course.name %></td>
+                    <td><%= course.author %></td>
+                    <td>
+                        <span
+                            class="badge rounded-pill text-bg-<%= course.status === 'On Going' ? 'warning' : course.status === 'Finished' ? 'success' : 'secondary' %> px-3 py-2"
+                            style="font-size: 0.85rem"
+                        >
+                            <%= course.status %>
+                        </span>
+                    </td>
+                </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+    <% } %>
+</main>
