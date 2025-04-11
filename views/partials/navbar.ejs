@@ -1,142 +1,101 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Course Navigation Bar</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-  <style>
-    .navbar {
-      padding: 10px 20px;
-      border-bottom: 1px solid #eaeaea;
-    }
+<nav class="navbar navbar-expand-lg navbar-light bg-light px-3">
+  <div class="container-fluid">
+    <!-- Logo on the left -->
+    <a class="navbar-brand" href="/">
+      <img
+        src="images/siteLogo.jpg"
+        alt="LearnNow Logo"
+        class="img-fluid"
+        style="width: 120px; height: 5vh"
+      />
+    </a>
 
-    .logo {
-      background-color: #d3d3d3;
-      color: #555;
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
-    }
+    <!-- Navigation Bar -->
+    <div
+      class="collapse navbar-collapse justify-content-between"
+      id="navbarNav"
+    >
+      <!-- Search form -->
+      <form
+        class="d-flex w-50 mx-auto"
+        role="search"
+        action="/search"
+        method="GET"
+      >
+        <input
+          class="form-control me-2"
+          type="search"
+          name="q"
+          placeholder="Search for courses now!"
+          aria-label="Search"
+        />
+        <button class="btn search-bar-btn" type="submit">Search</button>
+      </form>
 
-    .login-btn {
-      background-color: #e07a5f;
-      border-color: #e07a5f;
-      color: white;
-      border-radius: 4px;
-    }
+      <!-- Right links (All courses + My Courses + Forum + Cart + Bell + Chat + Login/Signup or user icons) -->
+      <!--All Courses Link-->
+      <ul class="navbar-nav me-3">
+        <li class="nav-item">
+          <a class="nav-link active me-4" href="/courses">All Courses</a>
+        </li>
+        <!-- Uncomment if needed later -->
+        <!--
+        <li class="nav-item">
+          <a class="nav-link" href="/my-courses">My Courses</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/forum">Forum</a>
+        </li>
+        -->
+      </ul>
+<ul class="navbar-nav">
+        <% /* Not logged in */ %>
+        <li class="nav-item">
+          <a class="btn login-btn me-1" href="/login">Login</a>
+        </li>
+        <li class="nav-item">
+          <a class="btn sign-up-btn" href="/signup">Sign Up</a>
+        </li>
 
-    .signup-btn {
-      background-color: #d3d3d3;
-      border-color: #d3d3d3;
-      color: #333;
-      border-radius: 4px;
-    }
+        <% /* Logged in UI */ %>
+        <!--
+        <li class="nav-item mx-2">
+          <a class="nav-link" href="#"><i class="bi bi-bell"></i></a>
+        </li>
+        <li class="nav-item mx-2">
+          <a class="nav-link" href="#"><i class="bi bi-chat-dots"></i></a>
+        </li>
+        <li class="nav-item mx-2">
+          <a class="nav-link" href="#"><i class="bi bi-cart"></i></a>
+        </li>
+        <li class="nav-item mx-2">
+          <a class="nav-link" href="/profile">
+            <img src="/images/avatar.png" class="rounded-circle" width="32" height="32" />
+          </a>
+        </li>
+        -->
 
-    .search-container {
-      width: auto;
-      flex: 1;
-      min-width: 0;
-      max-width: 500px;
-      padding: 0;
-    }
-
-    .courses-dropdown {
-      white-space: nowrap;
-      min-width: 120px;
-      flex-shrink: 0;
-    }
-
-    .search-input {
-      width: 100%;
-      background-color: #d3d3d3;
-      border: none;
-      border-radius: 25px;
-      padding: 8px 15px;
-    }
-
-    /* Prevent wrapping */
-    .navbar .container-fluid {
-      flex-wrap: nowrap !important;
-    }
-
-
-    @media (max-width: 630px) {
-      .desktop-auth {
-        display: none !important;
-      }
-      .navbar-toggler {
-        display: block !important;
-      }
-    }
-
-    @media (min-width: 631px) {
-      .navbar-toggler {
-        display: none !important;
-      }
-      #navbarContent {
-        display: none !important;
-      }
-    }
-  </style>
-</head>
-<body>
-
-  <nav class="navbar navbar-expand-lg navbar-light bg-white">
-    <div class="container-fluid">
-
-      <!-- Toggler + Logo -->
-      <div class="d-flex align-items-center flex-shrink-0 me-2">
-        <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
-          aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+        <!-- Toggler for mobile (Collaspable Top Bar) -->
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
           <span class="navbar-toggler-icon"></span>
         </button>
-        <a class="navbar-brand me-0" href="#">
-          <div class="logo">Logo</div>
-        </a>
-      </div>
-
-      <!-- Search + Dropdown -->
-      <div class="d-flex align-items-center flex-nowrap flex-grow-1 gap-2 min-width-0">
-        <div class="search-container me-2">
-          <input type="text" class="search-input" placeholder="Search for courses now!">
-        </div>
-        <div class="dropdown course-dropdown">
-          <button class="btn btn-light dropdown-toggle p-2" type="button" id="coursesDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-            All Courses
-          </button>
-          <ul class="dropdown-menu" aria-labelledby="coursesDropdown">
-            <li><a class="dropdown-item" href="#">All Courses</a></li>
-            <li><a class="dropdown-item" href="#">Featured Courses</a></li>
-            <li><a class="dropdown-item" href="#">New Courses</a></li>
-          </ul>
-        </div>
-      </div>
-
-      <!-- Right: Desktop Auth Buttons -->
-      <div class="desktop-auth d-flex flex-shrink-0 ms-2">
-        <a href="#" class="btn login-btn me-2">Login</a>
-        <a href="#" class="btn signup-btn">Sign Up</a>
-      </div>
-    </div>
-
-    <!-- Mobile Auth Buttons (inside collapsible content) -->
-    <div class="collapse navbar-collapse d-md-none px-3" id="navbarContent">
-      <ul class="navbar-nav w-100 mt-2">
-        <li class="nav-item">
-          <a href="#" class="btn login-btn w-100 mb-2">Login</a>
-        </li>
-        <li class="nav-item">
-          <a href="#" class="btn signup-btn w-100">Sign Up</a>
-        </li>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
       </ul>
     </div>
-  </nav>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+  </div>
+</nav>
