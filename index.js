@@ -35,6 +35,16 @@ app.use("/userProfile", userRoutes);
 
 
 
+
+
+
+app.use('/navbar', (req,res) => {
+    res.render('partials/navbar');
+});
+
+
 app.listen(port, () => {
     console.log(chalk.green(`Server is running on port ${port}`));
 });
+
+
