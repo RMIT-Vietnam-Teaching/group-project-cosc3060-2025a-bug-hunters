@@ -24,14 +24,17 @@ connectDB();
 // Import Routes
 const authRoutes = require("./routes/authRoutes");
 const homeRoutes = require("./routes/homeRoutes");
-const userRoutes = require("./routes/userRoutes");
+const settingsRoutes = require("./routes/settingsRoutes");
 const adminRoutes = require("./routes/adminRoutes");
+const userRoutes = require("./routes/userRoutes");
 const { session } = require("passport");
 
 app.use("/", homeRoutes);
 app.use("/auth", authRoutes);
 app.use("/admin", adminRoutes);
-app.use("/userProfile", userRoutes);
+app.use("/settings", settingsRoutes);
+// app.use("/user", userRoutes);
+
 
 
 

@@ -1,0 +1,43 @@
+      <!-- Main Content -->
+      <main class="col-md-10 p-4">
+        <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4">
+          <div class="text-muted fs-5">←</div>
+          <h1 class="h4 m-0">Account Security</h1>
+          <div></div>
+        </div>
+
+
+   <!-- Form -->
+<form action="/profile/security/update" method="POST" class="d-flex justify-content-center">
+  <div style="max-width: 500px; width: 100%;">
+    
+    <!-- Email (Stacked layout) -->
+    <div class="mb-3">
+      <input type="email" name="email" class="form-control" value="<%= user.email %>" placeholder="User Email" required />
+    </div>
+    <div class="mb-4 text-end">
+      <button type="submit" formaction="/profile/security/change-email" class="btn btn-outline-danger">Change Email</button>
+    </div>
+
+    <hr class="my-4" />
+
+    <!-- Password Fields -->
+    <div class="mb-3">
+      <input type="password" name="oldPassword" class="form-control" placeholder="Enter old password" required />
+    </div>
+    <div class="mb-3">
+      <input type="password" name="newPassword" class="form-control" placeholder="Enter new password" required />
+    </div>
+    <div class="mb-4">
+      <input type="password" name="confirmPassword" class="form-control" placeholder="Re-type new password" required />
+    </div>
+
+    <!-- Submit Password -->
+    <div class="text-end">
+      <button type="submit" formaction="/profile/security/change-password" class="btn btn-outline-danger">Change password</button>
+    </div>
+    
+  </div>
+</form>
+      </main>
+    

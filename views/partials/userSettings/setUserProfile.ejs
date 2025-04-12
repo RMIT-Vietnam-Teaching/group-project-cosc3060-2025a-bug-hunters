@@ -1,0 +1,50 @@
+<!-- main Content -->
+<main class="col-md-10 p-4">
+    <!-- header -->
+    <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4">
+      <div class="text-muted fs-5">←</div>
+      <h1 class="h4 m-0">Public Profile</h1>
+      <div class="d-flex gap-3 fs-5">
+      </div>
+    </div>
+
+    <!-- form -->
+    <div class="row">
+      <div class="col-md-8">
+        <form>
+          <div class="mb-3 col-9">
+            <input type="text" class="form-control" placeholder="First Name" value="<%= user.firstName %>">
+          </div>
+          <div class="mb-3 col-9">
+            <input type="text" class="form-control" placeholder="Last Name" value="<%= user.lastName %>">
+          </div>
+          <div class="mb-3 col-9">
+            <input type="email" class="form-control" placeholder="Email" value="<%= user.email %>">
+          </div>
+          <div class="mb-3 col-9">
+            <input type="text" class="form-control" placeholder="Role" value="<%= user.role %>" disabled>
+          </div>
+          <div class="mb-3 col-9">
+            <input type="text" class="form-control" placeholder="Date Joined" value="<%= user.joined %>">
+          </div>
+          <div class="mb-3 col-12">
+            <input type="text" class="form-control" placeholder='Headline, like "Professional Data Analysis"' value="<%= user.headline %>">
+          </div>
+          <div class="mb-3 col-12">
+            <textarea class="form-control" placeholder="What you describe about yourself" rows="4"><%= user.about %></textarea>
+          </div>
+        </div>
+        
+        <div class="col-md-4 d-flex flex-column justify-content-start align-items-start pt-4">
+            <img src="/images/defaultAvatar.png" alt="Profile Picture" class="rounded-circle ms-3" width="150" height="150">
+            <button type="submit" class="btn btn-outline-danger mt-3 ms-5">Update</button>
+        </div>
+
+        <div class="col-md-6 d-flex flex-column justify-content-end align-items-end pt-5">
+            <button type="submit" class="btn btn-outline-danger mt-5 ms-5">Save</button>
+
+    </form>
+    </div>
+</div>
+</div>
+</main>
