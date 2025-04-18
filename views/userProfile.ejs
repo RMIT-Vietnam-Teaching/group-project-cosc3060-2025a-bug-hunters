@@ -6,66 +6,140 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="/css/userProfile.css">
 </head>
+
 <body>
-  <div class="container py-5">
+  <!--  navbar -->
+  <%- include('partials/navbar') %>
 
     <!-- Profile Info Section -->
-    <div class="row align-items-center bg-light p-4 rounded shadow-sm mb-5">
-      <div class="col-md-3 text-center">
-        <img src="/images/defaultAvatar.png" alt="Profile Picture" class="rounded-circle" width="140" height="140">
-        <h4 class="mt-3"><%= user.firstName %></h4>
-      </div>
-      <div class="col-md-6">
-        <div class="bg-white p-4 rounded shadow-sm">
-          <div class="row">
-            <div class="col-sm-6">
-              <p><strong>Role</strong><br><%= user.role %></p>
-              <p><strong>Gmail</strong><br><a href="<%= user.email %>"><%= user.email %></a></p>
-              <p><strong>Phone</strong><br>095298375</p>
-            </div>
-            <div class="col-sm-6">
-              <p><strong>Major</strong><br>Cybersecurity</p>
-              <p><strong>About me</strong><br><%= user.aboutme %></p>
-            </div>
+    <div class="p-3 mb-5 mx-auto" style="background-color: #f6f6e9; border-radius: 100px; max-width: 1000px;">
+  <div class="row align-items-center">
+    <div class="col-md-4 text-center">
+      <img src="/images/defaultAvatar.png" alt="Profile Picture" class="rounded-circle" width="180" height="180" style="background-color: #efedea;">
+      <h3 class="mt-3 fw-semibold"><%= user.firstName %> <%= user.lastName %></h3>
+      <!-- <h3 class="mt-3 fw-semibold user-name"></h3> -->
+    </div>
+
+    <!-- User info -->
+    <div class="col-md-7">
+      <div class="bg-white p-4 rounded-4 shadow-sm" style="box-shadow: 2px 4px 6px rgba(0,0,0,0.1);">
+        <div class="row">
+          <div class="col-sm-6">
+            <p><strong>Role</strong><br><em><%= user?.role?.user || 'Student' %></em></p>
+            <p><strong>Gmail</strong><br><a href="mailto:<%= user.email %>"><em><%= user.email %></em></a></p>
+            <p><strong>Phone</strong><br><em><%= user.phone %></em></p>
+          </div>
+          <div class="col-sm-6">
+            <p><strong>Major</strong><br><em><%= user.major %></em></p>
+            <p><strong>About me</strong><br><em><%= user.about %></em></p>
           </div>
         </div>
       </div>
-      <div class="col-md-3 text-center mt-3 mt-md-0">
-        <button class="btn btn-outline-dark me-2"><i class="bi bi-share me-1"></i> Share</button>
-        <button class="btn btn-outline-dark"><i class="bi bi-chat-dots me-1"></i> Message</button>
-      </div>
     </div>
 
-    <!-- Courses Section -->
+    <!-- buttons -->
+    <div class="col-12 mt-4 d-flex justify-content-center gap-3">
+      <button id="shareBtn" class="btn btn-light shadow rounded-pill px-4 py-2 d-flex align-items-center gap-2 rounded-pill">
+        <img src="/images/shareIcon.png" alt="Share" width="20" height="20">
+          <i class="bi bi-share"></i> Share
+      </button>
+      <!-- send a message and keep the user on the same page -->
+      <button class="btn btn-light shadow rounded-pill px-4 py-2 d-flex align-items-center gap-2 rounded-pill" data-bs-toggle="modal" data-bs-target="#messageModal">
+        <img src="/images/messageIcon.png" alt="Message" width="30" height="30">
+        <span>Message</span>
+      </button>
+      <!-- go to messages page -->
+      <!-- <a href="/messages/<%= user._id %>" class="btn btn-light shadow rounded-pill px-4 py-2 d-flex align-items-center gap-2 rounded-pill" data-bs-toggle="modal" data-bs-target="#messageModal">
+        <img src="/images/messageIcon.png" alt="Message" width="30" height="30">
+        <span>Message</span> -->
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- message -->
+<div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form class="modal-content" action="/send-message" method="POST">
+      <div class="modal-header">
+        <h5 class="modal-title" id="messageModalLabel">Send a Message to <%= user.firstName %></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" name="recipientId" value="<%= user._id %>">
+        <div class="mb-3">
+          <label for="message" class="form-label">Message</label>
+          <textarea class="form-control" name="message" rows="4" required></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-danger">Send</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+    <!-- Courses -->
     <h4 class="mb-4">Course Studied So Far/ Created Course</h4>
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
 
       <% const courses = [
-        { title: "Introduction to Cybersecurity", instructor: "Dr. Alina Prest", image: "cyber1.jpg" },
-        { title: "Data Dive: Exploring Big Data", instructor: "Dr. Mark Bright", image: "cyber2.jpg" },
-        { title: "AI Foundations: The Essentials", instructor: "Dr. Kim Park", image: "cyber3.jpg" },
-        { title: "Graphic Design 101 - Introductory", instructor: "Mikayla Jones", image: "design1.jpg", italic: true },
-        { title: "UI/UX For Beginners", instructor: "Josh Hamil", image: "design2.jpg" },
-        { title: "Basic Psychology - Course 3", instructor: "Dr. Alan Teck", image: "psych1.jpg", italic: true }
+        { title: "Introduction to Cybersecurity", instructor: "Dr. Alina Prest", image: "cybersecurity.jpg" },
+        { title: "Data Dive: Exploring Big Data", instructor: "Dr. Mark Bright", image: "defaultCourse.png" },
+        { title: "AI Foundations: The Essentials", instructor: "Dr. Kim Park", image: "defaultCourse.png" },
+        { title: "Graphic Design 101 - Introductory", instructor: "Mikayla Jones", image: "defaultCourse.png", italic: true },
+        { title: "UI/UX For Beginners", instructor: "Josh Hamil", image: "defaultCourse.png" },
+        { title: "Basic Psychology - Course 3", instructor: "Dr. Alan Teck", image: "defaultCourse.png", italic: true }
       ]; %>
 
       <% courses.forEach(course => { %>
         <div class="col">
-          <div class="card h-100 shadow-sm">
-            <img src="/images/<%= course.image %>" class="card-img-top" alt="<%= course.title %>">
-            <div class="card-body">
-              <h6 class="card-title <%= course.italic ? 'fst-italic fw-bold' : 'fw-semibold' %>"><%= course.title %></h6>
+          <div class="card h-100 shadow rounded-3 border-0 d-flex flex-column" style="max-width: 300px; margin-inline: auto;">
+            <div style="height: 180px; overflow: hidden;">
+              <img src="/images/<%= course.image %>" class="card-img-top h-100 w-100 object-fit-cover" alt="<%= course.title %>" style="border-bottom: 4px solid #2b6cb0;">
+            </div>
+            <div class="card-body d-flex flex-column text-center">
+              <h6 class="card-title fw-bold fst-italic mb-1"><%= course.title %></h6>
               <p class="card-subtitle text-muted mb-2">by <%= course.instructor %></p>
               <p class="card-text">Kickstart your career in cybersecurity – start with the essentials!</p>
-              <a href="#" class="btn btn-outline-dark w-100">Click to see details</a>
+              <div class="mt-auto">
+                <a href="#" class="btn btn-outline-dark rounded-pill fw-semibold mt-2">Click to see details</a>
+              </div>
             </div>
           </div>
         </div>
       <% }); %>
 
+      <!-- <%- include('partials/courseCard', { courses: courses }) %> -->
+
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    window.addEventListener("DOMContentLoaded", () => {
+      const hash = window.location.hash;
+      if (hash) {
+        const name = decodeURIComponent(hash.substring(1));
+        const nameContainers = document.querySelectorAll(".user-name");
+        
+        nameContainers.forEach(el => {
+          el.textContent = name;
+        });
+      }
+    });
+    document.getElementById('shareBtn').addEventListener('click', async () => {
+      try {
+        await navigator.share({
+          title: 'Check out my LearnNow Profile!',
+          text: 'Here’s my profile on LearnNow!',
+          url: window.location.href
+        });
+      } catch (err) {
+        console.error('Share failed:', err.message);
+      }
+    });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

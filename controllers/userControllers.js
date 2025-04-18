@@ -4,79 +4,70 @@ const { get } = require("mongoose");
 
 
 
+const user = {
+  id: "123",
+  firstName: "paddy",
+  lastName: "Smith",
+  picture: "images/defaultAvatar.png",
+  theme: "light",
+  email: "paddy123@gmail.com",
+  phone: "1234567890",
+  major: "Computer Science",
+  joinDate: "2023-10-01",
+  headline: "Hello, I'm paddy!!",
+  about: "I am a student at the University of Toronto.",
+};
 
-// const updateDisplayTheme = async (req, res) => {
+
+const getUserProfileSettings = (req, res) => {
+  res.render("userProfileSettings", { user, activePage: "profileSetting" });
+};
+const loadDisplayTheme = (req, res) => {
+  res.render("userSetTheme", {user, activePage: "theme" });
+};
+const getAccountSecurity = (req, res) => {
+  res.render("userSecurity", {user, activePage: "security" });
+};
+
+const getAccountBalance = (req, res) => {
+  res.render("userBalance", { user, activePage: "balance" });
+}
+const mongoose = require("mongoose");
+
+
+const getUserProfile = (req, res) => {
+  res.render("userProfile", { user });
+}
+
+
+
+//use the code below instead!!
+// const getUserProfile = async (req, res) => {
+  
+//   const { userId } = req.params;
+
+//   if (!mongoose.Types.ObjectId.isValid(userId)) {
+//     console.error("Invalid MongoDB ID:", userId);
+//     return res.status(400).send("Invalid user ID");
+//   }
 //   try {
-//     const { theme } = req.body;
-//     const user = {
-//       username: 'joanna',
-//       picture: 'images/defaultAvatar.png',
-//       theme: 'light',
-//       headline: "Hello, I'm Joanna!",
-//       about: 'I am a student at the University of Toronto.',
-
-//     };
-//     res.render("userprofile/display", {
-//   user: req.session.user,
-//   pageTitle: "Display Settings"
-// });
-//     req.session.user = user; 
-//     // res.redirect("/profile/profilePreferences");
+//     const user = await User.findById(userId);
+//     if (!user) {
+//       return res.redirect("/login");
+//     }
+//     res.render("userProfile", { user });
 //   } catch (error) {
-//     console.log("Update Theme Error:", error.message);
-//     res.status(500).send("Theme update failed.");
+//     console.error("Error fetching user profile:", error.message);
+//     res.status(500).send("Something went wrong");
 //   }
 // };
 
 
-const getProfilePreferences = (req, res) => {
-  res.render("/userProfileSettings", { user:  'joanna', picture: 'images/defaultAvatar.png', theme: 'light', headline: "Hello, I'm Joanna!", about: 'I am a student at the University of Toronto.' });
-};
-const loadDisplayTheme = (req, res) => {
-  res.render("userSetTheme", {
-    user: req.session.user,
-    pageTitle: "Display Settings"
-  });
-
-}
-const getAccountSecurity = (req, res) => {
-  res.render("/userSecurity");
-}
-const getAccountBalance = (req, res) => {
-  res.render("/userBalance");
-}
-const getUserProfileSettings = (req, res) => {
-  const raw = req.params.usernameProfile;
-  const username = raw.replace("Profile", "");
-  const picture = req.query.picture || "images/defaultAvatar.png";
-  try {
-    const user = { name: username, picture: picture };
-    // console.log("user object:", user);
-    res.render("userProfileSettings", { user }); 
-  } catch (error) {
-    res.status(500).send("Something went wrong");
-  }
-}
-
-const getUserProfile = (req, res) => {
-  const raw = req.params.usernameProfile;
-  const username = raw.replace("Profile", "");
-  const picture = req.query.picture || "images/defaultAvatar.png";
-  try {
-    const user = { name: username, picture: picture };
-    res.render("userProfile", { user }); 
-  } catch (error) {
-    res.status(500).send("Something went wrong");
-  }
-}
-
 
 module.exports = { 
-  getProfilePreferences,
-  // getDisplayTheme, 
+  getUserProfileSettings,
   loadDisplayTheme,
-  // updateDisplayTheme,
   getAccountSecurity,
   getAccountBalance,
-  getUserProfileSettings
+  getUserProfile,
  };
