@@ -43,15 +43,11 @@ const userSchema = new mongoose.Schema({
     enum: ['Student', 'Instructor'],
     required: true
   },
-  isBot: {
-    type: Boolean,
-    default: true
-  },
-
+  
   passwordHistory: {
     type: [String],
     default: []
-    }
+}
 
 });
 
