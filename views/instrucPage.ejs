@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Management</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .dropdown-toggle {
+            color: #eb7350;
+            border-color: #eb7350;
+            background-color: white;
+            padding: 6px 15px;
+        }
+        
+        .dropdown-toggle::after {
+            vertical-align: middle;
+        }
+        
+        .upload-btn {
+            color: #eb7350;
+            border-color: #eb7350;
+            background-color: white;
+            padding: 6px 15px;
+        }
+        
+        .course-card {
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            border: 1px solid #e0e0e0;
+            background-color: white;
+        }
+        
+        .course-img {
+            height: 150px;
+            position: relative;
+            background-color: #1f2937;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .course-img h3 {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .course-img .full-course {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .course-info {
+            padding: 15px;
+        }
+        
+        .course-info h4 {
+            font-size: 1rem;
+            margin-bottom: 10px;
+        }
+        
+        .course-meta {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+        
+        .course-meta .icon {
+            margin-right: 5px;
+        }
+        
+        .course-meta .star {
+            color: gold;
+        }
+        
+        .course-actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .action-btn {
+            flex: 1;
+            text-align: center;
+            padding: 8px 0;
+            background-color: #eb7350;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .action-btn:hover {
+            background-color: #d66648;
+        }
+        
+        .badge-container {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+        }
+        
+        .badge-container img {
+            width: 40px;
+            height: 40px;
+        }
+        
+        /* Media queries for responsive design */
+        @media (max-width: 991px) {
+            .course-img {
+                height: 140px;
+            }
+        }
+        
+        @media (max-width: 767px) {
+            .course-img {
+                height: 130px;
+            }
+            
+            .course-img h3 {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="dropdown">
+                <button class="btn dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    Newest <i class="fas fa-chevron-down ms-1"></i>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="sortDropdown">
+                    <li><a class="dropdown-item" href="#">Newest</a></li>
+                    <li><a class="dropdown-item" href="#">Oldest</a></li>
+                    <li><a class="dropdown-item" href="#">Most Popular</a></li>
+                    <li><a class="dropdown-item" href="#">Highest Rated</a></li>
+                </ul>
+            </div>
+            
+            <button class="btn upload-btn">
+                Upload course
+            </button>
+        </div>
+        
+        <!-- Course Cards -->
+        <div class="row">
+            <!-- Course 1 -->
+            <div class="col-lg-4 col-md-6 col-12">
+                <div class="course-card">
+                    <div class="course-img">
+                        <div class="badge-container">
+                            <img src="/api/placeholder/40/40" alt="Badge">
+                        </div>
+                        <h3>Introduction to Programming</h3>
+                        <div class="full-course">FULL COURSE</div>
+                    </div>
+                    <div class="course-info">
+                        <h4>Introduction to Programming</h4>
+                        <div class="course-meta">
+                            <i class="fas fa-users icon"></i>
+                            <span>124 Enrollments</span>
+                            <span class="mx-2">|</span>
+                            <i class="fas fa-star star"></i>
+                            <span>4.7 (38 reviews)</span>
+                        </div>
+                        <div class="course-meta">
+                            <i class="fas fa-calendar-alt icon"></i>
+                            <span>Last updated: 2025/03/10</span>
+                        </div>
+                        <div class="course-actions">
+                            <button class="action-btn">Edit</button>
+                            <button class="action-btn">Delete</button>
+                            <button class="action-btn">Feedback</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Course 2 -->
+            <div class="col-lg-4 col-md-6 col-12">
+                <div class="course-card">
+                    <div class="course-img">
+                        <div class="badge-container">
+                            <img src="/api/placeholder/40/40" alt="Badge">
+                        </div>
+                        <h3>Introduction to Programming</h3>
+                        <div class="full-course">FULL COURSE</div>
+                    </div>
+                    <div class="course-info">
+                        <h4>Introduction to Programming</h4>
+                        <div class="course-meta">
+                            <i class="fas fa-users icon"></i>
+                            <span>124 Enrollments</span>
+                            <span class="mx-2">|</span>
+                            <i class="fas fa-star star"></i>
+                            <span>4.7 (38 reviews)</span>
+                        </div>
+                        <div class="course-meta">
+                            <i class="fas fa-calendar-alt icon"></i>
+                            <span>Last updated: 2025/03/10</span>
+                        </div>
+                        <div class="course-actions">
+                            <button class="action-btn">Edit</button>
+                            <button class="action-btn">Delete</button>
+                            <button class="action-btn">Feedback</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Course 3 -->
+            <div class="col-lg-4 col-md-6 col-12">
+                <div class="course-card">
+                    <div class="course-img">
+                        <div class="badge-container">
+                            <img src="/api/placeholder/40/40" alt="Badge">
+                        </div>
+                        <h3>Introduction to Programming</h3>
+                        <div class="full-course">FULL COURSE</div>
+                    </div>
+                    <div class="course-info">
+                        <h4>Introduction to Programming</h4>
+                        <div class="course-meta">
+                            <i class="fas fa-users icon"></i>
+                            <span>124 Enrollments</span>
+                            <span class="mx-2">|</span>
+                            <i class="fas fa-star star"></i>
+                            <span>4.7 (38 reviews)</span>
+                        </div>
+                        <div class="course-meta">
+                            <i class="fas fa-calendar-alt icon"></i>
+                            <span>Last updated: 2025/03/10</span>
+                        </div>
+                        <div class="course-actions">
+                            <button class="action-btn">Edit</button>
+                            <button class="action-btn">Delete</button>
+                            <button class="action-btn">Feedback</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Course 4 -->
+            <div class="col-lg-4 col-md-6 col-12">
+                <div class="course-card">
+                    <div class="course-img">
+                        <div class="badge-container">
+                            <img src="/api/placeholder/40/40" alt="Badge">
+                        </div>
+                        <h3>Introduction to Programming</h3>
+                        <div class="full-course">FULL COURSE</div>
+                    </div>
+                    <div class="course-info">
+                        <h4>Introduction to Programming</h4>
+                        <div class="course-meta">
+                            <i class="fas fa-users icon"></i>
+                            <span>124 Enrollments</span>
+                            <span class="mx-2">|</span>
+                            <i class="fas fa-star star"></i>
+                            <span>4.7 (38 reviews)</span>
+                        </div>
+                        <div class="course-meta">
+                            <i class="fas fa-calendar-alt icon"></i>
+                            <span>Last updated: 2025/03/10</span>
+                        </div>
+                        <div class="course-actions">
+                            <button class="action-btn">Edit</button>
+                            <button class="action-btn">Delete</button>
+                            <button class="action-btn">Feedback</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Course 5 -->
+            <div class="col-lg-4 col-md-6 col-12">
+                <div class="course-card">
+                    <div class="course-img">
+                        <div class="badge-container">
+                            <img src="/api/placeholder/40/40" alt="Badge">
+                        </div>
+                        <h3>Introduction to Programming</h3>
+                        <div class="full-course">FULL COURSE</div>
+                    </div>
+                    <div class="course-info">
+                        <h4>Introduction to Programming</h4>
+                        <div class="course-meta">
+                            <i class="fas fa-users icon"></i>
+                            <span>124 Enrollments</span>
+                            <span class="mx-2">|</span>
+                            <i class="fas fa-star star"></i>
+                            <span>4.7 (38 reviews)</span>
+                        </div>
+                        <div class="course-meta">
+                            <i class="fas fa-calendar-alt icon"></i>
+                            <span>Last updated: 2025/03/10</span>
+                        </div>
+                        <div class="course-actions">
+                            <button class="action-btn">Edit</button>
+                            <button class="action-btn">Delete</button>
+                            <button class="action-btn">Feedback</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Course 6 -->
+            <div class="col-lg-4 col-md-6 col-12">
+                <div class="course-card">
+                    <div class="course-img">
+                        <div class="badge-container">
+                            <img src="/api/placeholder/40/40" alt="Badge">
+                        </div>
+                        <h3>Introduction to Programming</h3>
+                        <div class="full-course">FULL COURSE</div>
+                    </div>
+                    <div class="course-info">
+                        <h4>Introduction to Programming</h4>
+                        <div class="course-meta">
+                            <i class="fas fa-users icon"></i>
+                            <span>124 Enrollments</span>
+                            <span class="mx-2">|</span>
+                            <i class="fas fa-star star"></i>
+                            <span>4.7 (38 reviews)</span>
+                        </div>
+                        <div class="course-meta">
+                            <i class="fas fa-calendar-alt icon"></i>
+                            <span>Last updated: 2025/03/10</span>
+                        </div>
+                        <div class="course-actions">
+                            <button class="action-btn">Edit</button>
+                            <button class="action-btn">Delete</button>
+                            <button class="action-btn">Feedback</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

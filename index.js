@@ -47,10 +47,12 @@ connectDB();
 // Import Routes
 const authRoutes = require("./routes/authRoutes");
 const homeRoutes = require("./routes/homeRoutes");
+const chatRoutes = require("./routes/chatRoutes");
 
 
 app.use("/", homeRoutes);
 app.use("/auth", authRoutes);
+app.use("/",chatRoutes);
 
 
 
