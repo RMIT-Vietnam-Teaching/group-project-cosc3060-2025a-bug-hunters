@@ -1,0 +1,139 @@
+body {
+    background-color: #f8f9fa;
+    padding: 20px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.dropdown-toggle {
+    color: #eb7350;
+    border-color: #eb7350;
+    background-color: white;
+    padding: 6px 15px;
+}
+
+.dropdown-toggle::after {
+    vertical-align: middle;
+}
+
+.upload-btn {
+    color: #eb7350;
+    border-color: #eb7350;
+    background-color: white;
+    padding: 6px 15px;
+}
+
+.course-card {
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    border: 1px solid #e0e0e0;
+    background-color: white;
+}
+
+.course-img {
+    height: 150px;
+    position: relative;
+    background-color: #1f2937;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    text-align: center;
+}
+
+.course-img h3 {
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.course-img .full-course {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.course-info {
+    padding: 15px;
+}
+
+.course-info h4 {
+    font-size: 1rem;
+    margin-bottom: 10px;
+}
+
+.course-meta {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+.course-meta .icon {
+    margin-right: 5px;
+}
+
+.course-meta .star {
+    color: gold;
+}
+
+.course-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.action-btn {
+    flex: 1;
+    text-align: center;
+    padding: 8px 0;
+    background-color: #eb7350;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.action-btn:hover {
+    background-color: #d66648;
+}
+
+.badge-container {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
+
+.badge-container img {
+    width: 40px;
+    height: 40px;
+}
+
+/* Media queries for responsive design */
+@media (max-width: 991px) {
+    .course-img {
+        height: 140px;
+    }
+}
+
+@media (max-width: 767px) {
+    .course-img {
+        height: 130px;
+    }
+    
+    .course-img h3 {
+        font-size: 1.3rem;
+    }
+}

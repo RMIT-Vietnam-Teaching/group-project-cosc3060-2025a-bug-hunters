@@ -3,7 +3,7 @@ const chalk = require("chalk");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const session = require("express-session");
-
+const multer = require('multer');
 
 
 
@@ -22,6 +22,18 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
+
+
+// Storage config
+const storage = multer.diskStorage({
+    destination: './public/uploads/',
+    filename: (req, file, cb) => {
+      cb(null, Date.now() + path.extname(file.originalname));
+    },
+  });
+
+  // Multer upload instance
+const upload = multer({ storage: storage });
 
 
 //Set up a session 
@@ -45,14 +57,14 @@ app.use((req, res, next) => {
 connectDB();
 
 // Import Routes
-const authRoutes = require("./routes/authRoutes");
+
 const homeRoutes = require("./routes/homeRoutes");
+const instructRoutes = require("./routes/instructRoutes");
 
 
 
 app.use("/", homeRoutes);
-app.use("/auth", authRoutes);
-
+app.use("/", instructRoutes);
 
 
 
