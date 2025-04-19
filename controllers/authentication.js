@@ -61,7 +61,7 @@ exports.registerUser = async (req, res) => {
     });
 
     await newUser.save();
-    res.redirect("/homepage");
+    res.redirect("/");
   } catch (err) {
     console.error("Registration Error:", err);
     res.status(500).render("register", { error: "An error occured during Registration", formData: req.body });
@@ -134,7 +134,7 @@ exports.loginUser = async (req, res) => {
       console.log("Session User:", req.session.user);
 
       req.session.save(() => {
-        res.redirect("/homepage");
+        res.redirect("/");
       });
   
     } catch (err) {
