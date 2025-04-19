@@ -51,9 +51,11 @@ const adminRoutes = require("./routes/adminRoutes");
 const { session } = require("passport");
 
 
+
 app.use("/", homeRoutes);
 app.use("/auth", authRoutes);
 app.use("/admin", adminRoutes);
+
 
 
 
