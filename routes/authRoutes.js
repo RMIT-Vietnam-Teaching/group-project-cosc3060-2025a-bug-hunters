@@ -29,14 +29,14 @@ router.post("/forgetPassword", forgetPasswordUser);
 
 // Render reset password page
 router.get("/forgetPassword/resetPassword", (req, res) => {
-    res.render("resetPassword");
+    res.render("resetPassword", {
+        userEmail: req.session.userEmail
+    });
 });
 
+// Handle reset password
 router.post("/forgetPassword/resetPassword",resetPasswordUser);
 
 
-router.get("/navbar", (req, res) => {
-    res.render("partials/navbarLogin");
-});
 
 module.exports = router;
