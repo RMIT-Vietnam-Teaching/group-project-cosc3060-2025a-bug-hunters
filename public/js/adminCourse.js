@@ -1,4 +1,5 @@
-// Sorting functionality for the admin user table
+// Sorting and Searching functionality for the admin course table
+
 document.addEventListener("DOMContentLoaded", () => {
     const table = document.querySelector(".admin-table tbody");
     const headers = document.querySelectorAll(".sortable");
@@ -12,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const rows = Array.from(table.querySelectorAll("tr"));
 
             if (currentSortKey === sortKey) {
-                sortDirection *= -1; // toggle direction
+                sortDirection *= -1;
             } else {
                 sortDirection = 1;
                 currentSortKey = sortKey;
@@ -28,6 +29,14 @@ document.addEventListener("DOMContentLoaded", () => {
                     ?.innerText.trim()
                     .toLowerCase();
 
+                if (!aVal || !bVal) return 0;
+
+                if (!isNaN(aVal) && !isNaN(bVal)) {
+                    return (
+                        (parseFloat(aVal) - parseFloat(bVal)) * sortDirection
+                    );
+                }
+
                 if (aVal < bVal) return -1 * sortDirection;
                 if (aVal > bVal) return 1 * sortDirection;
                 return 0;
@@ -37,30 +46,24 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // Correct mapping based on your table
     function getIndex(key) {
         switch (key) {
-            case "firstName":
+            case "name":
                 return 1;
-            case "lastName":
+            case "author":
                 return 2;
-            case "email":
+            case "students":
                 return 3;
-            case "role":
+            case "price":
                 return 4;
+            case "status":
+                return 5;
+            case "created":
+                return 6;
             default:
                 return 1;
         }
     }
-
-    // Row click navigation
-    const rows = document.querySelectorAll(".user-row");
-    rows.forEach((row) => {
-        row.addEventListener("click", () => {
-            const userId = row.dataset.id;
-            window.location.href = `/admin/users/${userId}`;
-        });
-    });
 
     const searchInput = document.querySelector(".admin-search-input");
     const tableRows = document.querySelectorAll(".admin-table tbody tr");
@@ -70,22 +73,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
         tableRows.forEach((row) => {
             const cells = row.querySelectorAll("td");
-            const firstName = cells[0].textContent.toLowerCase();
-            const lastName = cells[1].textContent.toLowerCase();
-            const email = cells[2].textContent.toLowerCase();
-            const role = cells[3].textContent.toLowerCase();
-            const status = cells[4].textContent.toLowerCase();
-            const dateJoined = cells[5].textContent.toLowerCase();
+            const match = Array.from(cells).some((cell) =>
+                cell.textContent.toLowerCase().includes(query)
+            );
+            row.style.display = match ? "" : "none";
+        });
+    });
 
-            const matches =
-                firstName.includes(query) ||
-                lastName.includes(query) ||
-                email.includes(query) ||
-                role.includes(query) ||
-                status.includes(query) ||
-                dateJoined.includes(query);
-
-            row.style.display = matches ? "" : "none";
+    const rows = document.querySelectorAll(".admin-table tbody tr");
+    rows.forEach((row) => {
+        row.addEventListener("click", () => {
+            const courseId = row.dataset.id;
+            if (courseId) {
+                window.location.href = `/admin/courses/${courseId}`;
+            }
         });
     });
 });

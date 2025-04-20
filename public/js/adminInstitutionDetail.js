@@ -7,11 +7,11 @@ document.addEventListener("DOMContentLoaded", () => {
         archiveBtn.addEventListener("click", () => {
             const userId = archiveBtn.dataset.id;
             if (confirm("Are you sure you want to archive this user?")) {
-                fetch(`/admin/users/archive/${userId}`, {
+                fetch(`/admin/institutions/archive/${userId}`, {
                     method: "POST",
                 }).then((res) => {
                     if (res.ok) {
-                        window.location.href = "/admin/users";
+                        window.location.href = "/admin/institutions";
                     } else {
                         alert("Failed to archive user.");
                     }
@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
         reactivateBtn.addEventListener("click", () => {
             const userId = reactivateBtn.dataset.id;
             if (confirm("Reactivate this user account?")) {
-                fetch(`/admin/users/update/${userId}`, {
+                fetch(`/admin/institutions/update/${userId}`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     body: JSON.stringify({ status: "active" }),
                 }).then((res) => {
                     if (res.ok) {
-                        window.location.href = "/admin/users";
+                        window.location.href = "/admin/institutions";
                     } else {
                         alert("Failed to reactivate user.");
                     }
@@ -49,11 +49,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     "Are you sure you want to permanently delete this user?"
                 )
             ) {
-                fetch(`/admin/users/delete/${userId}`, {
+                fetch(`/admin/institutions/delete/${userId}`, {
                     method: "POST",
                 }).then((res) => {
                     if (res.ok) {
-                        window.location.href = "/admin/users";
+                        window.location.href = "/admin/institutions";
                     } else {
                         alert("Failed to delete user.");
                     }
