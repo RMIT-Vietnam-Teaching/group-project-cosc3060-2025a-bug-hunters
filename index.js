@@ -3,6 +3,7 @@ const chalk = require("chalk");
 const cors = require("cors");
 const dotenv = require("dotenv");
 
+
 const connectDB = require("./utils/db");
 
 const { port } = require("./configs/keys");
@@ -28,11 +29,16 @@ const settingsRoutes = require("./routes/settingsRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const userRoutes = require("./routes/userRoutes");
 const { session } = require("passport");
+const coinPayment = require("./routes/coinPayment");
 
 app.use("/", homeRoutes);
 app.use("/auth", authRoutes);
 app.use("/admin", adminRoutes);
 app.use("/settings", settingsRoutes);
+app.use("/checkout", coinPayment);
+
+
+
 // app.use("/user", userRoutes);
 
 

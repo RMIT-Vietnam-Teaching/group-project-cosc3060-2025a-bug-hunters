@@ -1,0 +1,100 @@
+<main class="col-md-10 p-4">
+  <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4">
+    <div class="text-muted fs-5">←</div>
+    <h1 class="h4 m-0">Account Balance</h1>
+    <div></div>
+  </div>
+
+  <!-- balance info -->
+  <form method="POST" class="row g-3">
+    <div class="col-md-6">
+      <label class="form-label fw-bold">Current Balance (Coin)</label>
+      <input type="text" class="form-control" value="$ <%= user.balance || '1034' %>" readonly disabled/>
+    </div>
+    <div class="col-md-6">
+      <label class="form-label fw-bold">Select Coin Package</label>
+      <select class="form-select" id="coinPackage">
+        <option value="coin100">100 Coins - $10</option>
+        <option value="coin500">500 Coins - $45</option>
+        <option value="coin1000">1000 Coins - $80</option>
+      </select>
+    </div>
+
+    <!-- payment -->
+    <div class="col-md-12 mt-4">
+      <label class="form-label fw-bold">Payment methods</label>
+      <div class="credit-card-box">
+        <span>Credit card</span>
+        <span>
+          <img  src="/images/mastercard.png" alt="MasterCard">
+          <img src="/images/visa.png" alt="Visa">
+        </span>
+      </div>
+    </div>
+
+    <!-- card inputs -->
+    <div class="col-md-12">
+      <input type="number" class="form-control" placeholder="Card Number" >
+    </div>
+
+    <div class="col-md-6">
+      <input type="date" class="form-control" placeholder="MM/YY">
+    </div>
+    <div class="col-md-6">
+      <input type="number" class="form-control" placeholder="CVC">
+    </div>
+
+    <div class="col-md-12 mt-3">
+      <button type="submit" class="btn btn-continue" onclick="makePayment()">Continue</button>
+    </div>
+  </form>
+</main>
+<!-- <script src="/js/payment.js"></script> -->
+
+<script>
+  const continueBtn = document.querySelector('.btn-continue');
+  continueBtn.addEventListener('click', async function (e) {
+  e.preventDefault();    
+    const selectedPackage = document.querySelector('#coinPackage').value;
+    console.log("clicked")
+    
+    // const cardNumber = document.querySelector('input[placeholder="Card Number"]').value;
+    // const expiryDate = document.querySelector('input[placeholder="MM/YY"]').value;
+    // const cvc = document.querySelector('input[placeholder="CVC"]').value;
+    // const selectedPackage = document.querySelector('#coinPackage').value;
+    
+    // if (!cardNumber || !expiryDate || !cvc) {
+      //   alert('Please fill in all fields');
+      //   return;
+      // }
+    fetch("/checkout", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        items: [{ id: selectedPackage, quantity: 1 }],
+        userId: "<%= user._id %>"
+      })
+    })
+    .then(res => {
+      if (!res.ok) {
+        return res.text().then(errorText => {
+          console.error("Server error:", errorText);
+          alert('Payment session failed.');
+        });
+      }
+      return res.json();
+    })
+    .then(({ url }) => {
+      // console.log(url);
+      window.location.href = url;
+    })
+    .catch(e => {
+      console.error(e.error);
+    })
+    
+  });
+  
+</script>
+</main>
