@@ -16,16 +16,14 @@
 }
 
 .login-btn {
-  background-color: #e07a5f;
-  border-color: #e07a5f;
-  color: white;
+  background-color: #e07a5f !important;
+  color: black !important;
   border-radius: 4px;
 }
 
 .signup-btn {
-  background-color: #d3d3d3;
-  border-color: #d3d3d3;
-  color: #333;
+  background-color: #d3d3d3!important;
+  color: black !important;
   border-radius: 4px;
 }
 
@@ -33,7 +31,7 @@
   width: auto;
   flex: 1;
   min-width: 0;
-  max-width: 500px;
+  max-width: 700px;
   padding: 0;
 }
 
@@ -41,6 +39,37 @@
   white-space: nowrap;
   min-width: 120px;
   flex-shrink: 0;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #333;
+  margin-right: 2rem;
+  font-size: 1rem;
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  padding: 0 10px;
+}
+
+.icon-btn:hover {
+  background-color: #ff8623;
+  color: #fff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transform: scale(1.1);
+}
+
+.nav-links a:hover {
+  background-color: #e37908;
+  color: #fff;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  transform: translateY(-2px);
+  transition: all 0.3s ease;
+  border-radius: 12px;
+  padding: 8px 16px;
 }
 
 .search-input {
@@ -56,20 +85,17 @@
 }
 
 
-@media (max-width: 630px) {
-  .desktop-auth {
-    display: none !important;
-  }
-  .navbar-toggler {
-    display: block !important;
+
+@media (max-width: 767px) {
+  #navbarContent, #mobileLinks {
+    display: hidden !important; 
   }
 }
 
-@media (min-width: 631px) {
-  .navbar-toggler {
-    display: none !important;
+@media (min-width: 768px) {
+  #navbarContent, #mobileLinks {
+    display: none !important; 
   }
-  #navbarContent {
-    display: none !important;
-  }
+
 }
+
