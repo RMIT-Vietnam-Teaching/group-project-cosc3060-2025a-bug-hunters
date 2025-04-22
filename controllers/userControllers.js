@@ -1,8 +1,6 @@
 const express = require("express");
 const User = require("../models/User");
-const { get } = require("mongoose");
-
-
+const mongoose = require("mongoose");
 
 const user = {
   id: "123",
@@ -16,58 +14,70 @@ const user = {
   joinDate: "2023-10-01",
   headline: "Hello, I'm paddy!!",
   about: "I am a student at the University of Toronto.",
+  password: "oldpassword",
 };
-
 
 const getUserProfileSettings = (req, res) => {
   res.render("userProfileSettings", { user, activePage: "profileSetting" });
 };
+
 const loadDisplayTheme = (req, res) => {
-  res.render("userSetTheme", {user, activePage: "theme" });
+  res.render("userSetTheme", { user, activePage: "theme" });
 };
+
 const getAccountSecurity = (req, res) => {
-  res.render("userSecurity", {user, activePage: "security" });
+  const { success, error } = req.query;
+  res.render("userSecurity", { user, activePage: "security", success, error });
 };
 
 const getAccountBalance = (req, res) => {
   res.render("userBalance", { user, activePage: "balance" });
-}
-const mongoose = require("mongoose");
-
+};
 
 const getUserProfile = (req, res) => {
   res.render("userProfile", { user });
-}
+};
 
+// changing email
+const changeEmail = async (req, res) => {
+  const { newEmail } = req.body;
+  try {
+    user.email = newEmail;
+    res.redirect("/settings/security?success=Email+updated+to+" + encodeURIComponent(newEmail));
+  } catch (error) {
+    res.status(500).send("Error updating email");
+  }
+};
 
+//changing password
+const changePassword = async (req, res) => {
+  const { oldPassword, newPassword, confirmPassword } = req.body;
+  try {
+    if (newPassword !== confirmPassword) {
+      return res.redirect("/settings/security?error=Passwords+do+not+match");
+    }
 
-//use the code below instead!!
-// const getUserProfile = async (req, res) => {
-  
-//   const { userId } = req.params;
+    if (oldPassword !== user.password) {
+      return res.redirect("/settings/security?error=Old+password+is+incorrect");
+    }
 
-//   if (!mongoose.Types.ObjectId.isValid(userId)) {
-//     console.error("Invalid MongoDB ID:", userId);
-//     return res.status(400).send("Invalid user ID");
-//   }
-//   try {
-//     const user = await User.findById(userId);
-//     if (!user) {
-//       return res.redirect("/login");
-//     }
-//     res.render("userProfile", { user });
-//   } catch (error) {
-//     console.error("Error fetching user profile:", error.message);
-//     res.status(500).send("Something went wrong");
-//   }
-// };
+    if (newPassword === user.password) {
+      return res.redirect("/settings/security?error=New+password+must+be+different+from+old+password");
+    }
 
+    user.password = newPassword;
+    res.redirect("/settings/security?success=Password+successfully+changed");
+  } catch (error) {
+    res.status(500).send("Error changing password");
+  }
+};
 
-
-module.exports = { 
+module.exports = {
   getUserProfileSettings,
   loadDisplayTheme,
   getAccountSecurity,
   getAccountBalance,
   getUserProfile,
- };
+  changeEmail,
+  changePassword
+};

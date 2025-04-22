@@ -34,16 +34,16 @@ const settingsRoutes = require("./routes/settingsRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const userRoutes = require("./routes/userRoutes");
 const institution = require("./routes/institutionRoutes");
+
 // const coinPaymentRoutes = require("./routes/coinPayment");
 
 app.use("/", homeRoutes);
 app.use("/auth", authRoutes);
 app.use("/admin", adminRoutes);
-app.use("/user", settingsRoutes);
+app.use("/settings", settingsRoutes);
 // app.use("/user", userRoutes);
 app.use("/institution", institution);
 // app.use("/payment", coinPaymentRoutes);
-
 app.use('/navbar', (req,res) => {
     res.render('partials/navbar');
 });

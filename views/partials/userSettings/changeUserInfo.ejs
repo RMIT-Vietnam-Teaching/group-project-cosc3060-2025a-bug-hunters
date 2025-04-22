@@ -7,21 +7,22 @@
         </div>
 
 
-   <!-- Form -->
-<form action="/profile/security/update" method="POST" class="d-flex justify-content-center">
+   <!-- Email -->
+<form method="POST" action="/settings/security/change-email" class="d-flex justify-content-center mb-5">
   <div style="max-width: 500px; width: 100%;">
-    
-    <!-- Email (Stacked layout) -->
     <div class="mb-3">
-      <input type="email" name="email" class="form-control" value="<%= user.email %>" placeholder="User Email" required />
+      <input type="email" name="newEmail" class="form-control" value="<%= user.email %>" placeholder="User Email" required />
     </div>
-    <div class="mb-4 text-end">
-      <button type="submit" formaction="/profile/security/change-email" class="btn btn-outline-danger">Change Email</button>
+    <div class="text-end">
+      <button type="submit" class="btn btn-outline-danger">Change Email</button>
     </div>
+  </div>
+</form>
 
+<!-- Password -->
+<form method="POST" action="/settings/security/change-password" class="d-flex justify-content-center">
+  <div style="max-width: 500px; width: 100%;">
     <hr class="my-4" />
-
-    <!-- Password Fields -->
     <div class="mb-3">
       <input type="password" name="oldPassword" class="form-control" placeholder="Enter old password" required />
     </div>
@@ -31,13 +32,21 @@
     <div class="mb-4">
       <input type="password" name="confirmPassword" class="form-control" placeholder="Re-type new password" required />
     </div>
-
-    <!-- Submit Password -->
     <div class="text-end">
-      <button type="submit" formaction="/profile/security/change-password" class="btn btn-outline-danger">Change password</button>
+      <button type="submit" class="btn btn-outline-danger">Change password</button>
     </div>
-    
   </div>
 </form>
       </main>
-    
+
+      <script>
+        document.addEventListener("DOMContentLoaded", function () {
+          const alerts = document.querySelectorAll(".alert");
+          alerts.forEach(alert => {
+            setTimeout(() => {
+              const bsAlert = bootstrap.Alert.getOrCreateInstance(alert);
+              bsAlert.close();
+            }, 3000);
+          });
+        });
+      </script>
