@@ -3,8 +3,6 @@ const chalk = require("chalk");
 const cors = require("cors");
 const dotenv = require("dotenv");
 
-
-
 const connectDB = require("./utils/db");
 
 const { port } = require("./configs/keys");
@@ -27,11 +25,12 @@ connectDB();
 const authRoutes = require("./routes/authRoutes");
 const homeRoutes = require("./routes/homeRoutes");
 const adminRoutes = require("./routes/adminRoutes");
-const { session } = require("passport");
+const forumRoutes = require("./routes/forumRoutes");
 
 app.use("/", homeRoutes);
 app.use("/auth", authRoutes);
 app.use("/admin", adminRoutes);
+app.use("/forum", forumRoutes);
 
 app.listen(port, () => {
     console.log(chalk.green(`Server is running on port ${port}`));
