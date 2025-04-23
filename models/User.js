@@ -67,6 +67,34 @@ const userSchema = new mongoose.Schema({
         type: String,
         trim: true,
     },
+    coin: {
+        type: Number,
+        default: 0,
+    },
+    theme: {
+        type: String,
+        enum: ["light", "dark"],
+        default: "light",
+    },
+    SearchingHistory: [String],
+    cardPaymentInfo: {
+        cardNumber: {
+            type: String,
+            required: true,
+        },
+        cardHolderName: {
+            type: String,
+            required: true,
+        },
+        expirationDate: {
+            type: String,
+            required: true,
+        },
+        cvv: {
+            type: String,
+            required: true,
+        },
+    },
 });
 
 module.exports = mongoose.model("User", userSchema);
