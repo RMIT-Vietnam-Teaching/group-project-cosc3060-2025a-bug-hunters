@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Forum</title>
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+        />
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
+            rel="stylesheet"
+        />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;600&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            body {
+                font-family: "Rubik", sans-serif;
+                background-color: #f9f9f9;
+                color: #2e2e2e;
+            }
+
+            .avatar {
+                width: 60px;
+                height: 60px;
+                border-radius: 50%;
+                object-fit: cover;
+                border: 3px solid #ff8a65;
+            }
+
+            .sidebar,
+            .rightbar {
+                background-color: #fff;
+                border-radius: 16px;
+                padding: 2rem 1.5rem;
+                margin-top: 2rem;
+                box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            }
+
+            .sidebar .profile {
+                text-align: center;
+                margin-bottom: 1rem;
+            }
+
+            .sidebar .profile h5 {
+                margin-top: 0.8rem;
+                font-weight: 600;
+                color: #d75a27;
+            }
+
+            .sidebar h6 {
+                font-weight: 600;
+                font-size: 0.95rem;
+                margin-top: 1.8rem;
+                color: #d75a27;
+                text-transform: uppercase;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .sidebar h6 i {
+                font-size: 1rem;
+            }
+
+            .tag-btn {
+                background-color: #fffaf5;
+                color: #d75a27;
+                border: 1px solid #ffe1d4;
+                padding: 8px 14px;
+                border-radius: 10px;
+                font-size: 0.9rem;
+                margin-bottom: 6px;
+                width: 100%;
+                transition: background 0.2s, color 0.2s;
+            }
+
+            .tag-btn:hover {
+                background-color: #ffe5d9;
+                color: #000;
+            }
+
+            .post-card {
+                background-color: #fff;
+                border-radius: 16px;
+                box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+                padding: 1.5rem;
+                margin-bottom: 2rem;
+            }
+
+            .reaction-btn-group {
+                display: flex;
+                justify-content: space-between;
+                gap: 0.5rem;
+                margin-top: 1rem;
+            }
+
+            .reaction-btn {
+                flex: 1;
+                border: 1px solid #ddd;
+                border-radius: 12px;
+                background-color: #f6f6f6;
+                padding: 8px 0;
+                font-weight: 500;
+                transition: all 0.2s;
+            }
+
+            .reaction-btn:hover {
+                background-color: #ff8a65;
+                color: white;
+            }
+
+            .reaction-counts {
+                display: flex;
+                justify-content: space-between;
+                font-size: 0.9rem;
+                color: #999;
+                margin-bottom: 0.5rem;
+            }
+
+            .comment-input-wrapper {
+                display: flex;
+                align-items: center;
+                margin-top: 1rem;
+                position: relative;
+            }
+
+            .comment-input-wrapper input {
+                width: 100%;
+                border: 1px solid #ddd;
+                border-radius: 12px;
+                padding: 8px 36px 8px 12px;
+            }
+
+            .emoji-btn {
+                position: absolute;
+                right: 10px;
+                background: none;
+                border: none;
+                font-size: 1.3rem;
+                color: #f9a825;
+                cursor: pointer;
+            }
+
+            .rightbar h6 {
+                font-size: 0.95rem;
+                color: #d75a27;
+                font-weight: 600;
+                margin-bottom: 1rem;
+            }
+
+            .follow-btn,
+            .followed-btn {
+                font-size: 0.8rem;
+                border-radius: 20px;
+                padding: 6px 14px;
+                font-weight: 500;
+            }
+
+            .follow-btn {
+                background-color: #fff;
+                color: #ff8a65;
+                border: 1px solid #ff8a65;
+            }
+
+            .follow-btn:hover {
+                background-color: #ff8a65;
+                color: #fff;
+            }
+
+            .followed-btn {
+                background-color: #ff8a65;
+                color: #fff;
+                border: none;
+            }
+
+            input.post-launch {
+                background: #fff;
+                border: 1px solid #ffe4dc;
+                border-radius: 999px;
+                padding: 10px 16px;
+                font-size: 0.95rem;
+                flex-grow: 1;
+            }
+
+            input.post-launch:hover {
+                background-color: #fffdfb;
+                cursor: pointer;
+                border-color: #ffa07a;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container-fluid">
+            <div class="row gx-4">
+                <!-- Sidebar -->
+                <div class="col-md-3 sidebar">
+                    <div class="profile">
+                        <img src="<%= user.avatar %>" class="avatar" />
+                        <h5><%= user.name %></h5>
+                    </div>
+                    <h6>
+                        <i class="bi bi-bookmark-fill text-warning"></i> Latest
+                        Courses
+                    </h6>
+                    <% user.latestCourses.forEach(course => { %>
+                    <button class="tag-btn"><%= course %></button>
+                    <% }) %>
+                    <h6>
+                        <i class="bi bi-journal-bookmark-fill text-info"></i>
+                        Programs
+                    </h6>
+                    <% user.enrolledPrograms.forEach(course => { %>
+                    <button class="tag-btn"><%= course %></button>
+                    <% }) %>
+                </div>
+
+                <!-- Main Feed -->
+                <div class="col-md-6">
+                    <div
+                        class="post-card d-flex align-items-center gap-3 mb-4 p-3"
+                    >
+                        <img
+                            src="<%= user.avatar %>"
+                            class="avatar"
+                            style="width: 50px; height: 50px"
+                        />
+                        <input
+                            class="post-launch"
+                            type="text"
+                            data-bs-toggle="modal"
+                            data-bs-target="#postModal"
+                            placeholder="Write something..."
+                            readonly
+                        />
+                    </div>
+
+                    <% posts.forEach(post => { %>
+                    <div class="post-card">
+                        <div class="d-flex align-items-center mb-3">
+                            <img
+                                src="<%= post.user.avatar %>"
+                                class="avatar me-2"
+                            />
+                            <div>
+                                <strong><%= post.user.name %></strong><br />
+                                <small class="text-muted"
+                                    ><%= post.timeAgo %></small
+                                >
+                            </div>
+                        </div>
+                        <p><%= post.content %></p>
+                        <% if (post.image) { %>
+                        <img
+                            src="<%= post.image %>"
+                            class="img-fluid rounded mb-2"
+                        />
+                        <% } %>
+                        <div class="reaction-counts">
+                            <span
+                                ><i class="bi bi-heart"></i> <%= post.likes
+                                %></span
+                            >
+                            <span
+                                ><i class="bi bi-chat-dots"></i> <%=
+                                post.comments.length %></span
+                            >
+                        </div>
+                        <div class="reaction-btn-group">
+                            <button class="reaction-btn">👍 Like</button>
+                            <button class="reaction-btn">💬 Comment</button>
+                            <button class="reaction-btn">🔁 Share</button>
+                        </div>
+                        <div class="comment-input-wrapper">
+                            <input type="text" placeholder="Add a reply..." />
+                            <button class="emoji-btn">😊</button>
+                        </div>
+                        <% post.comments.forEach(comment => { %>
+                        <div class="d-flex align-items-start mt-3">
+                            <img
+                                src="<%= comment.user.avatar %>"
+                                class="avatar me-2"
+                                style="width: 32px; height: 32px"
+                            />
+                            <div class="bg-light p-2 rounded w-100">
+                                <strong><%= comment.user.name %></strong
+                                ><br /><%= comment.text %>
+                            </div>
+                        </div>
+                        <% }) %>
+                    </div>
+                    <% }) %>
+                </div>
+
+                <!-- Rightbar -->
+                <div class="col-md-3 rightbar">
+                    <h6>
+                        <i class="bi bi-stars text-danger"></i> Recommended
+                        Instructors
+                    </h6>
+                    <% instructors.forEach(instr => { %>
+                    <div
+                        class="d-flex align-items-center justify-content-between mb-3"
+                    >
+                        <div class="d-flex align-items-center gap-2">
+                            <img
+                                src="<%= instr.avatar %>"
+                                class="avatar"
+                                style="width: 36px; height: 36px"
+                            />
+                            <span><%= instr.name %></span>
+                        </div>
+                        <% if (instr.followed) { %>
+                        <button class="followed-btn">Followed</button>
+                        <% } else { %>
+                        <form action="/follow" method="POST">
+                            <input
+                                type="hidden"
+                                name="instructorId"
+                                value="<%= instr.id %>"
+                            />
+                            <button class="follow-btn">Follow</button>
+                        </form>
+                        <% } %>
+                    </div>
+                    <% }) %>
+                </div>
+            </div>
+        </div>
+
+        <!-- Post Modal -->
+        <div
+            class="modal fade"
+            id="postModal"
+            tabindex="-1"
+            aria-labelledby="postModalLabel"
+            aria-hidden="true"
+        >
+            <div class="modal-dialog modal-xl modal-dialog-centered">
+                <div class="modal-content p-4">
+                    <div class="modal-header border-0">
+                        <h5 class="modal-title" id="postModalLabel">
+                            Create Post
+                        </h5>
+                        <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"
+                        ></button>
+                    </div>
+                    <form
+                        action="/forum/post"
+                        method="POST"
+                        enctype="multipart/form-data"
+                    >
+                        <div class="modal-body">
+                            <div class="d-flex align-items-start gap-3 mb-4">
+                                <img
+                                    src="<%= user.avatar %>"
+                                    class="avatar"
+                                    style="width: 56px; height: 56px"
+                                />
+                                <textarea
+                                    name="content"
+                                    class="form-control"
+                                    rows="5"
+                                    placeholder="What would you like to share?"
+                                    style="border-radius: 12px"
+                                ></textarea>
+                            </div>
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label
+                                        for="photoInput"
+                                        class="form-control d-flex align-items-center gap-2"
+                                        style="cursor: pointer"
+                                    >
+                                        <i
+                                            class="bi bi-image text-danger fs-5"
+                                        ></i>
+                                        <span>Add Photo</span>
+                                    </label>
+                                    <input
+                                        type="file"
+                                        name="photo"
+                                        id="photoInput"
+                                        accept="image/*"
+                                        hidden
+                                    />
+                                </div>
+                                <div class="col-md-4">
+                                    <label
+                                        for="videoInput"
+                                        class="form-control d-flex align-items-center gap-2"
+                                        style="cursor: pointer"
+                                    >
+                                        <i
+                                            class="bi bi-camera-video text-primary fs-5"
+                                        ></i>
+                                        <span>Add Video</span>
+                                    </label>
+                                    <input
+                                        type="file"
+                                        name="video"
+                                        id="videoInput"
+                                        accept="video/*"
+                                        hidden
+                                    />
+                                </div>
+                                <div class="col-md-4">
+                                    <button
+                                        type="button"
+                                        class="form-control d-flex align-items-center gap-2"
+                                    >
+                                        <i
+                                            class="bi bi-emoji-smile text-warning fs-5"
+                                        ></i>
+                                        <span>Add Feeling</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer border-0">
+                            <button
+                                type="submit"
+                                class="btn btn-primary w-100 rounded-pill"
+                            >
+                                Post
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+</html>
