@@ -62,7 +62,7 @@ connectDB();
 // Import Routes
 const authRoutes = require("./routes/authRoutes");
 const homeRoutes = require("./routes/homeRoutes");
-const settingsRoutes = require("./routes/settingsRoutes");
+const userSettingsRoutes = require("./routes/userSetting");
 const adminRoutes = require("./routes/adminRoutes");
 const userRoutes = require("./routes/userRoutes");
 const institution = require("./routes/institutionRoutes");
@@ -74,7 +74,7 @@ const institution = require("./routes/institutionRoutes");
 app.use("/", homeRoutes);
 app.use("/auth", authRoutes);
 app.use("/admin", adminRoutes);
-app.use("/settings", settingsRoutes);
+app.use("/userSettings", userSettingsRoutes);
 // app.use("/user", userRoutes);
 app.use("/institution", institution);
 // app.use("/payment", coinPaymentRoutes);
