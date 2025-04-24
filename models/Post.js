@@ -1,26 +1,6 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
-const commentSchema = new Schema(
-    {
-        user: {
-            type: Schema.Types.ObjectId,
-            ref: "User",
-            required: true,
-        },
-        text: {
-            type: String,
-            required: true,
-            trim: true,
-        },
-        time: {
-            type: Date,
-            default: Date.now,
-        },
-    },
-    { _id: false }
-);
-
 const postSchema = new Schema(
     {
         author: {
@@ -34,15 +14,22 @@ const postSchema = new Schema(
             trim: true,
             maxlength: 1000,
         },
-        media: {
-            type: String, // URL of image/video
-            default: null,
-        },
+        media: [
+            {
+                type: String, // URL of image/video
+                default: null,
+            },
+        ],
         likes: {
             type: Number,
             default: 0,
         },
-        comments: [commentSchema],
+        comments: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: "Comment",
+            },
+        ],
         createdAt: {
             type: Date,
             default: Date.now,
@@ -52,6 +39,9 @@ const postSchema = new Schema(
             enum: ["active", "archived"],
             default: "active",
         },
+        feelings: {
+            type: String,
+        }
     },
     {
         timestamps: true, // Automatically adds createdAt and updatedAt fields
