@@ -2,6 +2,51 @@ const bcrypt = require("bcrypt");
 const User = require("../models/User");
 const axios = require('axios');
 
+//Render different pages
+
+//render register page
+exports.renderRegisterPage = async (req, res) => {
+  try {
+    res.render("Authentication/register");
+  } catch (error) {
+    console.log("Error rendering register page:", error);
+  }
+};
+
+//render Login page 
+
+exports.renderLoginPage = async (req, res) => {
+  try {
+    res.render("Authentication/login");
+  } catch (error) {
+    console.log("Error rendering register page:", error);
+  }
+};
+
+//render forget password page 
+exports.renderForgetPasswordPage = async (req, res) => {
+  try {
+    res.render("Authentication/forgetPassword");
+  } catch (error) {
+    console.log("Error rendering register page:", error);
+  }
+};
+
+
+//render reset password page 
+exports.renderResetPasswordPage = async (req, res) => {
+  try {
+    res.render("Authentication/resetPassword", {
+      userEmail: req.session.userEmail
+  });
+  } catch (error) {
+    console.log("Error rendering register page:", error);
+  }
+};
+
+
+//Handle functions 
+
 //User register function 
 exports.registerUser = async (req, res) => {
   try {
