@@ -275,3 +275,16 @@ exports.resetPasswordUser = async (req, res) => {
         });
     }
 };
+
+exports.logout = async (req, res) => {
+    try {
+        res.clearCookie("userId");
+        res.clearCookie("userRole");
+        res.redirect("/");
+    } catch (err) {
+        console.error("Logout Error:", err);
+        res.status(500).render("login", {
+            error: "An error occurred during logout.",
+        });
+    }
+};

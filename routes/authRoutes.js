@@ -9,6 +9,7 @@ const {
     registerUser,
     forgetPasswordUser,
     resetPasswordUser,
+    logout,
 } = require("../controllers/authentication");
 
 const { preventAuthAccess } = require("../middlewares/auth");
@@ -40,5 +41,7 @@ router.get(
 
 // Handle reset password
 router.post("/forgetPassword/resetPassword", resetPasswordUser);
+
+router.get("/logout", logout);
 
 module.exports = router;
