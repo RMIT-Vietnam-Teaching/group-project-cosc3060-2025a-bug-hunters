@@ -69,3 +69,22 @@ document
             alert("Failed to submit post.");
         }
     });
+
+function openFeelingSelector() {
+    // Replace with a modal or dropdown UI for selecting a feeling
+    const feelings = [
+        { emoji: "😊", label: "happy" },
+        { emoji: "😢", label: "sad" },
+        { emoji: "😎", label: "cool" },
+        { emoji: "🥳", label: "excited" },
+        { emoji: "❤️", label: "loved" },
+    ];
+
+    // For now, just prompt (replace this with modal later)
+    const selected = feelings[Math.floor(Math.random() * feelings.length)];
+    document.getElementById("feelingPreview").style.display = "block";
+    document.getElementById("feelingIcon").textContent = selected.emoji;
+    document.getElementById(
+        "feelingText"
+    ).textContent = `feeling ${selected.label}`;
+}

@@ -41,7 +41,12 @@ const postSchema = new Schema(
         },
         feelings: {
             type: String,
-        }
+        },
+        privacy: {
+            type: String,
+            enum: ["public", "private"],
+            default: "public",
+        },
     },
     {
         timestamps: true, // Automatically adds createdAt and updatedAt fields
