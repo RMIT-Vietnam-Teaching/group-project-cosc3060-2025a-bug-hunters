@@ -8,7 +8,7 @@
 
 
    <!-- Email -->
-<form method="POST" action="/settings/security/change-email" class="d-flex justify-content-center mb-5">
+<form method="POST" action="/userSettings/security/update/<%= user._id %>" class="d-flex justify-content-center mb-5">
   <div style="max-width: 500px; width: 100%;">
     <div class="mb-3">
       <input type="email" name="newEmail" class="form-control" value="<%= user.email %>" placeholder="User Email" required />
@@ -19,8 +19,9 @@
   </div>
 </form>
 
+
 <!-- Password -->
-<form method="POST" action="/settings/security/change-password" class="d-flex justify-content-center">
+<form method="POST" action="/userSettings/security/update/<%= user._id %>" class="d-flex justify-content-center">
   <div style="max-width: 500px; width: 100%;">
     <hr class="my-4" />
     <div class="mb-3">
@@ -37,6 +38,18 @@
     </div>
   </div>
 </form>
-      </main>
+<% if (success) { %>
+  <div class="col-md-12 d-flex justify-content-center">
+    <div id="success-alert"
+         class="alert alert-success text-center fw-semibold rounded-pill shadow-sm px-4 py-2 mt-3"
+         style="max-width: 400px; opacity: 1;">
+      ✅ Updated successfully!
+    </div>
+  </div>
+<% } %>
 
-      <script src="/js/userSecurity.js"></script>
+
+      </main>
+      
+      <script src="/js/userSecurity.js?v=1"></script>
+      <script src="/js/setTheme.js"></script>

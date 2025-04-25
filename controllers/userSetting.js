@@ -1,7 +1,8 @@
 const User = require("../models/User");
+const bcrypt = require("bcrypt");
 
-const renderUserPreference = async (req, res) => {
-  const tempUserId  = "68084f433822e88df6ec532f";
+exports.renderUserPreference = async (req, res) => {
+  const tempUserId = "68084f433822e88df6ec532f";
 
   try {
     const user = await User.findById(req.params.userId);
@@ -12,31 +13,29 @@ const renderUserPreference = async (req, res) => {
 
     const success = req.query.success;
 
-    res.render("userSettingProfilePreference", { user, activePage: "profileSetting", success });
+    res.render("userSettingProfilePreference", {
+      user,
+      activePage: "profileSetting",
+      success,
+    });
   } catch (error) {
     console.error("Error rendering user profile settings:", error);
     res.status(500).send("Failed to render user profile settings");
   }
 };
 
-const updateUserPreference = async (req, res) => {
+exports.updateUserPreference = async (req, res) => {
   try {
-    const {userId} = req.params;
+    const { userId } = req.params;
 
-    const {
-        firstName,
-        lastName,
-        email,
-        headline,
-        description,
-    } = req.body;
+    const { firstName, lastName, email, headline, description } = req.body;
     const updateData = {
-        firstName,
-        lastName,
-        email,
-   
-        headline,
-        description,
+      firstName,
+      lastName,
+      email,
+
+      headline,
+      description,
     };
 
     // Handle uploaded avatar
@@ -46,50 +45,13 @@ const updateUserPreference = async (req, res) => {
 
     await User.findByIdAndUpdate(userId, updateData);
     res.redirect(`/userSettings/profilePreference/${userId}?success=1`);
-
   } catch (error) {
     console.error("Error updating user:", error);
     res.status(500).send("Failed to update user");
   }
-}
+};
 
-// const getUserProfileSettings = async (req, res) => {
-//   try {
-//     // const { userId } = req.params;
-//     const userId  = "68084f433822e88df6ec532f";
-//     const {
-//         firstName,
-//         lastName,
-//         email,
-//         role,
-//         headline,
-//         description,
-//     } = req.body;
-
-//     const updateData = {
-//         firstName,
-//         lastName,
-//         email,
-//         role,
-//         headline,
-//         description,
-//     };
-//     console.log(updateData.firstName);
-
-//     if (req.file && req.file.path) {
-//         updateData.avatar = req.file.path; 
-//     }
-
-//     console.log( await User.findByIdAndUpdate(userId, updateData));
-//     res.redirect("/settings/profileSetting/preferences/${userId}?success=Profile+updated");
-// } catch (error) {
-//     console.error("Error updating user:", error);
-//     res.status(500).send("Failed to update user");
-// }
-// };
-
-
-const renderDisplay = async (req, res) => {
+exports.renderDisplay = async (req, res) => {
   try {
     const user = await User.findById(req.params.userId);
 
@@ -104,91 +66,134 @@ const renderDisplay = async (req, res) => {
   }
 };
 
-const renderAccountSecurity = async (req, res) => {
+exports.renderAccountSecurity = async (req, res) => {
   try {
     const user = await User.findById(req.params.userId);
 
     if (!user) {
       return res.status(404).send("User not found");
     }
-  
-    res.render("userSettingSecurity", { user, activePage: "security"});
+
+    res.render("userSettingSecurity", { user, activePage: "security", success: req.query.success });
   } catch (error) {
     console.error("Error rendering user profile settings:", error);
     res.status(500).send("Failed to render user profile settings");
   }
 };
 
-const renderAccountBalance = async (req, res) => {
+exports.renderAccountBalance = async (req, res) => {
   try {
     const user = await User.findById(req.params.userId);
 
     if (!user) {
       return res.status(404).send("User not found");
     }
-  
-    res.render("userSettingBalance", { user, activePage: "balance"});
-    
+
+    res.render("userSettingBalance", { user, activePage: "balance", success: req.query.success, });
   } catch (error) {
     console.error("Error rendering user profile settings:", error);
     res.status(500).send("Failed to render user profile settings");
   }
 };
 
+exports.updateUserDisplay = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const theme = req.body.theme || req.body?.theme; 
+
+    await User.findByIdAndUpdate(userId, { theme }, { runValidators: true });
+
+    res.status(200).json({ success: true });
+  } catch (error) {
+    console.error("Error updating user display settings:", error);
+    res.status(500).json({ success: false });
+  }
+};
 
 
 
+exports.updateUserSecurity = async (req, res) => {
+  
+  try {
+    const { userId } = req.params;
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).send("User not found");
+    }
+
+    const { newEmail, oldPassword, newPassword, confirmPassword } = req.body;
 
 
+    if (newEmail && newEmail !== user.email) {
+      user.email = newEmail;
+    }
+
+    if (oldPassword || newPassword || confirmPassword) {
+      if (!oldPassword || !newPassword || !confirmPassword) {
+        return res.redirect(`/userSettings/security/${userId}?error=Please+fill+all+password+fields`);
+      }
+
+      const isPasswordMatch = await bcrypt.compare(oldPassword, user.password);
+      if (!isPasswordMatch) {
+        return res.redirect(`/userSettings/security/${userId}?error=Old+password+is+incorrect`);
+      }
 
 
+      if (newPassword !== confirmPassword) {
+        return res.redirect(`/userSettings/security/${userId}?error=Passwords+do+not+match`);
+      }
+
+      if (newPassword === user.password) {
+        return res.redirect(`/userSettings/security/${userId}?error=New+password+must+be+different+from+old+password`);
+      }
+
+      // Hash new password before saving
+      const hashedPassword = await bcrypt.hash(newPassword, 12);
+      user.password = hashedPassword;
+
+    }
+
+    await user.save({ validateModifiedOnly: true });
+
+
+    res.redirect(`/userSettings/security/${userId}?success=1`);
+  } catch (error) {
+    console.error("Error updating user security settings:", error);
+    res.status(500).send("Failed to update user security settings");
+  }
+};
+
+
+exports.updateUserBalance = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { cardNumber, expirationDate, cvv, cardHolderName } = req.body;
+    const sanitizedCardNumber = cardNumber.replace(/\s/g, "");
+    const last4 = sanitizedCardNumber.slice(-4);
+
+    console.log("Form data received:", req.body);
+
+    const updatedFields = {
+      cardPaymentInfo: {
+        cardNumber: `**** **** **** ${last4}`,
+        expirationDate,
+        cvv,
+        cardHolderName,
+      },
+    };
+
+    await User.findByIdAndUpdate(userId, updatedFields, { runValidators: true });
+
+    res.redirect(`/userSettings/balance/${userId}?success=1`);
+  } catch (error) {
+    console.error("Error updating user card info:", error);
+    res.status(500).send("Failed to update card info");
+  }
+};
 
 
 const getUserProfile = async (req, res) => {
   const user = await User.find();
   res.render("userProfile", { user });
-};
-
-
-const changeEmail = async (req, res) => {
-  const user = await User.find();
-  const { newEmail } = req.body;
-  try {
-    user.email = newEmail;
-    res.redirect("/settings/security?success=Email+updated+to+" + encodeURIComponent(newEmail));
-  } catch (error) {
-    res.status(500).send("Error updating email");
-  }
-};
-
-
-const changePassword = async (req, res) => {
-  const user = await User.find()
-  const { oldPassword, newPassword, confirmPassword } = req.body;
-  try {
-    if (newPassword !== confirmPassword) {
-      return res.redirect("/settings/security?error=Passwords+do+not+match");
-    }
-    
-    if (oldPassword !== user.password) {
-      return res.redirect("/settings/security?error=Old+password+is+incorrect");
-    }
-    
-    if (newPassword === user.password) {
-      return res.redirect("/settings/security?error=New+password+must+be+different+from+old+password");
-    }
-  
-    user.password = newPassword;
-    res.redirect("/settings/security?success=Password+successfully+changed");
-  } catch (error) {
-    res.status(500).send("Error changing password");
-  }
-};
-
-module.exports = {
-  renderUserPreference,
-  updateUserPreference,
-  renderDisplay,
-  renderAccountSecurity,
-  renderAccountBalance,
 };

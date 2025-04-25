@@ -1,4 +1,26 @@
-
+<style>
+    body.dark nav.col-md-2 {
+      background-color: #1f1f1f !important;
+      border-right: 1px solid #444 !important;
+    }
+  
+    body.dark nav.col-md-2 h5 {
+      color: #fff !important;
+    }
+  
+    body.dark nav.col-md-2 .nav-link {
+      color: #ccc !important;
+    }
+  
+    body.dark nav.col-md-2 .nav-link.active {
+      color: white !important;
+      background-color: #e07b4f !important;
+    }
+  
+    body.dark nav.col-md-2 img {
+      filter: brightness(0.9) contrast(1.2);
+    }
+  </style>
 
     <nav
     class="col-md-2"
@@ -46,17 +68,18 @@
      </li>
      <li class="nav-item">
          <a
-             class="nav-link text-center <%= activePage === 'accountSecurity' ? 'active' : '' %>"
+             class="nav-link text-center <%= activePage === 'security' ? 'active' : '' %>"
              href="/userSettings/security/68084f433822e88df6ec532f"
              >Account Security</a
          >
      </li>
      <li class="nav-item">
          <a
-             class="nav-link text-center <%= activePage === 'accountBalance' ? 'active' : '' %>"
+             class="nav-link text-center <%= activePage === 'balance' ? 'active' : '' %>"
              href="/userSettings/balance/68084f433822e88df6ec532f"
              >Account Balance</a
          >
      </li>
  </ul>
 </nav>
+<script src="/js/setTheme.js"></script>

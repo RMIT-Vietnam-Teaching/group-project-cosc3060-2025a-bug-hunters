@@ -1,4 +1,4 @@
-
+<main class="col-md-10 p-4">
       <!-- header -->
       <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4">
         <div class="text-muted fs-5">←</div>
@@ -6,7 +6,9 @@
         <div class="d-flex gap-3 fs-5"></div>
       </div>
 
-      <form action="/profile/display/update" method="POST" class="d-flex justify-content-center">
+
+      <form id="theme-form" action="/userSettings/display/update/<%= user._id %>" method="POST" class="d-flex justify-content-center">
+
         <div style="max-width: 700px; width: 100%;">
           <div class="row align-items-start">
             <!-- Left: Label -->
@@ -27,9 +29,7 @@
             </div>
           </div>
       
-          <!-- Save -->
-          <div class="text-end mt-4">
-            <button type="submit" class="btn btn-outline-danger">Save</button>
-          </div>
-        </div>
       </form>
+      
+    </main>
+    <script src="/js/setTheme.js"></script>

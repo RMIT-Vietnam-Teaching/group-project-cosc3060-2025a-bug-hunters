@@ -66,6 +66,7 @@ const userSettingsRoutes = require("./routes/userSetting");
 const adminRoutes = require("./routes/adminRoutes");
 const userRoutes = require("./routes/userRoutes");
 const institution = require("./routes/institutionRoutes");
+// const userProfileRoutes = require("./routes/userProfileRoutes");
 
 // const coinPaymentRoutes = require("./routes/coinPayment");
 
@@ -75,8 +76,8 @@ app.use("/", homeRoutes);
 app.use("/auth", authRoutes);
 app.use("/admin", adminRoutes);
 app.use("/userSettings", userSettingsRoutes);
-// app.use("/user", userRoutes);
-app.use("/institution", institution);
+// app.use("/userProfile", userProfileRoutes);
+// app.use("/institution", institution);
 // app.use("/payment", coinPaymentRoutes);
 app.use('/navbar', (req,res) => {
     res.render('partials/navbar');
