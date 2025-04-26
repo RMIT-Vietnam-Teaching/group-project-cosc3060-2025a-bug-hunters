@@ -114,3 +114,62 @@ body[data-theme="dark"] .nav-link:hover {
 }
 /* accBlance css */
 
+
+/* mobile */
+/* @media (max-width: 768px) {
+  nav.col-md-2 {
+    height: auto;
+    padding: 10px 15px;
+    border-right: none;
+    border-bottom: 1px solid #eee;
+  }
+
+  nav .nav-link {
+    font-size: 16px;
+    padding: 10px;
+    margin: 4px 0;
+  }
+
+  .navbar {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+} */
+
+@media (max-width: 767px) {
+  main.col-md-10.p-4 {
+    padding: 1rem !important;
+  }
+
+  .form-control,
+  textarea {
+    font-size: 16px;
+  }
+
+  .col-md-4 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #avatarPreview {
+    width: 100px !important;
+    height: 100px !important;
+    object-fit: cover;
+  }
+
+  button[type="submit"] {
+    width: 100%;
+    font-size: 16px;
+  }
+
+  h1.h4.m-0 {
+    text-align: center;
+  }
+
+  .d-flex.justify-content-between {
+    flex-direction: column;
+    gap: 10px;
+    align-items: center !important;
+  }
+}

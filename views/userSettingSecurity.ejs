@@ -9,14 +9,15 @@
   <link rel="stylesheet" href="/css/userSetting.css" />
 </head>
 
-<body data-theme="<%= user.theme %>">
+<body class="<%= user.theme %>">
+
   <!-- navbar -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4">
+  <!-- <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4">
     <a class="navbar-brand" href="#">YourSite</a>
     <div class="ms-auto">
       <span class="text-white me-3">Welcome, <%= user.firstName %></span>
     </div>
-  </nav>
+  </nav> -->
 
   <div style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 1055; width: auto; max-width: 90%;">
     <% if (typeof success !== 'undefined') { %>
