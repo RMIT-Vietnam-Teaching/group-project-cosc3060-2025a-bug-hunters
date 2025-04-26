@@ -64,7 +64,7 @@ const authRoutes = require("./routes/authRoutes");
 const homeRoutes = require("./routes/homeRoutes");
 const userSettingsRoutes = require("./routes/userSetting");
 const adminRoutes = require("./routes/adminRoutes");
-const userRoutes = require("./routes/userRoutes");
+const userProfileRoutes = require("./routes/userProfileRoutes");
 const institution = require("./routes/institutionRoutes");
 
 // const coinPaymentRoutes = require("./routes/coinPayment");
@@ -75,7 +75,7 @@ app.use("/", homeRoutes);
 app.use("/auth", authRoutes);
 app.use("/admin", adminRoutes);
 app.use("/userSettings", userSettingsRoutes);
-// app.use("/user", userRoutes);
+app.use("/userProfile", userProfileRoutes);
 app.use("/institution", institution);
 // app.use("/payment", coinPaymentRoutes);
 app.use('/navbar', (req,res) => {
