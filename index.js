@@ -50,11 +50,13 @@ connectDB();
 const authRoutes = require("./routes/authRoutes");
 const homeRoutes = require("./routes/homeRoutes");
 const adminRoutes = require("./routes/adminRoutes");
+const courseRoutes = require("./routes/courseRoutes");
 
 // Use Routes
 app.use("/", homeRoutes);
 app.use("/auth", authRoutes);
 app.use("/admin", adminRoutes);
+app.use("/courses", courseRoutes);
 
 // Start Server
 app.listen(port, () => {

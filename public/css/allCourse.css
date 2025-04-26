@@ -1,0 +1,94 @@
+/* All button */
+.btn-all {
+  background-color: orange;
+  color: white;
+  border: none;
+}
+
+.btn-all.active {
+  background-color: orange;
+  color: white;
+}
+
+.btn-all:hover {
+  background-color: #e07b4f;
+  color: white;
+}
+
+/* Category buttons */
+.btn-categories {
+  background-color: transparent;
+  color: black;
+  border: 1px solid lightsalmon;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.btn-categories:hover {
+  background-color: orange;
+  color: white;
+  border-color: lightsalmon; /* Keep the outline black */
+}
+
+.btn-categories.active {
+  background-color: #e07b4f;
+  color: white;
+  border-color: black; /* Keep the outline black */
+}
+
+.category-carousel-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  width: 100%;
+}
+
+.category-carousel {
+  display: flex;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  gap: 12px;
+  padding: 10px;
+  width: 100%;
+  scrollbar-width: none; /* Firefox */
+}
+
+.category-carousel::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
+
+.category-btn {
+  flex: 0 0 auto;
+  padding: 8px 16px;
+  border: 1px solid black;
+  border-radius: 20px;
+  background-color: transparent;
+  color: black;
+  white-space: nowrap;
+  text-decoration: none;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.category-btn:hover,
+.category-btn.active {
+  background-color: orange;
+  color: white;
+  border-color: orange;
+}
+
+/* Scroll buttons */
+.scroll-btn {
+  background: white;
+  border: none;
+  font-size: 1.5rem;
+  padding: 0 10px;
+  cursor: pointer;
+  z-index: 1;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+
