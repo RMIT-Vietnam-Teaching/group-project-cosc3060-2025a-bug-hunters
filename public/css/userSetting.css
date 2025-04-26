@@ -91,3 +91,24 @@ body.dark .btn-outline-danger:hover {
 }
 /* accBlance css */
 
+
+/* mobile */
+@media (max-width: 768px) {
+  nav.col-md-2 {
+    height: auto;
+    padding: 10px 15px;
+    border-right: none;
+    border-bottom: 1px solid #eee;
+  }
+
+  nav .nav-link {
+    font-size: 16px;
+    padding: 10px;
+    margin: 4px 0;
+  }
+
+  .navbar {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+}
