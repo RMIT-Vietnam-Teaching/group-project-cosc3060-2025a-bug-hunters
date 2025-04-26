@@ -21,6 +21,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.use(cookieParser(process.env.COOKIE_SECRET));
 
+
 //Set up a session
 // app.use(
 //     session({
