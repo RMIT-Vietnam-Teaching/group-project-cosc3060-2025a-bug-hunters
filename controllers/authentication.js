@@ -131,6 +131,13 @@ exports.loginUser = async (req, res) => {
         userRole: user.userRole
       };
 
+      //joanna settting up cookies
+      res.cookie('userId', user._id.toString(), {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production', 
+        sameSite: 'strict',
+        maxAge: 7 * 24 * 60 * 60 * 1000 
+    });
       console.log("Session User:", req.session.user);
 
       req.session.save(() => {
