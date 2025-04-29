@@ -1,8 +1,10 @@
+/* General body styling */
 body {
     background-color: #f8f9fa;
     padding: 20px;
 }
 
+/* Header (sorting and upload button) */
 .header {
     display: flex;
     justify-content: space-between;
@@ -10,70 +12,91 @@ body {
     margin-bottom: 20px;
 }
 
+/* Dropdown button */
 .dropdown-toggle {
     color: #eb7350;
-    border-color: #eb7350;
+    border: 1px solid #eb7350;
     background-color: white;
     padding: 6px 15px;
+    transition: all 0.3s;
 }
 
-.dropdown-toggle::after {
-    vertical-align: middle;
+.dropdown-toggle:hover {
+    background-color: #eb7350;
+    color: white;
 }
 
+/* Upload button */
 .upload-btn {
     color: #eb7350;
-    border-color: #eb7350;
+    border: 1px solid #eb7350;
     background-color: white;
     padding: 6px 15px;
+    transition: all 0.3s;
 }
 
+.upload-btn:hover {
+    background-color: #eb7350;
+    color: white;
+}
+
+/* Course Card */
 .course-card {
+    background-color: white;
     border-radius: 10px;
     overflow: hidden;
     margin-bottom: 20px;
     border: 1px solid #e0e0e0;
-    background-color: white;
+    transition: transform 0.2s, box-shadow 0.2s;
 }
 
+.course-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Course image area */
 .course-img {
     height: 150px;
     position: relative;
     background-color: #1f2937;
-    color: white;
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 20px;
-    text-align: center;
+    overflow: hidden;
 }
 
-.course-img h3 {
-    font-size: 1.5rem;
-    margin-bottom: 5px;
-    font-weight: bold;
+.course-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
-.course-img .full-course {
-    font-size: 0.9rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+/* Badge container (for image) */
+.badge-container {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+    border-radius: 8px;
 }
 
+/* Course Info */
 .course-info {
     padding: 15px;
 }
 
 .course-info h4 {
-    font-size: 1rem;
+    font-size: 1.1rem;
+    font-weight: bold;
     margin-bottom: 10px;
 }
 
+/* Course metadata (users, rating, updated date) */
 .course-meta {
     display: flex;
     align-items: center;
-    margin-bottom: 5px;
+    flex-wrap: wrap;
     font-size: 0.9rem;
     color: #6c757d;
 }
@@ -86,42 +109,24 @@ body {
     color: gold;
 }
 
-.course-actions {
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-    margin-top: 15px;
-}
-
-.action-btn {
+/* Action buttons inside course cards */
+.d-flex.gap-2 button,
+.d-flex.gap-2 a {
     flex: 1;
-    text-align: center;
-    padding: 8px 0;
-    background-color: #eb7350;
-    color: white;
-    border: none;
-    border-radius: 5px;
     font-size: 0.9rem;
-    cursor: pointer;
-    transition: background-color 0.2s;
 }
 
-.action-btn:hover {
-    background-color: #d66648;
+/* Validation error text */
+.validation-error {
+    font-size: 0.85rem;
 }
 
-.badge-container {
-    position: absolute;
-    top: 10px;
-    left: 10px;
+/* Modal styling tweaks */
+.modal-content {
+    border-radius: 10px;
 }
 
-.badge-container img {
-    width: 40px;
-    height: 40px;
-}
-
-/* Media queries for responsive design */
+/* Media queries for responsiveness */
 @media (max-width: 991px) {
     .course-img {
         height: 140px;
@@ -132,8 +137,8 @@ body {
     .course-img {
         height: 130px;
     }
-    
-    .course-img h3 {
-        font-size: 1.3rem;
+
+    .course-info h4 {
+        font-size: 1rem;
     }
 }
