@@ -1,8 +1,9 @@
 document.getElementById("resetForm").addEventListener("submit", function (e) {
-    const getVal = id => document.getElementById(id).value.trim();
-    const setError = (id, msg) => document.getElementById(id + "-error").innerText = msg;
+    const getVal = (id) => document.getElementById(id).value.trim();
+    const setError = (id, msg) =>
+        (document.getElementById(id + "-error").innerText = msg);
 
-    ["new-password", "confirm-password"].forEach(id => setError(id, ""));
+    ["new-password", "confirm-password"].forEach((id) => setError(id, ""));
 
     const newPassword = getVal("new-password");
     const confirmPassword = getVal("confirm-password");
@@ -14,7 +15,7 @@ document.getElementById("resetForm").addEventListener("submit", function (e) {
         /.{8,}/.test(newPassword),
         /[a-z]/.test(newPassword) && /[A-Z]/.test(newPassword),
         /[a-zA-Z]/.test(newPassword) && /\d/.test(newPassword),
-        /[!@#?\]]/.test(newPassword)
+        /[!@#?\]]/.test(newPassword),
     ];
     const metCriteria = criteria.filter(Boolean).length;
 
@@ -22,7 +23,10 @@ document.getElementById("resetForm").addEventListener("submit", function (e) {
         setError("new-password", "Please enter a new password.");
         valid = false;
     } else if (metCriteria < 2) {
-        setError("new-password", "Password must meet at least 2 of: 8+ characters, upper/lowercase, letters & numbers, special character (!@#?]).");
+        setError(
+            "new-password",
+            "Password must meet at least 2 of: 8+ characters, upper/lowercase, letters & numbers, special character (!@#?])."
+        );
         valid = false;
     }
 

@@ -24,6 +24,24 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true,
+<<<<<<< HEAD
+=======
+        validate: {
+            validator: function (password) {
+                // Must be at least 8 characters and match at least two criteria
+                const criteria = [
+                    /.{8,}/.test(password), // Min 8 chars
+                    /[a-z]/.test(password) && /[A-Z]/.test(password), // Upper and lower
+                    /[a-zA-Z]/.test(password) && /\d/.test(password), // Letters and numbers
+                    /[!@#?\]]/.test(password), // Special character
+                ];
+                // At least 2 of the 4 criteria must be true
+                return criteria.filter(Boolean).length >= 2;
+            },
+            message:
+                "Password must meet at least 2 of the following: minimum 8 characters, a mix of uppercase and lowercase, a mix of letters and numbers, at least one special character (! @ # ? ]).",
+        },
+>>>>>>> authentication
     },
 
     role: {
@@ -80,6 +98,7 @@ const userSchema = new mongoose.Schema({
     cardPaymentInfo: {
         cardNumber: {
             type: String,
+<<<<<<< HEAD
             required: true,
         },
         cardHolderName: {
@@ -95,6 +114,25 @@ const userSchema = new mongoose.Schema({
             required: true,
         },
     },
+=======
+        },
+        cardHolderName: {
+            type: String,
+        },
+        expirationDate: {
+            type: String,
+        },
+        cvv: {
+            type: String,
+        },
+    },
+    following: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+        },
+    ],
+>>>>>>> authentication
 });
 
 module.exports = mongoose.model("User", userSchema);
