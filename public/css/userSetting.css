@@ -30,12 +30,15 @@ nav .nav-link.active {
   box-shadow: 0 4px 12px rgba(224, 123, 79, 0.5);
   border-radius: 8px;
 }
+#sidebarDropdown {
+  margin-left: 0 !important;
+  padding-left: 0 !important;
+}
 
 /* Navbar */
 body[data-theme="dark"] .navbar {
   background-color: #1a1a1a !important;
 }
-
 /* Light  (default) */
 light {
   background-color: #ffffff;

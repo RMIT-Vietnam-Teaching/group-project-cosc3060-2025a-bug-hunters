@@ -1,5 +1,4 @@
 
-     
         <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4">
           <h1 class="h4 m-0">Account Security</h1>
           <div></div>
@@ -37,16 +36,19 @@
     </div>
   </div>
 </form>
+
+
 <% if (success) { %>
-  <div class="col-md-12 d-flex justify-content-center">
-    <div id="success-alert"
-         class="alert alert-success text-center fw-semibold rounded-pill shadow-sm px-4 py-2 mt-3"
-         style="max-width: 400px; opacity: 1;">
-      ✅ Updated successfully!
-    </div>
+  <div id="success-alert" class="alert alert-success ...">
+    ✅ Security settings updated successfully!
   </div>
 <% } %>
 
+<% if (error) { %>
+  <div id="error-alert" class="alert alert-danger text-center fw-semibold rounded-pill shadow-sm px-4 py-2 mt-3" style="max-width: 400px; margin: auto;">
+    ❌ <%= decodeURIComponent(error) %>
+  </div>
+<% } %>
 
 
       

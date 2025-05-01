@@ -78,46 +78,12 @@
 <body class="<%= user.theme %>" data-user-id="<%= user._id %>">
 
   <!-- navbar -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4 d-flex align-items-center">
-    <div class="d-flex align-items-center gap-2">
-      <button class="mobile-menu-button d-lg-none" id="sidebarToggle" aria-label="Toggle sidebar">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
-      <a class="navbar-brand" href="#">YourSite</a>
-    </div>
-    <div class="ms-auto">
-      <span class="text-white me-3">Welcome, <%= user.firstName %></span>
-    </div>
-  </nav>
 
   <div class="container-fluid">
     <div class="row vh-100">
 
       <!-- sidebar -->
-      <nav id="sidebarDropdown" class="col-md-2 col-12">
-        <div class="p-3">
-          <div class="d-flex align-items-center mb-4 ps-2">
-            <img src="<%= user.avatar || 'https://via.placeholder.com/90' %>" alt="Profile" style="width: 70px; height: 70px; border-radius: 50%; margin-right: 10px;">
-            <h5 class="mb-0"><%= user.firstName %></h5>
-          </div>
-          <ul class="nav flex-column">
-            <li class="nav-item mb-3">
-              <a class="nav-link <%= activePage === 'profileSetting' ? 'active' : '' %>" href="/userSettings/profilePreference/<%= user._id %>">Profile Preferences</a>
-            </li>
-            <li class="nav-item mb-3">
-              <a class="nav-link <%= activePage === 'display' ? 'active' : '' %>" href="/userSettings/display/<%= user._id %>">Display</a>
-            </li>
-            <li class="nav-item mb-3">
-              <a class="nav-link <%= activePage === 'security' ? 'active' : '' %>" href="/userSettings/security/<%= user._id %>">Account Security</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link <%= activePage === 'balance' ? 'active' : '' %>" href="/userSettings/balance/<%= user._id %>">Account Balance</a>
-            </li>
-          </ul>
-        </div>
-      </nav>
+      <%- include('partials/userSettings/sideBar') %>
 
       <!-- main content -->
       <main class="col-md-10 col-12 p-4">

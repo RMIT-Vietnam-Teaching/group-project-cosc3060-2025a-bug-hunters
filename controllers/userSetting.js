@@ -40,7 +40,7 @@ exports.updateUserPreference = async (req, res) => {
 
     // Handle uploaded avatar
     if (req.file) {
-      updateData.avatar = req.file.path; // if using cloudinary, you can also use req.file.secure_url
+      updateData.avatar = req.file.path; 
     }
 
     await User.findByIdAndUpdate(userId, updateData);
@@ -74,7 +74,12 @@ exports.renderAccountSecurity = async (req, res) => {
       return res.status(404).send("User not found");
     }
 
-    res.render("userSettingSecurity", { user, activePage: "security", success: req.query.success });
+    res.render("userSettingSecurity", {
+      user,
+      activePage: "security",
+      success: req.query.success === '1' || req.query.success === 'true',
+      error: req.query.error || null
+    });
   } catch (error) {
     console.error("Error rendering user profile settings:", error);
     res.status(500).send("Failed to render user profile settings");
@@ -113,7 +118,6 @@ exports.updateUserDisplay = async (req, res) => {
 
 
 exports.updateUserSecurity = async (req, res) => {
-  
   try {
     const { userId } = req.params;
     const user = await User.findById(userId);
@@ -124,38 +128,41 @@ exports.updateUserSecurity = async (req, res) => {
 
     const { newEmail, oldPassword, newPassword, confirmPassword } = req.body;
 
-
+    // Update email if changed
     if (newEmail && newEmail !== user.email) {
       user.email = newEmail;
     }
 
+    // Handle password update
     if (oldPassword || newPassword || confirmPassword) {
+      // All fields must be filled
       if (!oldPassword || !newPassword || !confirmPassword) {
         return res.redirect(`/userSettings/security/${userId}?error=Please+fill+all+password+fields`);
       }
 
+      // Check if old password matches the stored one
       const isPasswordMatch = await bcrypt.compare(oldPassword, user.password);
       if (!isPasswordMatch) {
         return res.redirect(`/userSettings/security/${userId}?error=Old+password+is+incorrect`);
       }
 
-
+      // Check if new passwords match
       if (newPassword !== confirmPassword) {
         return res.redirect(`/userSettings/security/${userId}?error=Passwords+do+not+match`);
       }
 
-      if (newPassword === user.password) {
+      // ✅ Check if new password is the same as old password
+      const isSameAsOld = await bcrypt.compare(newPassword, user.password);
+      if (isSameAsOld) {
         return res.redirect(`/userSettings/security/${userId}?error=New+password+must+be+different+from+old+password`);
       }
 
-      // Hash new password before saving
+      // Hash new password and assign
       const hashedPassword = await bcrypt.hash(newPassword, 12);
       user.password = hashedPassword;
-
     }
 
     await user.save({ validateModifiedOnly: true });
-
 
     res.redirect(`/userSettings/security/${userId}?success=1`);
   } catch (error) {
