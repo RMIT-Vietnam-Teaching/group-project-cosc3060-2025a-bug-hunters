@@ -145,16 +145,6 @@ exports.loginUser = async (req, res) => {
         if (!isMatch)
             return res.render("login", { error: "Invalid password." });
 
-<<<<<<< HEAD
-      //joanna settting up cookies
-      res.cookie('userId', user._id.toString(), {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production', 
-        sameSite: 'strict',
-        maxAge: 7 * 24 * 60 * 60 * 1000 
-    });
-      console.log("Session User:", req.session.user);
-=======
         res.cookie("userId", user._id.toString(), {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
@@ -162,7 +152,6 @@ exports.loginUser = async (req, res) => {
             maxAge: 7 * 24 * 60 * 60 * 1000,
             signed: true,
         });
->>>>>>> authentication
 
         res.cookie("userRole", user.role, {
             httpOnly: true,

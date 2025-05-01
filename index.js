@@ -12,10 +12,6 @@ const { port } = require("./configs/keys");
 
 dotenv.config();
 
-<<<<<<< HEAD
-=======
-const app = express();
->>>>>>> authentication
 
 //set up view engine
 app.set("view engine", "ejs");
