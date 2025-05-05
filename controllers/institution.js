@@ -1,97 +1,105 @@
-const express = require('express');
-const Courses = require("../models/Courses");
-const Tutors = require("../models/tutors");
-const { get } = require("mongoose");
-
-const allCourses = [
-    {
-      title: "Intro to JS",
-      instructor: "Alice",
-      rating: 4.5,
-      students: 20,
-      updatedAt: "2025-04-12"
-    },
-    {
-      title: "Python Basics",
-      instructor: "Bob",
-      rating: 4.7,
-      students: 30,
-      updatedAt: "2025-04-10"
-    }
-  ];
-
-  // const 
-
-  const allTutors = [
-    {
-      name: "John Doe",
-      email: "123@gmail.com",
-      phone: "1234567890",
-      bio: "Experienced tutor with a passion for teaching.",
-      image: "tutor1.jpg",
-      field:  ["Mathematics", "Computer Science"],
-      exp: "3",  
-    }
-  ];
-
-  const getCourses = async (req, res) => {
-    // const sort = req.query.sort;
-    // try {
-    //   let courses = await Courses.find();
-  
-    //   if (sort === 'rating_desc') {
-    //     courses.sort((a, b) => b.rating - a.rating);
-    //   } else if (sort === 'rating_asc') {
-    //     courses.sort((a, b) => a.rating - b.rating);
-    //   } else if (sort === 'students_desc') {
-    //     courses.sort((a, b) => b.students - a.students);
-    //   } else if (sort === 'students_asc') {
-    //     courses.sort((a, b) => a.students - b.students);
-    //   }
-  
-      res.render("institutionCourses", {
-        courses: allCourses,
-        sort: req.query.sort
-      });
-    // } catch (err) {
-    //   console.error("Error fetching courses:", err);
-    //   res.status(500).send("Internal Server Error");
-    // }
-  };
+const Course = require("../models/Course");
+const User = require("../models/User");
 
 
-const getTutorDetail = (req, res) => {
-    res.render("institutionTutorDetail", { tutors: allTutors, courses: allCourses,});
-}
+exports.renderCourses = async (req, res) => {
+  try {
+    const courses = await Course.find().lean();
+    console.log("Courses fetched:", courses); 
+    res.render("institutionCourses", { courses });
+  } catch (error) {
+    console.error("Error creating or fetching courses:", error);
+    res.status(500).send("Internal Server Error");
+  }
+};
 
-const getTutor = (req, res) => {
-    // const { id } = req.params;
-    // const tutor = allTutors.find(t => t.id === parseInt(id));
-    // if (!tutor) {
-        // return res.status(404).send('Tutor not found');
-    // }
-    res.render("institutionTutor", { tutors: allTutors });
-    
-}
+exports.renderCourseDetail = async (req, res) => {
+  try {
+    const course = await Course.findById(req.params.id);
+    if (!course) return res.status(404).send("Course not found");
+    res.render("institutionViewCourse", { course }); 
+  } catch (err) {
+    console.error("Error fetching course detail:", err);
+    res.status(500).send("Internal Server Error");
+  }
+};
+exports.renderEditCoursePage = async (req, res) => {
+  try {
+    const course = await Course.findById(req.params.id);
+    if (!course) return res.status(404).send("Course not found");
+    res.render("institutionEditCourse", { course }); 
+  } catch (err) {
+    res.status(500).send("Error loading course");
+  }
+};
 
-//fix this
-const deleteCourse = async (req, res) => {
-    const { title } = req.params;
+exports.updateCourse = async (req, res) => {
+  try {
+    const { title, description, price, duration, startDate, endDate } = req.body;
+
+    await Course.findByIdAndUpdate(req.params.id, {
+      name: title,
+      description,
+      price,
+      duration,
+      startDate,
+      endDate
+    });
+
+    res.redirect("/institution/manageCourses");
+  } catch (err) {
+    console.error("Error updating course:", err);
+    res.status(500).send("Error updating course");
+  }
+};
+
+exports.deleteCourseFromManageCourse = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deletedCourse = await Course.findByIdAndDelete(id);
+    if (!deletedCourse) return res.status(404).send("Course not found");
+    res.redirect("/institution/manageCourses");
+  } catch (error) {
+    console.error("Error deleting course:", error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+exports.renderTutors = async (req, res) => {
     try {
-        const course = await Courses.findAndDelete(title);
-        if (!course) {
-            return res.status(404).send('Course not found');
-        }
-        res.status(200).send('Course deleted successfully');
-    } catch (err) {
-        console.error("Error deleting course:", err);
-        res.status(500).send("Internal Server Error");
+        const user = await User.find({ role: "Instructor" });
+        res.render("institutionTutor", { user });
     }
-}
+    catch (error) {
+        console.error("Error fetching tutors:", error);
+        res.status(500).send("Internal Server Error");
+}};
 
-module.exports = {
-  getCourses,
-    getTutor,
-    getTutorDetail,
-    deleteCourse,
-}
+exports.renderTutorDetail = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const user = await User.findById(id);
+        const courses = await Course.find({ author: id });
+        if (!user) {
+            return res.status(404).send("Tutor not found");
+        }
+        res.render("institutionTutorDetail", { user, courses });
+    }
+    catch (error) {
+        console.error("Error fetching tutor details:", error);
+        res.status(500).send("Internal Server Error");
+}};
+
+
+exports.deleteCourseFromInstitution = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deletedCourse = await Course.findByIdAndDelete(id);
+    if (!deletedCourse) return res.status(404).send("Course not found");
+    res.redirect("/institutionTutorDetail");
+  } catch (error) {
+    console.error("Error deleting course:", error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+

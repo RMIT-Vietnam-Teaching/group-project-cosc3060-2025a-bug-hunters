@@ -1,10 +1,26 @@
 const router = require("express").Router();
-const institutionController = require("../controllers/institution");
+
+const {
+  renderCourses,
+  renderCourseDetail,
+  renderEditCoursePage,
+  updateCourse,
+  deleteCourseFromManageCourse,
+  renderTutors,
+  renderTutorDetail,
+  deleteCourseFromInstitution,
+} = require("../controllers/institution");
+
+router.get("/manageCourses", renderCourses);
+router.get("/viewCourse/:id", renderCourseDetail);
+router.post("/deletCourses/:id", deleteCourseFromManageCourse);
+router.get("/editCourse/:id", renderEditCoursePage);
+router.post('/editCourse/:id', updateCourse); 
+
+router.get("/manageTutors", renderTutors);
+router.get("/tutorDetail/:id", renderTutorDetail);
+router.post("/deleteInstitutionCourses/:id", deleteCourseFromInstitution);
 
 
-router.get("/manageCourses", institutionController.getCourses);
-router.get("/manageTutors", institutionController.getTutor);
-router.get("/tutorDetail", institutionController.getTutorDetail);
-router.delete("/course/:id", institutionController.deleteCourse); //fix this
 
 module.exports = router;

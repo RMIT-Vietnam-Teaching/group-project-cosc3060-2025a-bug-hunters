@@ -1,23 +1,102 @@
-<div class="list-group">
+<div class="container mt-4 mb-4">
+  <div class="d-flex" style="margin-left: 1.5rem;">
+    <div class="dropdown">
+      <button class="btn btn-light border rounded-pill px-4 py-2 fw-medium shadow-sm d-flex align-items-center gap-2"
+              type="button" data-bs-toggle="dropdown" aria-expanded="false"
+              style="font-size: 15px;">
+        <i class="bi bi-arrow-down-up"></i>
+        Sort by
+      </button>
+      <ul class="dropdown-menu rounded-4 shadow-sm">
+        <li><a class="dropdown-item sort-option" data-sort="title">📘 Title (A-Z)</a></li>
+        <li><a class="dropdown-item sort-option" data-sort="date">📅 Last Updated</a></li>
+        <li><a class="dropdown-item sort-option" data-sort="students">👥 Student Count</a></li>
+        <li><a class="dropdown-item sort-option" data-sort="rating">⭐ Rating</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="container px-4">
+  <div class="list-group">
     <% courses.forEach(course => { %>
-    <div class="list-group-item d-flex align-items-center justify-content-between border rounded mb-3 shadow-sm">
-      <div class="d-flex align-items-center gap-3">
-        <div style="width: 60px; height: 60px; background: #ddd; border-radius: 8px;"></div>
-        <div>
-          <strong><%= course.title %></strong>
-          <div class="small text-muted">
-            By <%= course.instructor %> - Last Updated: <%= course.updatedAt %><br>
-            ⭐ <%= course.rating %> Reviews | 👥 <%= course.students %> Students
+      <div class="list-group-item bg-white border-0 rounded-4 shadow-sm mb-4 px-4 py-4">
+        <div class="d-flex flex-wrap align-items-center justify-content-between">
+          <div class="d-flex align-items-center gap-3">
+            <div style="width: 60px; height: 60px; background: #e9ecef; border-radius: 12px;"></div>
+            <div>
+              <strong class="fs-5"><%= course.name %></strong>
+              <div class="small text-muted mt-1">
+                By <%= course.instructor %> • Updated: <%= course.dateCreated %><br>
+                ⭐ <%= course.rating %> Reviews &nbsp;|&nbsp; 👥 <%= course.studentsEnrolled?.length || 0 %> Students
+              </div>
+            </div>
+          </div>
+          <div class="d-flex gap-2 mt-3 mt-md-0">
+            <a href="/institution/editCourse/<%= course._id %>" class="btn btn-sm btn-outline-primary">Edit</a>
+            <!-- <button class="btn btn-sm btn-outline-danger btn-remove-course" data-id="<%= course._id %>">Remove</button> -->
+
+            <form action="/institution/deletCourses/<%= course._id %>" method="POST" onsubmit="return confirm('Are you sure you want to delete this course?')">
+              <button class="btn btn-sm btn-outline-danger">Delete</button>
+            </form>
+            <a href="/institution/viewCourse/<%= course._id %>" class="btn btn-sm btn-outline-secondary">View</a>
           </div>
         </div>
       </div>
-      <div class="d-flex gap-2">
-        <button class="btn btn-outline-danger btn-sm">Edit</button>
-        <form action="/institution/courses/<%= course._id %>?_method=DELETE" method="POST">
-          <button type="submit" class="btn btn-outline-danger btn-sm">Remove</button>
-        </form>
-        <button class="btn btn-outline-danger btn-sm">View</button>
-      </div>
-    </div>
     <% }) %>
   </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const courseList = document.querySelector(".list-group");
+
+    const getValue = (card, key) => {
+      if (key === "title") return card.querySelector("strong")?.textContent.trim().toLowerCase();
+      if (key === "date") {
+        const match = card.querySelector(".text-muted")?.textContent.match(/\d{4}\/\d{2}\/\d{2}/);
+        return new Date(match ? match[0] : null);
+      }
+      if (key === "students") return parseInt(card.innerText.match(/👥\s*(\d+)/)?.[1]) || 0;
+      if (key === "rating") return parseFloat(card.innerText.match(/⭐\s*(\d+(\.\d+)?)/)?.[1]) || 0;
+      return "";
+    };
+
+    const sortCards = (key) => {
+      const cards = Array.from(courseList.querySelectorAll(".list-group-item"));
+      cards.sort((a, b) => {
+        const valA = getValue(a, key);
+        const valB = getValue(b, key);
+        return typeof valA === "string" ? valA.localeCompare(valB) : valB - valA;
+      });
+      courseList.innerHTML = "";
+      cards.forEach(card => courseList.appendChild(card));
+    };
+
+    document.querySelectorAll(".sort-option").forEach(item => {
+      item.addEventListener("click", () => {
+        const sortKey = item.dataset.sort;
+        sortCards(sortKey);
+      });
+    });
+
+    // const removeButtons = document.querySelectorAll(".btn-remove-course");
+
+
+      button.addEventListener("click", async () => {
+        const courseId = button.dataset.id;
+        // if (!confirm("Are you sure you want to delete this course?")) return;
+
+        try {
+          const res = await fetch(`/institution/deleteInstitutionCourses/${courseId}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" }
+          });
+        } catch (err) {
+          console.error("Delete error:", err);
+          alert("An error occurred while deleting.");
+        }
+      });
+
+  });
+</script>

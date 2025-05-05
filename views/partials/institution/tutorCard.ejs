@@ -1,32 +1,104 @@
-<div class="container-fluid p-4">
-    <table class="table table-hover bg-white rounded shadow-sm">
-<thead>
-    <tr>
-      <th>Name</th>
-      <th>Teaching Field</th>
-      <th>Experience</th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-<% tutors.forEach(tutor => { %>
-    <tr>
-    <td>
-      <div class="d-flex align-items-center gap-2">
-        <div style="width: 32px; height: 32px; background: #ccc; border-radius: 50%;"></div>
-        <div>
-          <strong><%= tutor.name %></strong><br>
-          <small class="text-muted"><%= tutor.email %></small>
-        </div>
-      </div>
-    </td>
-    <td>
-        <% tutor.field.forEach(f => { %>
-          <span class="teaching-tag"><%= f %></span>
+<div class="container mt-4 mb-4 ">
+  <div class="d-flex" style="margin-left: 1.5rem;">
+    <div class="dropdown">
+      <button class="btn btn-light border rounded-pill px-4 py-2 fw-medium shadow-sm d-flex align-items-center gap-2"
+              type="button" data-bs-toggle="dropdown" aria-expanded="false"
+              style="font-size: 15px;">
+        <i class="bi bi-arrow-down-up"></i>
+        Sort by
+      </button>
+      <ul class="dropdown-menu rounded-4 shadow-sm">
+        <li><a class="dropdown-item sort-option" data-sort="name">🔤 Name (A-Z)</a></li>
+        <li><a class="dropdown-item sort-option" data-sort="exp">🧠 Experience</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="container px-5 py-4">
+  <div class="table-responsive">
+    <table class="table align-middle border-0">
+      <thead class="table-light">
+        <tr>
+          <th class="ps-4">Name</th>
+          <th>Teaching Field</th>
+          <th>Experience</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% user.forEach(user => { %>
+          <tr class="border-bottom">
+            <td class="ps-4 py-3">
+              <div class="d-flex align-items-center gap-3">
+                <div class="rounded-circle bg-secondary" style="width: 36px; height: 36px;"></div>
+                <div>
+                  <div class="fw-semibold"><%= user.name %></div>
+                  <div class="text-muted small"><%= user.email %></div>
+                </div>
+              </div>
+            </td>
+            <td class="py-3">
+              <% (user.field || []).forEach(field => { %>
+                <span class="badge bg-danger-subtle text-danger-emphasis rounded-pill px-3 py-1 me-1">
+                  <%= field %>
+                </span>
+              <% }) %>
+            </td>
+            <td class="py-3 text-muted">
+              <%= user.exp %> <%= user.exp === 1 ? 'Year' : 'Years' %>
+            </td>
+            <td class="py-3 text-end pe-4">
+              <a href="/institution/tutorDetail/<%= user._id %>" class="text-primary">Details</a>
+            </td>
+          </tr>
         <% }) %>
-      </td>
-    <td><%= tutor.exp %></td>
-    <td><a href="/institution/tutorDetail" class="text-primary">Details</a></td>
-  </tr>
-  <% }) %>
-</tbody>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const tutorTableBody = document.querySelector("table tbody");
+
+    const getRowValue = (row, key) => {
+  if (key === "title" || key === "name") {
+    return row.querySelector(".fw-semibold")?.textContent.trim().toLowerCase();
+  }
+  if (key === "exp") {
+    const expText = row.children[2]?.textContent || "";
+    const match = expText.match(/\d+/);
+    return match ? parseInt(match[0]) : 0;
+  }
+  return "";
+};
+
+    const sortRows = (key) => {
+      const rows = Array.from(tutorTableBody.querySelectorAll("tr"));
+
+      rows.sort((a, b) => {
+        const valA = getRowValue(a, key);
+        const valB = getRowValue(b, key);
+        return typeof valA === "string" ? valA.localeCompare(valB) : valB - valA;
+      });
+
+      tutorTableBody.innerHTML = "";
+      rows.forEach(row => tutorTableBody.appendChild(row));
+    };
+
+    document.querySelectorAll(".sort-option").forEach(option => {
+      option.addEventListener("click", () => {
+        const key = option.dataset.sort;
+        if (["title", "name"].includes(key)) {
+          sortRows("name");
+        } else if (key === "students" || key === "rating" || key === "date") {
+          alert("This sort option is only available on course pages.");
+        } else if (key === "exp") {
+          sortRows("exp");
+        }
+      });
+    });
+  });
+
+
+</script>

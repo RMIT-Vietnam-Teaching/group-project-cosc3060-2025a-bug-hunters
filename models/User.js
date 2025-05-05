@@ -1,110 +1,100 @@
-// const mongoose = require("mongoose");
+const mongoose = require("mongoose");
 
-
-// const userSchema = new mongoose.Schema({
-//   userFirstName: {
-//     type: String,
-//     required: true,
-//     trim: true
-//   },
-//   userLastName: {
-//     type: String,
-//     required: true,
-//     trim: true
-//   },
-//   userEmail: {
-//     type: String,
-//     required: true,
-//     unique: true,
-//     lowercase: true,
-//     trim: true
-//   },
-//   userPassword: {
-//     type: String,
-//     required: true,
-//     validate: {
-//       validator: function(password) {
-//         // Must be at least 8 characters and match at least two criteria
-//         const criteria = [
-//           /.{8,}/.test(password),                      // Min 8 chars
-//           /[a-z]/.test(password) && /[A-Z]/.test(password),  // Upper and lower
-//           /[a-zA-Z]/.test(password) && /\d/.test(password),  // Letters and numbers
-//           /[!@#?\]]/.test(password)                    // Special character
-//         ];
-//         // At least 2 of the 4 criteria must be true
-//         return criteria.filter(Boolean).length >= 2;
-//       },
-//       message:
-//         "Password must meet at least 2 of the following: minimum 8 characters, a mix of uppercase and lowercase, a mix of letters and numbers, at least one special character (! @ # ? ])."
-//     }
-//   },
-//   userRole: {
-//     type: String,
-//     enum: ['Student', 'Instructor'],
-//     required: true
-//   },
-//   isBot: {
-//     type: Boolean,
-//     default: true
-//   },
-
-//   passwordHistory: {
-//     type: [String],
-//     default: []
-//     }
-
-// });
-
-// module.exports = mongoose.model("User", userSchema);
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
-
-
-const user = new Schema({
-    username: {
-        type: String,
-        required: true,
-        unique: true,
-    },
+const userSchema = new mongoose.Schema({
     firstName: {
         type: String,
+        required: true,
+        trim: true,
     },
+
     lastName: {
         type: String,
-    },
-    password: {
-        type: String,
         required: true,
+        trim: true,
     },
+
     email: {
         type: String,
         required: true,
         unique: true,
+        lowercase: true,
+        trim: true,
     },
-    theme: {
+
+    password: {
         type: String,
-        default: 'light',
+        required: true,
     },
-    picture: {
-        type: String,
-        default: 'images/defaultAvatar.png',
-    },
+
     role: {
-        user: {
-            type: String,
-            default: 'Student',
-        },
+        type: String,
+        enum: ["Student", "Instructor", "Institution", "Admin"],
+        required: true,
+        default: "Student",
+    },
+
+    headline: {
+        type: String,
+        trim: true,
+    },
+
+    description: {
+        type: String,
+        trim: true,
+    },
+
+    status: {
+        type: String,
+        enum: ["active", "inactive"],
+        default: "active",
+    },
+
+    avatar: {
+        type: String, // URL to avatar image (e.g., Cloudinary or local path)
+        default:
+            "https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3467.jpg",
+    },
+
+    dateJoined: {
+        type: Date,
+        default: Date.now,
     },
     headline: {
         type: String,
+        trim: true,
     },
-    about: {
+    description: {
         type: String,
+        trim: true,
     },
-    createdAt: {
-        type: Date,
-        default: Date.now,
-    }
+    coin: {
+        type: Number,
+        default: 0,
+    },
+    theme: {
+        type: String,
+        enum: ["light", "dark"],
+        default: "light",
+    },
+    SearchingHistory: [String],
+    cardPaymentInfo: {
+        cardNumber: {
+            type: String,
+            required: true,
+        },
+        cardHolderName: {
+            type: String,
+            required: true,
+        },
+        expirationDate: {
+            type: String,
+            required: true,
+        },
+        cvv: {
+            type: String,
+            required: true,
+        },
+    },
 });
 
-    module.exports = mongoose.model('User', user);
+module.exports = mongoose.model("User", userSchema);

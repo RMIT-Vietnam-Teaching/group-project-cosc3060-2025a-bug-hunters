@@ -27,13 +27,14 @@ const homeRoutes = require("./routes/homeRoutes");
 const settingsRoutes = require("./routes/settingsRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const userRoutes = require("./routes/userRoutes");
+const institutionRoutes = require("./routes/institutionRoutes");
 const { session } = require("passport");
 
 app.use("/", homeRoutes);
 app.use("/auth", authRoutes);
 app.use("/admin", adminRoutes);
 app.use("/settings", settingsRoutes);
-// app.use("/user", userRoutes);
+app.use("/institution", institutionRoutes);
 
 
 

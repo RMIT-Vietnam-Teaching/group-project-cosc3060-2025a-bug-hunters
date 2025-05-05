@@ -18,11 +18,11 @@
       <div class="col-md-4">
         <div class="sidebar-box text-center">
           <img src="/images/defaultAvatar.png" alt="Avatar" class="rounded-circle mb-3 mt-5" width="100" height="100">
-          <h5 class="fw-semibold">Cody Fisher</h5>
-          <p class="text-muted">Helsinki, Finland<br>123@gmail.com</p>
+          <h5 class="fw-semibold"><%= user.name %></h5>
+          <p class="text-muted">Helsinki, Finland<br><%= user.email %></p>
           <hr class="m-3">
           <h6>Profile</h6>
-          <p class="small">They also don't ignore or bore high achievers. They have high expectations, are highly motivating, and believe in all of their students.</p>
+          <p class="small"><%= user.headline %></p>
           <hr class="m-3">
           <h6>Experience</h6>
           <ul class="list-unstyled small">
@@ -39,7 +39,7 @@
             <span class="fieldTag">Math</span>
             <span class="fieldTag">AI</span>
           </div>
-          <button class="btn btn-outline-danger btn-sm ">Remove tutor</button>
+          <button  class="btn btn-outline-danger btn-sm flex-fill btn-remove" data-id="<%= user._id %>">Remove tutor</button>
         </div>
       </div>
 
@@ -49,28 +49,64 @@
             <div class="col">
               <div class="course-card">
                 <div class="card-img-top" style="height: 140px; overflow: hidden; border-radius: 12px 12px 0 0;">
-                    <img src="<%= course.image ? course.image : '/images/defaultCourse.png' %>" 
-                         alt="Course Thumbnail"
-                         class="img-fluid w-100 h-100 object-fit-cover rounded">
-                  </div>
+                  <img src="<%= course.image ? course.image : '/images/defaultCourse.png' %>" 
+                       alt="Course Thumbnail"
+                       class="img-fluid w-100 h-100 object-fit-cover rounded">
+                </div>
                 <div class="p-3">
                   <strong><%= course.title %></strong>
                   <div class="small text-muted">
-                    👥 <%= course.enrollments %> Enrollments | ✨ <%= course.rating %> (<%= course.reviews %> reviews)<br>
-                    🕒 Last updated: <%= course.updatedAt %>
+                    👥 <%= course.studentsEnrolled?.length || 0 %> Enrollments |
+                    ✨ <%= course.rating %><br>
+                    🕒 Last updated: <%= course.updatedAt?.toDateString() %>
                   </div>
                   <div class="d-flex gap-2 mt-2">
                     <button class="btn btn-outline-danger btn-sm flex-fill">Edit</button>
-                    <button class="btn btn-outline-danger btn-sm flex-fill">Delete</button>
+                    <button class="btn btn-outline-danger btn-sm flex-fill btn-remove" data-id="<%= course._id %>">Delete</button>
                     <button class="btn btn-outline-danger btn-sm flex-fill">Feedback</button>
                   </div>
                 </div>
               </div>
             </div>
-          <% }); %>
+          <% }) %>
         </div>
       </div>
     </div>
   </div>
+
+  <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const removeButtons = document.querySelectorAll(".btn-remove-course");
+  
+    removeButtons.forEach(button => {
+      button.addEventListener("click", async () => {
+        const courseId = button.dataset.id;
+  
+        if (!confirm("Are you sure you want to delete this tutor?")) return;
+  
+        try {
+          const res = await fetch(`/institution/courses/${courseId}`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            }
+          });
+  
+          if (res.ok) {
+            const item = button.closest(".list-group-item");
+            item.remove();
+          } else {
+            const data = await res.json();
+            alert(`Failed: ${data.message}`);
+          }
+        } catch (err) {
+          console.error("Delete error:", err);
+          alert("An error occurred while deleting.");
+        }
+      });
+    });
+  });
+</script>
 </body>
+
 </html>

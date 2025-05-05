@@ -1,0 +1,57 @@
+<div class="container mt-4 mb-4 ">
+    <div class="d-flex" style="margin-left: 1.5rem;">
+      <div class="dropdown">
+        <button class="btn btn-light border rounded-pill px-4 py-2 fw-medium shadow-sm d-flex align-items-center gap-2"
+                type="button" data-bs-toggle="dropdown" aria-expanded="false"
+                style="font-size: 15px;">
+          <i class="bi bi-arrow-down-up"></i>
+          Sort by
+        </button>
+        <ul class="dropdown-menu rounded-4 shadow-sm">
+          <li><a class="dropdown-item sort-option" data-sort="title">📘 Title (A-Z)</a></li>
+          <li><a class="dropdown-item sort-option" data-sort="date">📅 Last Updated</a></li>
+          <li><a class="dropdown-item sort-option" data-sort="students">👥 Student Count</a></li>
+          <li><a class="dropdown-item sort-option" data-sort="rating">⭐ Rating</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+    const courseList = document.querySelector(".list-group");
+    const originalHTML = courseList.innerHTML;
+
+    const getValue = (card, key) => {
+      if (key === "title") return card.querySelector("strong")?.textContent.trim().toLowerCase();
+      if (key === "date") {
+        const match = card.querySelector(".text-muted")?.textContent.match(/\d{4}\/\d{2}\/\d{2}/);
+        return new Date(match ? match[0] : null);
+      }
+      if (key === "students") return parseInt(card.querySelector(".bi-people")?.parentNode.textContent.match(/\d+/)) || 0;
+      if (key === "rating") return parseInt(card.querySelector(".bi-star")?.parentNode.textContent.match(/\d+/)) || 0;
+      return "";
+    };
+
+    const sortCards = (key) => {
+      const cards = Array.from(courseList.querySelectorAll(".list-group-item"));
+      cards.sort((a, b) => {
+        const valA = getValue(a, key);
+        const valB = getValue(b, key);
+        return typeof valA === "string" ? valA.localeCompare(valB) : valB - valA;
+      });
+
+      courseList.innerHTML = "";
+      cards.forEach(card => courseList.appendChild(card));
+    };
+
+    document.querySelectorAll(".sort-option").forEach(item => {
+      item.addEventListener("click", () => {
+        const sortKey = item.dataset.sort;
+        sortCards(sortKey);
+      });
+    });
+  });
+  </script>

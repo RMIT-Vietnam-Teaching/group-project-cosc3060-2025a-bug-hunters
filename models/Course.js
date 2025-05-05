@@ -16,7 +16,7 @@ const courseSchema = new Schema({
 
     studentsEnrolled: [
         {
-            type: Schema.Types.ObjectId,
+            type: Number,
             ref: "User",
         },
     ],
@@ -36,6 +36,21 @@ const courseSchema = new Schema({
         type: String,
         enum: ["Not Started", "On Going", "Finished"],
         default: "Not Started",
+    },
+    rating: {
+        type: Number,
+        min: 0,
+        max: 5,
+        default: 0,
+    },
+    description: {
+        type: String,
+        required: true,
+        trim: true,
+    },
+    image: {
+        type: String,
+        default: "default.jpg",
     },
 });
 
