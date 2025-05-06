@@ -1,0 +1,44 @@
+<div class="form-card">
+    <h4 class="mb-4"><i class="bi bi-pencil-square me-2"></i>Edit Course</h4>
+  
+    <form action="/institution/editCourse/<%= course._id %>?returnTo=<%= returnTo %>" method="POST">
+      <div class="mb-3">
+        <label class="form-label">Course Title</label>
+        <input type="text" name="title" class="form-control" value="<%= course.title %>" required>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Description</label>
+        <textarea name="description" class="form-control" rows="4" required><%= course.description %></textarea>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label class="form-label">Price</label>
+          <input type="number" name="price" class="form-control" value="<%= course.price %>" required>
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label class="form-label">Duration</label>
+          <input type="text" name="duration" class="form-control" value="<%= course.duration %>" required>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label class="form-label">Start Date</label>
+          <input type="date" name="startDate" class="form-control" value="<%= course.startDate %>" required>
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label class="form-label">End Date</label>
+          <input type="date" name="endDate" class="form-control" value="<%= course.endDate %>" required>
+        </div>
+      </div>
+
+      <div class="text-end">
+        <a href="<%= returnTo %>" class="btn btn-secondary me-2">Cancel</a>
+        <button type="submit" class="btn btn-primary">Update Course</button>
+      </div>
+    </form>
+  </div>
