@@ -160,12 +160,11 @@ exports.loginUser = async (req, res) => {
             maxAge: 7 * 24 * 60 * 60 * 1000,
             signed: true,
         });
-
         // Redirect based on role
         if (user.role === "Admin") {
             return res.redirect("/admin/users");
         } else {
-            return res.redirect("/");
+            return res.redirect(`/userProfile?id=${user._id}`);
         }
     } catch (err) {
         console.error("Login Error:", err);

@@ -1,12 +1,21 @@
 const User = require("../models/User");
 
-exports.renderUserProfile = async (req, res) => {
-      const user = await User.findById(req.params.userId);
+exports.renderUserProfileByQuery = async (req, res) => {
+    const userId = req.query.id;
+  
+    if (!userId) {
+      return res.status(400).send("No user ID provided.");
+    }
+  
     try {
-      
-
-        res.render("userProfile", { user, activePage: "profile" });
-    } catch (error) {
-        console.error("Error rendering user profile:", error);
-        res.status(500).send("Failed to render user profile");
-    }};
+      const user = await User.findById(userId);
+      if (!user) {
+        return res.status(404).send("User not found.");
+      }
+  
+      res.render("userProfile", { user });
+    } catch (err) {
+      console.error("Error loading user profile:", err);
+      res.status(500).send("Server error.");
+    }
+  };
