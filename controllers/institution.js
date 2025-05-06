@@ -1,5 +1,6 @@
 const Course = require("../models/Course");
 const User = require("../models/User");
+const mongoose = require("mongoose");
 
 
 exports.renderCourses = async (req, res) => {
@@ -26,18 +27,23 @@ exports.renderCourseDetail = async (req, res) => {
 exports.renderEditCoursePage = async (req, res) => {
   try {
     const course = await Course.findById(req.params.id);
-    if (!course) return res.status(404).send("Course not found");
-    res.render("institutionEditCourse", { course }); 
-  } catch (err) {
-    res.status(500).send("Error loading course");
+    const returnTo = req.query.returnTo || '/institution/manageCourses';
+
+    res.render('institutionEditCourse', { course, returnTo });
+  } catch (error) {
+    console.error("Error rendering course edit page:", error);
+    res.status(500).send("Failed to load course edit page.");
   }
 };
 
 exports.updateCourse = async (req, res) => {
   try {
+    const { id } = req.params;
+    const returnTo = req.query.returnTo || '/institution/manageCourses';
+
     const { title, description, price, duration, startDate, endDate } = req.body;
 
-    await Course.findByIdAndUpdate(req.params.id, {
+    await Course.findByIdAndUpdate(id, {
       name: title,
       description,
       price,
@@ -46,7 +52,7 @@ exports.updateCourse = async (req, res) => {
       endDate
     });
 
-    res.redirect("/institution/manageCourses");
+    res.redirect(returnTo);
   } catch (err) {
     console.error("Error updating course:", err);
     res.status(500).send("Error updating course");
@@ -90,16 +96,42 @@ exports.renderTutorDetail = async (req, res) => {
         res.status(500).send("Internal Server Error");
 }};
 
-
 exports.deleteCourseFromInstitution = async (req, res) => {
   try {
+    console.log("DELETE request received for course:", req.params.id);
+
     const { id } = req.params;
     const deletedCourse = await Course.findByIdAndDelete(id);
-    if (!deletedCourse) return res.status(404).send("Course not found");
-    res.redirect("/institutionTutorDetail");
+
+    if (!deletedCourse) {
+      console.log("Course not found");
+      return res.status(404).json({ message: "Course not found" });
+    }
+
+    res.status(200).json({ message: "Course deleted" });
   } catch (error) {
     console.error("Error deleting course:", error);
-    res.status(500).send("Internal Server Error");
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
+exports.deleteTutorFromInstitution = async (req, res) => {
+  try {
+    const { id } = req.params;
+    console.log("Deleting tutor with ID:", id);
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid tutor ID" });
+    }
+
+    const deletedTutor = await User.findByIdAndDelete(id);
+    if (!deletedTutor) {
+      return res.status(404).json({ message: "Tutor not found" });
+    }
+
+    res.redirect("/institution/manageTutors");
+  } catch (error) {
+    console.error("Error deleting tutor:", error.message, error.stack);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};

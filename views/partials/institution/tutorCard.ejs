@@ -21,8 +21,6 @@
       <thead class="table-light">
         <tr>
           <th class="ps-4">Name</th>
-          <th>Teaching Field</th>
-          <th>Experience</th>
         </tr>
       </thead>
       <tbody>
@@ -43,9 +41,6 @@
                   <%= field %>
                 </span>
               <% }) %>
-            </td>
-            <td class="py-3 text-muted">
-              <%= user.exp %> <%= user.exp === 1 ? 'Year' : 'Years' %>
             </td>
             <td class="py-3 text-end pe-4">
               <a href="/institution/tutorDetail/<%= user._id %>" class="text-primary">Details</a>

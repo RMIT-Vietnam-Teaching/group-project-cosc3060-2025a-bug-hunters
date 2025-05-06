@@ -9,6 +9,7 @@ const {
   renderTutors,
   renderTutorDetail,
   deleteCourseFromInstitution,
+  deleteTutorFromInstitution,
 } = require("../controllers/institution");
 
 router.get("/manageCourses", renderCourses);
@@ -20,6 +21,7 @@ router.post('/editCourse/:id', updateCourse);
 router.get("/manageTutors", renderTutors);
 router.get("/tutorDetail/:id", renderTutorDetail);
 router.post("/deleteInstitutionCourses/:id", deleteCourseFromInstitution);
+router.post("/deleteInstitutionTutor/:id", deleteTutorFromInstitution);
 
 
 

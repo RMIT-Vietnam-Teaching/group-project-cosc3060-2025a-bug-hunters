@@ -50,7 +50,7 @@ const courseSchema = new Schema({
     },
     image: {
         type: String,
-        default: "default.jpg",
+        // default: "default.jpg",
     },
 });
 
