@@ -11,7 +11,8 @@ const {
   deleteCourseFromInstitution,
   deleteTutorFromInstitution,
   renderAddTutorForm,
-  createTutor
+  createTutor,
+  renderCourseFeedbackPage
 } = require("../controllers/institution");
 
 router.get("/manageCourses", renderCourses);
@@ -27,5 +28,6 @@ router.post("/deleteInstitutionTutor/:id", deleteTutorFromInstitution);
 
 router.get("/addTutor", renderAddTutorForm);
 router.post("/addTutor", createTutor);
+router.get("/courseFeedback/:id", renderCourseFeedbackPage);
 
 module.exports = router;

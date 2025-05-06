@@ -86,7 +86,7 @@ exports.renderTutorDetail = async (req, res) => {
     try {
         const { id } = req.params;
         const user = await User.findById(id);
-        const courses = await Course.find({ author: id });
+        const courses = await Course.find({ author: id }).lean();
         if (!user) {
             return res.status(404).send("Tutor not found");
         }
@@ -174,4 +174,9 @@ exports.createTutor = async (req, res) => {
     console.error("Error creating tutor:", err);
     res.status(500).send("Internal Server Error");
   }
+};
+
+exports.renderCourseFeedbackPage = async (req, res) => {
+  const course = await Course.findById(req.params.id);
+  res.render("institutionCourseFeedback", { course });
 };

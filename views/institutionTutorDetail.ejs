@@ -3,129 +3,194 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Institution Profile</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-  <link rel="stylesheet" href="/css/institution.css">
+  <title>Instructor Profile | Institution</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+  
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .sidebar-box {
+      background: #fff;
+      padding: 32px 24px;
+      border-radius: 16px;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.04);
+    }
+    .sidebar-box h5 {
+      font-weight: 600;
+    }
+    .sidebar-box hr {
+      margin: 1rem 0;
+    }
+    .card-course {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.05);
+      transition: all 0.2s ease;
+    }
+    .card-course:hover {
+      transform: translateY(-2px);
+    }
+    .btn-sm {
+      border-radius: 50px;
+      padding: 6px 16px;
+    }
+    .btn-action {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+  </style>
 </head>
-
 <body>
-<!-- navbar -->
-<%- include('partials/institution/navbar') %>
+  <%- include('partials/institution/navbar') %>
 
-<!-- display tutor-->
-<div class="container mt-4">
-  <div class="row g-4">
-    <div class="col-md-4">
-      <div class="sidebar-box d-flex flex-column justify-content-start" style="min-height: 90vh;">
-        <div class="text-center">
-          <img src="/images/defaultAvatar.png" alt="Avatar" class="rounded-circle mb-3 mt-5" width="100" height="100">
-          <h5 class="fw-semibold"><%= user.name %></h5>
-          <p class="text-muted"><br><%= user.email %></p>
-          <hr class="m-3">
-          <h6>Profile</h6>
-          <p class="small"><%= user.description %></p>
-          <hr class="m-3">
-          <h6>Headline</h6>
-          <p class="small"><%= user.headline %></p>
-          <hr class="m-3">
-        </div>
-
-        <div class="mt-auto text-center mb-2">
-          <button class="btn btn-outline-danger btn-sm btn-remove" data-id="<%= user._id %>">Remove tutor</button>
+  <div class="container my-5">
+    <div class="row g-4">
+      <!-- Left Panel: Tutor Profile -->
+      <div class="col-lg-4">
+        <div class="sidebar-box d-flex flex-column h-100">
+          <div class="text-center">
+            <img src="/images/defaultAvatar.png" class="rounded-circle mb-3" width="100" height="100" alt="Tutor Avatar" />
+            <h5><%= user.lastName %></h5>
+            <p class="text-muted small mb-0"><%= user.email %></p>
+          </div>
+  
+          <hr />
+          <h6 class="text-uppercase text-secondary small">Headline</h6>
+          <p class="small mb-2"><%= user.headline || "No headline provided." %></p>
+  
+          <h6 class="text-uppercase text-secondary small mt-3">Bio</h6>
+          <p class="small"><%= user.description || "No profile description available." %></p>
+  
+          <div class="mt-auto text-end px-3 pb-3">
+            <button class="btn btn-outline-danger btn-sm btn-remove" data-id="<%= user._id %>">
+              <i class="bi bi-trash me-1"></i> Remove Tutor
+            </button>
+          </div>
         </div>
       </div>
-    </div>
-
-    <!-- Course Cards -->
-    <div class="col-md-8">
-      <div class="row row-cols-1 row-cols-md-2 g-4">
-        <% courses.forEach(course => { %>
-          <div class="col">
-            <div class="bg-white rounded-4 shadow-sm overflow-hidden">
-              <div style="height: 140px; overflow: hidden;">
-                <img src="<%= course.image ? course.image : '/images/defaultCourse.png' %>"
-                     alt="Course Thumbnail"
-                     class="img-fluid w-100"
-                     style="height: 100%; object-fit: cover;">
-              </div>
-
-              <!-- Info -->
-              <div class="p-3">
-                <strong class="d-block fs-6 mb-1"><%= course.name %></strong>
-                <div class="small text-muted mb-2">
-                  👥 <%= course.studentsEnrolled?.length || 0 %> Enrollments |
-                  ✨ <%= course.rating || 0 %><br>
-                  🕒 Last updated: <%= course.updatedAt?.toDateString() %>
+      <!-- Right Panel: Course List -->
+      <div class="col-lg-8">
+        <div class="row row-cols-1 row-cols-md-2 g-4">
+          <% courses.forEach(course => { %>
+            <div class="col">
+              <div class="card-course overflow-hidden">
+                <div style="height: 140px; overflow: hidden;">
+                  <img src="<%= course.image || '/images/defaultCourse.png' %>" alt="Course Image"
+                       class="img-fluid w-100" style="object-fit: cover; height: 100%;" />
                 </div>
-                <div class="d-flex gap-2">
-                  <a href="/institution/editCourse/<%= course._id %>?returnTo=/institution/tutorDetail/<%= user._id %>" class="btn btn-outline-danger btn-sm flex-fill">Edit</a>
-                  <button class="btn btn-outline-danger btn-sm flex-fill btn-remove-course" data-id="<%= course._id %>">Delete</button>
-                  <button class="btn btn-outline-danger btn-sm flex-fill">Feedback</button>
+                <div class="p-3">
+                  <h6 class="fw-semibold mb-1"><%= course.name %></h6>
+                  <p class="text-muted small mb-2">
+                    👥 <%= course.studentsEnrolled?.length || 0 %> Enrolled |
+                    ⭐ <%= course.rating || 0 %> |
+                    🕒 <%= course.updatedAt?.toDateString() %>
+                  </p>
+                  <div class="d-flex gap-2">
+                    <a href="/institution/editCourse/<%= course._id %>?returnTo=/institution/tutorDetail/<%= user._id %>" class="btn btn-outline-primary btn-sm flex-fill">Edit</a>
+                    <button class="btn btn-outline-danger btn-sm flex-fill btn-remove-course" data-id="<%= course._id %>">Delete</button>
+                    <button class="btn btn-outline-dark btn-sm flex-fill" data-bs-toggle="modal" data-bs-target="#feedbackModal" data-course="<%= course.name %>">Feedback</button>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        <% }) %>
+          <% }) %>
+        </div>
       </div>
     </div>
   </div>
+
+  <a href="/institution/manageTutors"
+  class="btn btn-outline-secondary position-fixed"
+  style="bottom: 30px; left: 30px; z-index: 1050;">
+ <i class="bi bi-arrow-left me-1"></i> Back to Instructor List
+</a>
+
+<div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="feedbackModalLabel">Course Feedback</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p class="small text-muted mb-2" id="courseTitle"></p>
+        <textarea class="form-control" rows="4" placeholder="Write your feedback here..."></textarea>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-primary">Submit Feedback</button>
+      </div>
+    </form>
+  </div>
 </div>
+
+
 <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const tutorRemoveBtn = document.querySelector(".btn-remove");
-    if (tutorRemoveBtn) {
-      tutorRemoveBtn.addEventListener("click", async () => {
-        const tutorId = tutorRemoveBtn.dataset.id;
-  
-        if (!confirm("Are you sure you want to delete this tutor?")) return;
-  
-        try {
-          const res = await fetch(`/institution/deleteInstitutionTutor/${tutorId}`, {
+
+ document.addEventListener("DOMContentLoaded", () => {
+      const tutorRemoveBtn = document.querySelector(".btn-remove");
+      if (tutorRemoveBtn) {
+        tutorRemoveBtn.addEventListener("click", async () => {
+          const tutorId = tutorRemoveBtn.dataset.id;
+          if (!confirm("Are you sure you want to delete this tutor?")) return;
+
+          try {
+            const res = await fetch(`/institution/deleteInstitutionTutor/${tutorId}`, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({})
             });
-  
-          if (res.ok) {
-            location.reload();
-          } else {
-            const data = await res.json();
-            alert(`Failed: ${data.message}`);
+
+            if (res.ok) {
+              window.location.href = "/institution/manageTutors";
+            } else {
+              const data = await res.json();
+              alert(`Failed: ${data.message}`);
+            }
+          } catch (err) {
+            console.error("Tutor delete error:", err);
+            alert("An error occurred while deleting the tutor.");
           }
-        } catch (err) {
-          console.error("Tutor delete error:", err);
-          alert("An error occurred while deleting the tutor.");
-        }
-      });
-    }
-  });
-  
-//delete course
-    const removeButtons = document.querySelectorAll(".btn-remove-course");
-  
-    removeButtons.forEach(button => {
-  button.addEventListener("click", async () => {
-    const courseId = button.dataset.id;
-    if (!confirm("Are you sure you want to delete this course?")) return;
+        });
+      }
 
-    try {
-      const res = await fetch(`/institution/deleteInstitutionCourses/${courseId}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" }
+      // Remove Course
+      document.querySelectorAll(".btn-remove-course").forEach(button => {
+        button.addEventListener("click", async () => {
+          const courseId = button.dataset.id;
+          if (!confirm("Are you sure you want to delete this course?")) return;
+
+          try {
+            const res = await fetch(`/institution/deleteInstitutionCourses/${courseId}`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" }
+            });
+
+            if (res.ok) {
+              location.reload();
+            } else {
+              const data = await res.json();
+              alert(`Failed: ${data.message}`);
+            }
+          } catch (err) {
+            console.error("Delete error:", err);
+            alert("An error occurred while deleting the course.");
+          }
+        });
       });
-      if (res.ok) {
-  window.location.href = "/institution/manageTutors"; 
-} else {
-  const data = await res.json();
-  alert(`Failed: ${data.message}`);
-}
-    } catch (err) {
-      console.error("Delete error:", err);
-    }
+    });
+
+  const feedbackModal = document.getElementById('feedbackModal');
+  feedbackModal.addEventListener('show.bs.modal', function (event) {
+    const button = event.relatedTarget;
+    const courseName = button.getAttribute('data-course');
+    document.getElementById('courseTitle').textContent = `For: ${courseName}`;
   });
-});
-  </script>
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
 </body>
-
 </html>
