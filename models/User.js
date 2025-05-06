@@ -59,14 +59,6 @@ const userSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
-    headline: {
-        type: String,
-        trim: true,
-    },
-    description: {
-        type: String,
-        trim: true,
-    },
     coin: {
         type: Number,
         default: 0,
@@ -80,19 +72,19 @@ const userSchema = new mongoose.Schema({
     cardPaymentInfo: {
         cardNumber: {
             type: String,
-            required: true,
+            required: false,
         },
         cardHolderName: {
             type: String,
-            required: true,
+            required: false,
         },
         expirationDate: {
             type: String,
-            required: true,
+            required: false,
         },
         cvv: {
             type: String,
-            required: true,
+            required: false,
         },
     },
 });

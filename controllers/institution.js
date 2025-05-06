@@ -1,6 +1,7 @@
 const Course = require("../models/Course");
 const User = require("../models/User");
 const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
 
 
 exports.renderCourses = async (req, res) => {
@@ -133,5 +134,44 @@ exports.deleteTutorFromInstitution = async (req, res) => {
   } catch (error) {
     console.error("Error deleting tutor:", error.message, error.stack);
     res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+
+
+exports.renderAddTutorForm = (req, res) => {
+  res.render("institutionAddTutor");
+};
+
+exports.createTutor = async (req, res) => {
+  try {
+    const { firstName, lastName, email, password, headline, description } = req.body;
+
+    if (!firstName || !lastName || !email || !password) {
+      return res.status(400).send("Missing required fields");
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    await User.create({
+      firstName,
+      lastName,
+      email,
+      password: hashedPassword,
+      headline,
+      description,
+      role: "Instructor",
+      cardPaymentInfo: {
+        cardNumber: "0000000000000000",
+        cardHolderName: "N/A",
+        expirationDate: "01/30",
+        cvv: "000",
+      }
+    });
+
+    res.redirect("/institution/manageTutors");
+  } catch (err) {
+    console.error("Error creating tutor:", err);
+    res.status(500).send("Internal Server Error");
   }
 };
