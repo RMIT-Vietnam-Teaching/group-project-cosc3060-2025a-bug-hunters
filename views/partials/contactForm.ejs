@@ -1,0 +1,84 @@
+<!-- Contact Form Section -->
+<section class="contact-section py-5">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-10 col-lg-8">
+        <div class="text-center mb-5">
+          <h2 class="section-title">Get In Touch</h2>
+          <p class="section-subtitle">Have questions or feedback? Reach out to us directly.</p>
+        </div>
+        
+        <div class="contact-form-container">
+          <form id="contactForm" class="contact-form needs-validation" novalidate>
+            <!-- Name Field -->
+            <div class="mb-4">
+              <label for="name" class="form-label">Your Name</label>
+              <input type="text" class="form-control" id="name" name="name" required>
+              <div class="invalid-feedback">
+                Please provide your name.
+              </div>
+            </div>
+            
+            <!-- Email Field -->
+            <div class="mb-4">
+              <label for="email" class="form-label">Email Address</label>
+              <input type="email" class="form-control" id="email" name="email" required>
+              <div class="invalid-feedback">
+                Please provide a valid email address.
+              </div>
+            </div>
+            
+            <!-- Subject Field -->
+            <div class="mb-4">
+              <label for="subject" class="form-label">Subject</label>
+              <select class="form-select" id="subject" name="subject" required>
+                <option value="" selected disabled>Select a subject</option>
+                <option value="General Inquiry">General Inquiry</option>
+                <option value="Technical Support">Technical Support</option>
+                <option value="Course Question">Course Question</option>
+                <option value="Feedback">Feedback</option>
+                <option value="Other">Other</option>
+              </select>
+              <div class="invalid-feedback">
+                Please select a subject.
+              </div>
+            </div>
+            
+            <!-- Message Field -->
+            <div class="mb-4">
+              <label for="message" class="form-label">Your Message</label>
+              <textarea class="form-control" id="message" name="message" rows="5" required></textarea>
+              <div class="invalid-feedback">
+                Please provide your message.
+              </div>
+            </div>
+            
+            <!-- Privacy Policy Checkbox -->
+            <div class="mb-4">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="privacyPolicy" required>
+                <label class="form-check-label" for="privacyPolicy">
+                  I agree to the <a href="#" class="privacy-link">Privacy Policy</a>
+                </label>
+                <div class="invalid-feedback">
+                  You must agree to our privacy policy before submitting.
+                </div>
+              </div>
+            </div>
+            
+            <!-- Submit Button -->
+            <div class="text-center">
+              <button type="submit" class="btn btn-primary contact-submit-btn">
+                <span class="btn-text">Send Message</span>
+                <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+              </button>
+            </div>
+          </form>
+          
+          <!-- Status Message -->
+          <div id="contactStatus" class="text-center mt-4"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

@@ -51,12 +51,16 @@ const authRoutes = require("./routes/authRoutes");
 const homeRoutes = require("./routes/homeRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const courseRoutes = require("./routes/courseRoutes");
+const userRoutes = require("./routes/userRoutes");
+const subscriptionRoutes = require("./routes/subscriptionRoutes");
 
 // Use Routes
 app.use("/", homeRoutes);
 app.use("/auth", authRoutes);
 app.use("/admin", adminRoutes);
 app.use("/courses", courseRoutes);
+app.use("/user", userRoutes);
+app.use("/api", subscriptionRoutes);
 
 // Start Server
 app.listen(port, () => {
