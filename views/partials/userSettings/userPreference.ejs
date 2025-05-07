@@ -1,10 +1,16 @@
+<!-- Left Hamburger Menu Toggle -->
+
+<div class="d-flex align-items-center gap-3 mb-4">
+  <button id="leftSidebarToggle" class="mobile-menu-button" aria-label="Toggle left sidebar">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+  <h1 class="h4 m-0">Public Profile</h1>
+</div>
+
 <main class="col-md-12">
-  <!-- Header -->
-  <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4">
-    <!-- <div class="text-muted fs-5">←</div> -->
-    <h1 class="h4 m-0">Public Profile</h1>
-    <div class="d-flex gap-3 fs-5"></div>
-  </div>
+
 
   <!-- Form Start -->
   <form action="/userSettings/profilePreference/update/<%= user._id %>" method="POST" enctype="multipart/form-data">

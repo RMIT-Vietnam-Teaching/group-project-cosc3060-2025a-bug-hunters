@@ -1,9 +1,16 @@
 
-        <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4">
-          <h1 class="h4 m-0">Account Security</h1>
-          <div></div>
-        </div>
+<!-- Inside your main container: -->
+<div class="d-flex align-items-center gap-3 mb-4 position-relative">
+  <button id="leftSidebarToggle" class="mobile-menu-button" aria-label="Toggle left sidebar">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+  <h1 class="h4 m-0">Account Security</h1>
+</div>
 
+      
+     
 
    <!-- Email -->
 <form method="POST" action="/userSettings/security/update/<%= user._id %>" class="d-flex justify-content-center mb-5">

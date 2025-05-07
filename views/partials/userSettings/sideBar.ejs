@@ -88,12 +88,7 @@ body.dark #sidebarDropdown img {
     }
   }
 </style>
-    <script src="/js/setTheme.js"></script>
-    <button class="mobile-menu-button" id="sidebarToggle" aria-label="Toggle sidebar">
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
+    
     <%- include('../navbar') %>
   
     <div class="container-fluid">
@@ -123,6 +118,8 @@ body.dark #sidebarDropdown img {
           </div>
         </nav>
   
+    <script src="/js/setTheme.js"></script>
+
     <script>
       document.addEventListener('DOMContentLoaded', function() {
         const menuButton = document.getElementById('sidebarToggle');
