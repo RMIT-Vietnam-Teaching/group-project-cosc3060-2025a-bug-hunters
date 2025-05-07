@@ -2,10 +2,17 @@ const User = require("../models/User");
 const bcrypt = require("bcrypt");
 
 exports.renderUserPreference = async (req, res) => {
-  const tempUserId = "68084f433822e88df6ec532f";
+  const loggedInUserId = res.locals.user?._id?.toString(); 
+  const routeUserId = req.params.userId;
+
+ 
+
+  if (!loggedInUserId || loggedInUserId !== routeUserId) {
+    return res.status(403).send("Unauthorized access.");
+  }
 
   try {
-    const user = await User.findById(req.params.userId);
+    const user = await User.findById(routeUserId);
 
     if (!user) {
       return res.status(404).send("User not found");
@@ -52,6 +59,12 @@ exports.updateUserPreference = async (req, res) => {
 };
 
 exports.renderDisplay = async (req, res) => {
+  const loggedInUserId = res.locals.user?._id?.toString(); 
+  const routeUserId = req.params.userId;
+  if (!loggedInUserId || loggedInUserId !== routeUserId) {
+    return res.status(403).send("Unauthorized access.");
+  }
+
   try {
     const user = await User.findById(req.params.userId);
 
@@ -67,6 +80,16 @@ exports.renderDisplay = async (req, res) => {
 };
 
 exports.renderAccountSecurity = async (req, res) => {
+  const loggedInUserId = res.locals.user?._id?.toString(); 
+  const routeUserId = req.params.userId;
+  console.log("signedCookies =", req.signedCookies);
+  console.log("userId from cookie:", req.signedCookies.userId);
+  console.log("🔑 loggedInUserId:", loggedInUserId);
+  console.log("📍 routeUserId:", routeUserId);
+  if (!loggedInUserId || loggedInUserId !== routeUserId) {
+    return res.status(403).send("Unauthorized access.");
+  }
+
   try {
     const user = await User.findById(req.params.userId);
 
@@ -87,6 +110,15 @@ exports.renderAccountSecurity = async (req, res) => {
 };
 
 exports.renderAccountBalance = async (req, res) => {
+  const loggedInUserId = res.locals.user?._id?.toString(); 
+  const routeUserId = req.params.userId;
+
+  console.log("🔑 loggedInUserId:", loggedInUserId);
+  console.log("📍 routeUserId:", routeUserId);
+  if (!loggedInUserId || loggedInUserId !== routeUserId) {
+    return res.status(403).send("Unauthorized access.");
+  }
+
   try {
     const user = await User.findById(req.params.userId);
 
@@ -151,7 +183,6 @@ exports.updateUserSecurity = async (req, res) => {
         return res.redirect(`/userSettings/security/${userId}?error=Passwords+do+not+match`);
       }
 
-      // ✅ Check if new password is the same as old password
       const isSameAsOld = await bcrypt.compare(newPassword, user.password);
       if (isSameAsOld) {
         return res.redirect(`/userSettings/security/${userId}?error=New+password+must+be+different+from+old+password`);
@@ -199,8 +230,3 @@ exports.updateUserBalance = async (req, res) => {
   }
 };
 
-
-const getUserProfile = async (req, res) => {
-  const user = await User.find();
-  res.render("userProfile", { user });
-};

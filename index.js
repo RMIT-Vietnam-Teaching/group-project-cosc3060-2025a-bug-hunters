@@ -5,13 +5,13 @@ const dotenv = require("dotenv");
 const app = express();
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
-
+const User = require("./models/User"); 
 const connectDB = require("./utils/db");
 
 const { port } = require("./configs/keys");
 
-dotenv.config();
 
+dotenv.config();
 
 //set up view engine
 app.set("view engine", "ejs");
@@ -21,34 +21,11 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.use(cookieParser(process.env.COOKIE_SECRET));
 
+// Middleware to set user from cookie
+const { sessionMiddleware, setUserFromCookie } = require("./middlewares/setUser");
 
-//Set up a session
-// app.use(
-//     session({
-//         secret: "yourSecretKey",
-//         resave: false,
-//         saveUninitialized: true,
-//         cookie: { secure: false },
-//     })
-// );
-
-// app.use(async (req, res, next) => {
-//     const userId = req.cookies.userId;
-
-//     if (userId) {
-//         try {
-//             const user = await User.findById(userId).lean();
-//             res.locals.user = user; // this makes <%= user %> work in views
-//         } catch (err) {
-//             console.error("Failed to fetch user from cookie:", err);
-//             res.locals.user = null;
-//         }
-//     } else {
-//         res.locals.user = null;
-//     }
-
-//     next();
-// });
+app.use(sessionMiddleware);
+app.use(setUserFromCookie);
 
 // Set up Mongo DB connection
 connectDB();
@@ -60,7 +37,7 @@ const userSettingsRoutes = require("./routes/userSetting");
 const adminRoutes = require("./routes/adminRoutes");
 const userProfileRoutes = require("./routes/userProfileRoutes");
 const institution = require("./routes/institutionRoutes");
-// const userProfileRoutes = require("./routes/userProfileRoutes");
+
 
 // const coinPaymentRoutes = require("./routes/coinPayment");
 
@@ -68,7 +45,7 @@ app.use("/", homeRoutes);
 app.use("/auth", authRoutes);
 app.use("/admin", adminRoutes);
 app.use("/userSettings", userSettingsRoutes);
-// app.use("/userProfile", userProfileRoutes);
+app.use("/userProfile", userProfileRoutes);
 // app.use("/institution", institution);
 // app.use("/payment", coinPaymentRoutes);
 app.use('/navbar', (req,res) => {

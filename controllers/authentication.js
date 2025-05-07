@@ -147,16 +147,17 @@ exports.loginUser = async (req, res) => {
 
         res.cookie("userId", user._id.toString(), {
             httpOnly: true,
+
             secure: process.env.NODE_ENV === "production",
-            sameSite: "Strict",
+            sameSite: "Lax",
             maxAge: 7 * 24 * 60 * 60 * 1000,
             signed: true,
         });
-
+     
         res.cookie("userRole", user.role, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
-            sameSite: "Strict",
+            sameSite: "Lax",
             maxAge: 7 * 24 * 60 * 60 * 1000,
             signed: true,
         });
@@ -225,10 +226,7 @@ exports.resetPasswordUser = async (req, res) => {
         }
 
         //Check if the current password is the same as the previous password
-        const isSamePassword = await bcrypt.compare(
-            newPassword,
-            user.userPassword
-        );
+        const isSamePassword = await bcrypt.compare(newPassword, user.password);
         if (isSamePassword) {
             return res.render("resetPassword", {
                 error: "New password cannot be the same as the current password.",
@@ -279,7 +277,9 @@ exports.logout = async (req, res) => {
     try {
         res.clearCookie("userId");
         res.clearCookie("userRole");
+        req.session.destroy(() => {
         res.redirect("/");
+        });
     } catch (err) {
         console.error("Logout Error:", err);
         res.status(500).render("login", {
