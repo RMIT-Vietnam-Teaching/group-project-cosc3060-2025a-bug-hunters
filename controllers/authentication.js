@@ -160,6 +160,7 @@ exports.loginUser = async (req, res) => {
             sameSite: "Lax",
             maxAge: 7 * 24 * 60 * 60 * 1000,
             signed: true,
+            
         });
         // Redirect based on role
         if (user.role === "Admin") {

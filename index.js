@@ -7,6 +7,7 @@ const session = require("express-session");
 const cookieParser = require("cookie-parser");
 const User = require("./models/User"); 
 const connectDB = require("./utils/db");
+const { sessionMiddleware, setUserFromCookie } = require("./middlewares/setUser");
 
 const { port } = require("./configs/keys");
 
@@ -22,8 +23,6 @@ app.use(express.static("public"));
 app.use(cookieParser(process.env.COOKIE_SECRET));
 
 // Middleware to set user from cookie
-const { sessionMiddleware, setUserFromCookie } = require("./middlewares/setUser");
-
 app.use(sessionMiddleware);
 app.use(setUserFromCookie);
 
@@ -51,7 +50,16 @@ app.use("/userProfile", userProfileRoutes);
 app.use('/navbar', (req,res) => {
     res.render('partials/navbar');
 });
-
+app.get("/set-test-cookie", (req, res) => {
+  res.cookie("userId", "681affba12f498fff96735e7", {
+    httpOnly: true,
+    signed: true,
+    secure: false,
+    sameSite: "Lax",
+    maxAge: 1000 * 60 * 60 * 24
+  });
+  res.send("Signed test cookie set.");
+});
 app.listen(port, () => {
     console.log(chalk.green(`Server is running on port ${port}`));
 });

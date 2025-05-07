@@ -13,8 +13,7 @@ const sessionMiddleware = session({
 });
 
 const setUserFromCookie = async (req, res, next) => {
-  const userId = req.signedCookies.userId;
-
+  const userId = req.signedCookies?.userId;
   if (userId) {
     try {
       const user = await User.findById(userId).lean();
@@ -26,10 +25,8 @@ const setUserFromCookie = async (req, res, next) => {
   } else {
     res.locals.user = null;
   }
-
   next();
 };
-
 module.exports = {
   sessionMiddleware,
   setUserFromCookie,

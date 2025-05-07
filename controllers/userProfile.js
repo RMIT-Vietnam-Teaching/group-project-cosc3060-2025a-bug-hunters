@@ -3,11 +3,11 @@ const User = require("../models/User");
   exports.renderUserProfileByParam = async (req, res) => {
     const loggedInUserId = res.locals.user?._id?.toString(); 
     const routeUserId = req.params.userId;
-    if (!loggedInUserId || loggedInUserId !== routeUserId) {
+    if (!loggedInUserId || loggedInUserId !== queryId) {
       return res.status(403).send("Unauthorized access.");
     }
 
-    const userId = req.params.id;
+    const userId = res.locals.user?._id?.toString();
   
     if (!userId) {
       return res.status(400).send("No user ID provided.");
@@ -27,7 +27,7 @@ const User = require("../models/User");
   };
 
   exports.renderUserProfileByQuery = async (req, res) => {
-    const userId = req.query.id;
+    const userId = res.locals.user?._id?.toString();
   
     if (!userId) {
       return res.status(400).send("No user ID provided.");
