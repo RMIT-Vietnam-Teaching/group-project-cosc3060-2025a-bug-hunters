@@ -27,7 +27,20 @@ const setUserFromCookie = async (req, res, next) => {
   }
   next();
 };
+
+
+function requireOwnUserAccess(req, res, next) {
+  const loggedInUserId = req.signedCookies.userId;
+  const routeUserId = req.params.userId;
+
+  if (!loggedInUserId || loggedInUserId !== routeUserId) {
+    return res.status(403).send("Unauthorized access.");
+  }
+
+  next();
+}
 module.exports = {
   sessionMiddleware,
   setUserFromCookie,
+  requireOwnUserAccess
 };

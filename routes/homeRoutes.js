@@ -1,14 +1,7 @@
 const router = require("express").Router();
 const User = require("../models/User");
 
-router.get("/", async (req, res) => {
-    try {
-        const userId = req.signedCookies.userId;
-        let user = null;
 
-        if (userId) {
-            user = await User.findById(userId).lean();
-        }
 
 router.get("/", (req, res) => {
   const mockCourses = [

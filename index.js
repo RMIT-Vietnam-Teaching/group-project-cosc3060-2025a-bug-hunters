@@ -4,31 +4,18 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 const app = express();
 const session = require("express-session");
-<<<<<<< HEAD
 const cookieParser = require("cookie-parser");
 const User = require("./models/User"); 
 const connectDB = require("./utils/db");
 const { sessionMiddleware, setUserFromCookie } = require("./middlewares/setUser");
 
 const { port } = require("./configs/keys");
-
-
-dotenv.config();
-
-//set up view engine
-=======
 const passport = require("passport");
-const connectDB = require("./utils/db");
-const { port } = require("./configs/keys");
 
-// Load environment variables
+
 dotenv.config();
-
-// Initialize Express
-const app = express();
 
 // Set up view engine
->>>>>>> testing-branch
 app.set("view engine", "ejs");
 
 // Middleware
@@ -42,16 +29,7 @@ app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(sessionMiddleware);
 app.use(setUserFromCookie);
 
-// Set up Mongo DB connection
-// Set up session
-app.use(
-  session({
-    secret: "yourSecretKey", // ideally store this in .env
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: false }, // Set to true in production with HTTPS
-  })
-);
+
 
 // Initialize Passport
 app.use(passport.initialize());
@@ -74,6 +52,9 @@ const userSettingsRoutes = require("./routes/userSetting");
 const adminRoutes = require("./routes/adminRoutes");
 const userProfileRoutes = require("./routes/userProfileRoutes");
 const institution = require("./routes/institutionRoutes");
+
+
+
 
 
 // const coinPaymentRoutes = require("./routes/coinPayment");

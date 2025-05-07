@@ -2,16 +2,9 @@ const User = require("../models/User");
 const bcrypt = require("bcrypt");
 
 exports.renderUserPreference = async (req, res) => {
-  const loggedInUserId = res.locals.user?._id?.toString(); 
-  const routeUserId = req.params.userId;
-
- 
-
-  if (!loggedInUserId || loggedInUserId !== routeUserId) {
-    return res.status(403).send("Unauthorized access.");
-  }
-
   try {
+    const routeUserId = req.params.userId;
+
     const user = await User.findById(routeUserId);
 
     if (!user) {
@@ -59,11 +52,7 @@ exports.updateUserPreference = async (req, res) => {
 };
 
 exports.renderDisplay = async (req, res) => {
-  const loggedInUserId = res.locals.user?._id?.toString(); 
-  const routeUserId = req.params.userId;
-  if (!loggedInUserId || loggedInUserId !== routeUserId) {
-    return res.status(403).send("Unauthorized access.");
-  }
+ 
 
   try {
     const user = await User.findById(req.params.userId);
@@ -80,15 +69,6 @@ exports.renderDisplay = async (req, res) => {
 };
 
 exports.renderAccountSecurity = async (req, res) => {
-  const loggedInUserId = res.locals.user?._id?.toString(); 
-  const routeUserId = req.params.userId;
-  console.log("signedCookies =", req.signedCookies);
-  console.log("userId from cookie:", req.signedCookies.userId);
-  console.log("🔑 loggedInUserId:", loggedInUserId);
-  console.log("📍 routeUserId:", routeUserId);
-  if (!loggedInUserId || loggedInUserId !== routeUserId) {
-    return res.status(403).send("Unauthorized access.");
-  }
 
   try {
     const user = await User.findById(req.params.userId);
@@ -108,16 +88,7 @@ exports.renderAccountSecurity = async (req, res) => {
     res.status(500).send("Failed to render user profile settings");
   }
 };
-
 exports.renderAccountBalance = async (req, res) => {
-  const loggedInUserId = res.locals.user?._id?.toString(); 
-  const routeUserId = req.params.userId;
-
-  console.log("🔑 loggedInUserId:", loggedInUserId);
-  console.log("📍 routeUserId:", routeUserId);
-  if (!loggedInUserId || loggedInUserId !== routeUserId) {
-    return res.status(403).send("Unauthorized access.");
-  }
 
   try {
     const user = await User.findById(req.params.userId);
@@ -126,7 +97,11 @@ exports.renderAccountBalance = async (req, res) => {
       return res.status(404).send("User not found");
     }
 
-    res.render("userSettingBalance", { user, activePage: "balance", success: req.query.success, });
+    res.render("userSettingBalance", {
+      user,
+      activePage: "balance",
+      success: req.query.success,
+    });
   } catch (error) {
     console.error("Error rendering user profile settings:", error);
     res.status(500).send("Failed to render user profile settings");
