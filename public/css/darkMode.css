@@ -1,0 +1,188 @@
+/* Dark Mode Styles */
+:root {
+  --light-background: #ffffff;
+  --light-text: #333333;
+  --light-secondary-text: #6c757d;
+  --light-card-bg: #ffffff;
+  --light-border: #dee2e6;
+  --light-input-bg: #ffffff;
+  --light-hover: #f8f9fa;
+  
+  --dark-background: #121212;
+  --dark-text: #e0e0e0;
+  --dark-secondary-text: #adb5bd;
+  --dark-card-bg: #1e1e1e;
+  --dark-border: #2d2d2d;
+  --dark-input-bg: #2d2d2d;
+  --dark-hover: #2d2d2d;
+  
+  --primary-color: #ee6c4d;
+  --primary-hover: #e95d3c;
+}
+
+body {
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* Dark Mode Styles */
+body.dark-mode {
+  background-color: var(--dark-background);
+  color: var(--dark-text);
+}
+
+/* Navbar */
+body.dark-mode .navbar {
+  background-color: var(--dark-card-bg) !important;
+}
+
+body.dark-mode .navbar .navbar-brand,
+body.dark-mode .navbar .nav-link,
+body.dark-mode .navbar .dropdown-toggle {
+  color: var(--dark-text) !important;
+}
+
+/* Cards */
+body.dark-mode .card {
+  background-color: var(--dark-card-bg);
+  border-color: var(--dark-border);
+}
+
+body.dark-mode .card-title,
+body.dark-mode .card-text,
+body.dark-mode .section-title,
+body.dark-mode h1, body.dark-mode h2, body.dark-mode h3, 
+body.dark-mode h4, body.dark-mode h5, body.dark-mode h6 {
+  color: var(--dark-text);
+}
+
+body.dark-mode .card-footer {
+  background-color: var(--dark-card-bg);
+  border-color: var(--dark-border);
+}
+
+body.dark-mode .text-muted {
+  color: var(--dark-secondary-text) !important;
+}
+
+/* Forms */
+body.dark-mode input,
+body.dark-mode textarea,
+body.dark-mode select,
+body.dark-mode .form-control,
+body.dark-mode .form-select {
+  background-color: var(--dark-input-bg);
+  border-color: var(--dark-border);
+  color: var(--dark-text);
+}
+
+body.dark-mode input::placeholder,
+body.dark-mode textarea::placeholder {
+  color: var(--dark-secondary-text);
+}
+
+/* Buttons */
+body.dark-mode .btn-outline-secondary {
+  border-color: var(--dark-secondary-text);
+  color: var(--dark-secondary-text);
+}
+
+body.dark-mode .btn-outline-secondary:hover {
+  background-color: var(--dark-hover);
+  color: var(--dark-text);
+}
+
+/* Course section */
+body.dark-mode .courses-section {
+  background-color: #1a1a1a;
+}
+
+/* Testimonials section */
+body.dark-mode .testimonials-section {
+  background-color: var(--dark-background);
+}
+
+body.dark-mode .testimonial-card,
+body.dark-mode .stats-item {
+  background-color: var(--dark-card-bg);
+}
+
+body.dark-mode .testimonial-content {
+  background-color: #252525;
+}
+
+/* Learning paths */
+body.dark-mode .learning-paths-section {
+  background-color: #1a1a1a;
+}
+
+body.dark-mode .path-body {
+  background-color: var(--dark-card-bg);
+}
+
+/* Modals */
+body.dark-mode .modal-content {
+  background-color: var(--dark-card-bg);
+  border-color: var(--dark-border);
+}
+
+body.dark-mode .modal-header {
+  border-color: var(--dark-border);
+}
+
+body.dark-mode .modal-footer {
+  border-color: var(--dark-border);
+}
+
+/* Footer */
+body.dark-mode footer {
+  background-color: #1a1a1a !important;
+}
+
+/* Dark mode toggle button */
+.dark-mode-toggle {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 1000;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.dark-mode-toggle:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  background-color: var(--primary-hover);
+}
+
+.dark-mode-toggle i {
+  font-size: 1.2rem;
+}
+
+/* Adjustments for specific elements */
+body.dark-mode .carousel-caption h1,
+body.dark-mode .carousel-caption p {
+  text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+}
+
+body.dark-mode .dropdown-menu {
+  background-color: var(--dark-card-bg);
+  border-color: var(--dark-border);
+}
+
+body.dark-mode .dropdown-item {
+  color: var(--dark-text);
+}
+
+body.dark-mode .dropdown-item:hover {
+  background-color: var(--dark-hover);
+}

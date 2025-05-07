@@ -21,17 +21,8 @@
   <link rel="stylesheet" href="/css/navBarStyle.css" />
   <link rel="stylesheet" href="/css/allCourse.css" />
 
-  <script>
-    const carousel = document.querySelector(".category-carousel");
-    document.querySelector(".scroll-btn.left").addEventListener("click", () => {
-      carousel.scrollBy({ left: -150, behavior: "smooth" });
-    });
-    document
-      .querySelector(".scroll-btn.right")
-      .addEventListener("click", () => {
-        carousel.scrollBy({ left: 150, behavior: "smooth" });
-      });
-  </script>
+     <!-- Dark Mode CSS -->
+    <link rel="stylesheet" href="/css/darkMode.css">
 
   <body>
     <!--Include Nav Bar-->
@@ -67,25 +58,50 @@
         </button>
       </div>
 
-      <!-- Course Cards -->
-      <div class="row">
-        <% courses.forEach(course => { %>
-        <div class="col-md-4 mb-4">
-          <div class="card h-100">
-            <img
-              src="<%= course.imageUrl %>"
-              class="card-img-top"
-              alt="<%= course.title %>"
-            />
-            <div class="card-body">
-              <h5 class="card-title"><%= course.title %></h5>
-              <p class="card-text"><%= course.description %></p>
-              <p class="text-muted">Category: <%= course.category %></p>
-              <a href="#" class="btn btn-primary">View Course</a>
+      <!-- Course Cards Grid using the updated design -->
+      <div class="container">
+        <div class="row" id="courseList">
+          <% courses.forEach(course => { %>
+          <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+              <img
+                src="<%= course.imageUrl || 'images/course-placeholder.jpg' %>"
+                class="card-img-top"
+                alt="<%= course.title %>"
+              />
+              <div class="card-body">
+                <h5 class="card-title fw-bold text-center fst-italic">
+                  <%= course.title || 'Untitled Course' %>
+                </h5>
+                <p class="text-center fst-italic text-muted">
+                  by <%= course.instructor || 'Unknown Instructor' %>
+                </p>
+                <p class="card-text">
+                  <% if (course.description) { %>
+                    <%= course.description.substring(0, 100) %><%= course.description.length > 100 ? '...' : '' %>
+                  <% } else { %>
+                    No description available.
+                  <% } %>
+                </p>
+                <div class="d-flex justify-content-start align-items-center mb-1">
+                  <i class="bi bi-clock me-2"></i> <%= course.duration || 'Duration not specified' %>
+                </div>
+                <div class="d-flex justify-content-start align-items-center">
+                  <i class="bi bi-star-fill me-2"></i> <%= course.rating || 0 %> (<%= Math.floor(Math.random() * 1000) %>)
+                </div>
+              </div>
+              <div class="card-footer bg-white text-center">
+                <a
+                  href="/courses/<%= course._id %>"
+                  class="btn btn-lg rounded-pill text-white"
+                  style="background-color: #ee6c4d"
+                  >Enroll</a
+                >
+              </div>
             </div>
           </div>
+          <% }) %>
         </div>
-        <% }) %>
       </div>
     </div>
 
@@ -95,5 +111,23 @@
     <!-- Bootstrap JS and Popper.js CDN (These should be placed at the end of body) -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+    
+    <!-- Category Carousel Script -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const carousel = document.querySelector(".category-carousel");
+        document.querySelector(".scroll-btn.left").addEventListener("click", () => {
+          carousel.scrollBy({ left: -150, behavior: "smooth" });
+        });
+        document
+          .querySelector(".scroll-btn.right")
+          .addEventListener("click", () => {
+            carousel.scrollBy({ left: 150, behavior: "smooth" });
+          });
+      });
+    </script>
+
+    <!-- Dark Mode JavaScript -->
+    <script src="/js/darkMode.js"></script>
   </body>
 </html>

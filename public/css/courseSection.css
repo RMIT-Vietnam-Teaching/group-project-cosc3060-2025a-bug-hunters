@@ -1,0 +1,192 @@
+/* Course Section Styles */
+.courses-section {
+  background-color: #f8f9fa; /* Light grey background */
+  padding: 60px 0;
+  position: relative;
+}
+
+/* Add a subtle wave pattern at the bottom for transition */
+.courses-section::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 20px;
+  background: linear-gradient(135deg, #f8f9fa 25%, transparent 25%) -10px 0,
+              linear-gradient(225deg, #f8f9fa 25%, transparent 25%) -10px 0,
+              linear-gradient(315deg, #f8f9fa 25%, transparent 25%),
+              linear-gradient(45deg, #f8f9fa 25%, transparent 25%);
+  background-size: 20px 20px;
+  background-color: white;
+}
+
+.courses-title {
+  font-weight: 700;
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+  color: #333;
+  text-align: center;
+}
+
+.courses-subtitle {
+  font-size: 1.2rem;
+  color: #6c757d;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+/* Course Toggle Buttons */
+.course-toggle-container {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.course-toggle-btn {
+  padding: 10px 25px;
+  border-radius: 30px;
+  font-weight: 600;
+  margin: 0 10px;
+  transition: all 0.3s;
+}
+
+/* Course toggle buttons styling */
+.newCourse-btn,
+.btn-outline-secondary {
+  background-color: white; /* White fill when not active */
+  color: lightgrey; /* Light grey text when not active */
+  border: 2px solid lightgrey; /* Light grey border when not active */
+  border-radius: 30px;
+  padding: 8px 20px;
+  transition: all 0.3s ease;
+  font-weight: 600;
+}
+
+/* Hover state for both buttons */
+.newCourse-btn:hover,
+.btn-outline-secondary:hover {
+  background-color: #ee6c4d; /* Orange fill on hover */
+  color: black; /* Black text on hover */
+  border-color: black; /* Black border on hover */
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Active state for both buttons */
+.newCourse-btn.active,
+.btn-outline-secondary.active {
+  background-color: #ee6c4d; /* Orange fill when active */
+  color: white; /* White text when active */
+  border-color: black; /* Black border when active */
+}
+
+/* Course Card Styles */
+.course-card {
+  background-color: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+  height: 100%;
+  transition: transform 0.3s;
+  margin-bottom: 30px;
+}
+
+.course-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+}
+
+.card-img-top {
+  height: 200px;
+  object-fit: cover;
+}
+
+.card-body {
+  padding: 20px;
+}
+
+.card-title {
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.card-text {
+  color: #6c757d;
+  margin-bottom: 15px;
+}
+
+.card-footer {
+  padding: 15px 20px;
+  border-top: 1px solid rgba(0,0,0,0.05);
+}
+
+/* Course Metadata */
+.course-meta {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+  font-size: 0.9rem;
+  color: #6c757d;
+}
+
+.course-instructor, .course-rating {
+  display: flex;
+  align-items: center;
+}
+
+.course-instructor i, .course-rating i {
+  margin-right: 5px;
+  color: #ee6c4d;
+}
+
+/* Enroll Button */
+.enroll-btn {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  border-radius: 30px;
+  background-color: #ee6c4d;
+  color: white;
+  border: none;
+  font-weight: 600;
+  text-align: center;
+  transition: all 0.3s;
+}
+
+.enroll-btn:hover {
+  background-color: #e95d3c;
+  color: white;
+  transform: scale(1.05);
+}
+
+/* View All Courses Button */
+.view-all-btn {
+  display: block;
+  margin: 30px auto 0;
+  padding: 12px 30px;
+  border-radius: 30px;
+  background-color: transparent;
+  border: 2px solid #ee6c4d;
+  color: #ee6c4d;
+  font-weight: 600;
+  text-align: center;
+  transition: all 0.3s;
+}
+
+.view-all-btn:hover {
+  background-color: #ee6c4d;
+  color: white;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .courses-title {
+    font-size: 2rem;
+  }
+  
+  .course-toggle-btn {
+    padding: 8px 20px;
+    margin: 0 5px;
+    font-size: 0.9rem;
+  }
+}

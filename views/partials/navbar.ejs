@@ -27,6 +27,14 @@
         >
             <span class="navbar-toggler-icon"></span>
         </button>
+        <ul class="dropdown-menu" aria-labelledby="coursesDropdown">
+          <li><a class="dropdown-item" href="/courses">All Courses</a></li>
+          <li><a class="dropdown-item" href="#">Featured Courses</a></li>
+          <li><a class="dropdown-item" href="#">New Courses</a></li>
+        </ul>
+      </div>
+
+<!-- notice -->
 
         <!-- Navbar Content -->
         <div class="collapse navbar-collapse" id="navbarMain">
@@ -251,4 +259,59 @@
             <% } %>
         </div>
     </div>
+<<<<<<< HEAD
+=======
+  </div>
+
+  <!-- Mobile Auth Buttons (inside collapsible content) -->
+  <div class="collapse navbar-collapse px-3" id="navbarContent">
+    <ul class="navbar-nav w-100 mt-2">
+      <li class="nav-item">
+        <a href="/auth/login" class="btn login-btn w-100 mb-2">Login</a>
+      </li>
+      <li class="nav-item">
+        <a href="/auth/register" class="btn signup-btn w-100">Sign Up</a>
+      </li>
+    </ul>
+  </div>
+
+  <% } else { %>
+  <!-- dropdown replaced by nav link  -->
+  <div
+    class="d-none d-md-flex flex-shrink-0 ms-2 mx-5 align-items-center nav-links desktop-links"
+  >
+    <a href="/courses">All Courses</a>
+    <a href="#">My Courses</a>
+    <a href="#">Forum</a>
+    <a href="/courses/create" class="create-course-link"
+      ><i class="bi bi-plus-circle me-1"></i>Create Course</a
+    >
+  </div>
+
+  <!-- RIght icons  -->
+  <div class="d-flex align-items-center gap-2 flex-shrink-0 ms-auto">
+    <button class="icon-btn"><i class="bi bi-cart3"></i></button>
+    <button class="icon-btn"><i class="bi bi-bell"></i></button>
+    <button class="icon-btn"><i class="bi bi-chat-dots"></i></button>
+    <button class="icon-btn"><i class="bi bi-person-circle"></i></button>
+  </div>
+
+  <!-- navlink bar but collapse  -->
+  <div class="collapse navbar-collapse px-3" id="mobileLinks">
+    <ul class="navbar-nav w-100 mt-2">
+      <li class="nav-item">
+        <a class="nav-link" href="/courses">All Courses</a>
+      </li>
+      <li class="nav-item"><a class="nav-link" href="#">My Courses</a></li>
+      <li class="nav-item"><a class="nav-link" href="#">Forum</a></li>
+      <li class="nav-item">
+        <a class="nav-link" href="/courses/create"
+          ><i class="bi bi-plus-circle me-1"></i>Create Course</a
+        >
+      </li>
+    </ul>
+  </div>
+
+  <% } %>
+>>>>>>> testing-branch
 </nav>

@@ -59,6 +59,8 @@ const institution = require("./routes/institutionRoutes");
 
 // const coinPaymentRoutes = require("./routes/coinPayment");
 const courseRoutes = require("./routes/courseRoutes");
+const userRoutes = require("./routes/userRoutes");
+const subscriptionRoutes = require("./routes/subscriptionRoutes");
 
 // Use Routes
 app.use("/", homeRoutes);
@@ -72,6 +74,8 @@ app.use("/courses", courseRoutes);
 app.use('/navbar', (req,res) => {
     res.render('partials/navbar');
 });
+app.use("/user", userRoutes);
+app.use("/api", subscriptionRoutes);
 
 // Start Server
 app.listen(port, () => {
