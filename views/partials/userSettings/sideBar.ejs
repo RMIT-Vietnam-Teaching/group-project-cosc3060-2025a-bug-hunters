@@ -94,19 +94,7 @@ body.dark #sidebarDropdown img {
       <span></span>
       <span></span>
     </button>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4 d-flex align-items-center">
-      <div class="d-flex align-items-center gap-2">
-        <button class="mobile-menu-button d-lg-none" id="sidebarToggle" aria-label="Toggle sidebar">
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
-        <a class="navbar-brand" href="#">YourSite</a>
-      </div>
-      <div class="ms-auto">
-        <span class="text-white me-3">Welcome, <%= user.firstName %></span>
-      </div>
-    </nav>
+    <%- include('../navbar') %>
   
     <div class="container-fluid">
       <div class="row vh-100">
