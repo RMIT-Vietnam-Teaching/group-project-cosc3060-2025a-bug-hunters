@@ -12,21 +12,6 @@ const { port } = require("./configs/keys");
 
 dotenv.config();
 
-// app.use(
-    //     cors({
-        //       origin: "http://localhost:5500",
-        //     })
-        //   )
-        
-        //set up view engine
-        app.set("view engine", "ejs");
-        app.use(cors());
-        app.use(express.json());
-        app.use(express.urlencoded({ extended: true }));
-        app.use(express.static("public"));
-        
-        // Set up Mongo DB connection
-        connectDB();
 
 //set up view engine
 app.set("view engine", "ejs");
@@ -73,7 +58,7 @@ const authRoutes = require("./routes/authRoutes");
 const homeRoutes = require("./routes/homeRoutes");
 const userSettingsRoutes = require("./routes/userSetting");
 const adminRoutes = require("./routes/adminRoutes");
-const userRoutes = require("./routes/userRoutes");
+const userProfileRoutes = require("./routes/userProfileRoutes");
 const institution = require("./routes/institutionRoutes");
 // const userProfileRoutes = require("./routes/userProfileRoutes");
 
