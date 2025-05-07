@@ -72,17 +72,6 @@ app.use("/courses", courseRoutes);
 app.use('/navbar', (req,res) => {
     res.render('partials/navbar');
 });
-app.get("/set-test-cookie", (req, res) => {
-  res.cookie("userId", "681affba12f498fff96735e7", {
-    httpOnly: true,
-    signed: true,
-    secure: false,
-    sameSite: "Lax",
-    maxAge: 1000 * 60 * 60 * 24
-  });
-  res.send("Signed test cookie set.");
-});
-
 
 // Start Server
 app.listen(port, () => {
