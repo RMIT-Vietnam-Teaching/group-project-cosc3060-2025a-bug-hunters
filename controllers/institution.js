@@ -37,6 +37,40 @@ exports.renderEditCoursePage = async (req, res) => {
   }
 };
 
+exports.renderTutors = async (req, res) => {
+  try {
+      const user = await User.find({ role: "Instructor" });
+      res.render("institutionTutor", { user });
+  }
+  catch (error) {
+      console.error("Error fetching tutors:", error);
+      res.status(500).send("Internal Server Error");
+}};
+
+exports.renderTutorDetail = async (req, res) => {
+  try {
+      const { id } = req.params;
+      const user = await User.findById(id);
+      const courses = await Course.find({ author: id }).lean();
+      if (!user) {
+          return res.status(404).send("Tutor not found");
+      }
+      res.render("institutionTutorDetail", { user, courses });
+  }
+  catch (error) {
+      console.error("Error fetching tutor details:", error);
+      res.status(500).send("Internal Server Error");
+}};
+
+exports.renderAddTutorForm = (req, res) => {
+  res.render("institutionAddTutor");
+};
+
+exports.renderCourseFeedbackPage = async (req, res) => {
+  const course = await Course.findById(req.params.id);
+  res.render("institutionCourseFeedback", { course });
+};
+
 exports.updateCourse = async (req, res) => {
   try {
     const { id } = req.params;
@@ -71,31 +105,6 @@ exports.deleteCourseFromManageCourse = async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 };
-
-exports.renderTutors = async (req, res) => {
-    try {
-        const user = await User.find({ role: "Instructor" });
-        res.render("institutionTutor", { user });
-    }
-    catch (error) {
-        console.error("Error fetching tutors:", error);
-        res.status(500).send("Internal Server Error");
-}};
-
-exports.renderTutorDetail = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const user = await User.findById(id);
-        const courses = await Course.find({ author: id }).lean();
-        if (!user) {
-            return res.status(404).send("Tutor not found");
-        }
-        res.render("institutionTutorDetail", { user, courses });
-    }
-    catch (error) {
-        console.error("Error fetching tutor details:", error);
-        res.status(500).send("Internal Server Error");
-}};
 
 exports.deleteCourseFromInstitution = async (req, res) => {
   try {
@@ -138,11 +147,6 @@ exports.deleteTutorFromInstitution = async (req, res) => {
 };
 
 
-
-exports.renderAddTutorForm = (req, res) => {
-  res.render("institutionAddTutor");
-};
-
 exports.createTutor = async (req, res) => {
   try {
     const { firstName, lastName, email, password, headline, description } = req.body;
@@ -174,9 +178,4 @@ exports.createTutor = async (req, res) => {
     console.error("Error creating tutor:", err);
     res.status(500).send("Internal Server Error");
   }
-};
-
-exports.renderCourseFeedbackPage = async (req, res) => {
-  const course = await Course.findById(req.params.id);
-  res.render("institutionCourseFeedback", { course });
 };

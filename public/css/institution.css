@@ -1,32 +1,6 @@
     body { background-color: #f9fafb; }
 
 
-    /* institution tutor details */
-    .fieldTag {
-      background-color: #e6fbfd;
-      color: #000;
-      padding: 0.5rem 1rem;
-      border-radius: 50px;
-      font-size: 0.90rem;
-      font-weight: 400;
-      display: inline-block;
-      text-align: center;
-      white-space: nowrap;
-    }
-
-
-    /* institution tutor */
-    .teaching-tag {
-      background-color: #fdd; 
-      color: #c44; 
-      font-size: 0.75rem;
-      padding: 0.2rem 0.5rem;
-      border-radius: 0.5rem;
-      display: inline-block;
-    }
-
-
-
 .btn-light:hover {
   background-color: #f1f1f1;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
