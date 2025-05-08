@@ -19,6 +19,10 @@ const messageSchema = new mongoose.Schema({
         type: String, // URL or path to the file
         default: null,
     },
+    deletedBy: { 
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'User' 
+    },
     read: {
         type: Boolean,
         default: false,
