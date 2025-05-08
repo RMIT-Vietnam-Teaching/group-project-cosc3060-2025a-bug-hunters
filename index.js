@@ -4,6 +4,8 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
+const User = require("./models/User");
+const path = require("path");
 
 const connectDB = require("./utils/db");
 
@@ -20,35 +22,30 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.use(cookieParser(process.env.COOKIE_SECRET));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 
-//Set up a session
-// app.use(
-//     session({
-//         secret: "yourSecretKey",
-//         resave: false,
-//         saveUninitialized: true,
-//         cookie: { secure: false },
-//     })
-// );
 
-// app.use(async (req, res, next) => {
-//     const userId = req.cookies.userId;
+app.use(async (req, res, next) => {
+    const userId = req.signedCookies.userId;
 
-//     if (userId) {
-//         try {
-//             const user = await User.findById(userId).lean();
-//             res.locals.user = user; // this makes <%= user %> work in views
-//         } catch (err) {
-//             console.error("Failed to fetch user from cookie:", err);
-//             res.locals.user = null;
-//         }
-//     } else {
-//         res.locals.user = null;
-//     }
+    if (userId) {
+        try {
+            const user = await User.findById(userId).lean();
+            req.user = user;
+            res.locals.user = user; // makes <%= user %> work in views
+        } catch (err) {
+            console.error("Error loading user from cookie:", err);
+            req.user = null;
+            res.locals.user = null;
+        }
+    } else {
+        req.user = null;
+        res.locals.user = null;
+    }
 
-//     next();
-// });
+    next();
+});
 
 // Set up Mongo DB connection
 connectDB();
@@ -62,6 +59,8 @@ app.use("/", homeRoutes);
 app.use("/auth", authRoutes);
 app.use("/", chatRoutes);
 
-app.listen(port, () => {
-    console.log(chalk.green(`Server is running on port ${port}`));
-});
+// app.listen(port, () => {
+//     console.log(chalk.green(`Server is running on port ${port}`));
+// });
+
+module.exports = app;

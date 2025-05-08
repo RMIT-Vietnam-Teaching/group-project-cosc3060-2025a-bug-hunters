@@ -1,383 +1,368 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat Application</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <style>
-        html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-        }
-        
-        .chat-container {
-            height: 100vh;
-            width: 100vw;
-            max-height: 100vh;
-            max-width: 100vw;
-            overflow: hidden;
-            padding: 0;
-            margin: 0;
-        }
-        
-        .row {
-            height: 100%;
-            width: 100%;
-            margin: 0;
-        }
-        
-        .sidebar {
-            border-right: 1px solid #dee2e6;
-            height: 100%;
-            overflow-y: auto;
-            padding: 0;
-        }
-        
-        .sidebar-header {
-            padding: 15px;
-            border-bottom: 1px solid #dee2e6;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .contact-list {
-            overflow-y: auto;
-            height: calc(100% - 110px); /* Account for header and search */
-        }
-        
-        .contact-item {
-            padding: 10px 15px;
-            border-bottom: 1px solid #f8f9fa;
-            cursor: pointer;
-        }
-        
-        .contact-item:hover {
-            background-color: #f8f9fa;
-        }
-        
-        .contact-item.active {
-            background-color: #e9ecef;
-        }
-        
-        .chat-content {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            padding: 0;
-        }
-        
-        .chat-header {
-            padding: 15px;
-            border-bottom: 1px solid #dee2e6;
-            display: flex;
-            align-items: center;
-        }
-        
-        .messages-container {
-            flex-grow: 1;
-            overflow-y: auto;
-            padding: 15px;
-            background-color: #f8f9fa;
-        }
-        
-        .message {
-            margin-bottom: 15px;
-            display: flex;
-        }
-        
-        .message-content {
-            max-width: 70%;
-            padding: 10px 15px;
-            border-radius: 15px;
-        }
-        
-        .message.received {
-            justify-content: flex-start;
-        }
-        
-        .message.sent {
-            justify-content: flex-end;
-        }
-        
-        .received .message-content {
-            background-color: #e9ecef;
-            border-top-left-radius: 5px;
-        }
-        
-        .sent .message-content {
-            background-color: #0d6efd;
-            color: white;
-            border-top-right-radius: 5px;
-        }
-        
-        .chat-input-container {
-            padding: 15px;
-            border-top: 1px solid #dee2e6;
-            display: flex;
-            align-items: center;
-        }
-        
-        .avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: #e9ecef;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 10px;
-            flex-shrink: 0;
-        }
-        
-        .search-container {
-            padding: 10px 15px;
-            border-bottom: 1px solid #dee2e6;
-        }
-        
-        .user-info {
-            font-size: 0.9rem;
-            color: #6c757d;
-        }
-        
-        .input-message {
-            flex-grow: 1;
-        }
-        
-        /* Responsive adjustments */
-        @media (max-width: 767px) {
-            .sidebar {
-                height: 100%;
-            }
-            
-            .contact-list {
-                height: calc(100% - 110px);
-            }
-            
-            .message-content {
-                max-width: 85%;
-            }
-        }
-    </style>
-</head>
+
+<%- include('partials/authentication/headTag', { title: 'Chat', stylesheet: 'chat-style.css' }) %>
+
 <body>
-    <div class="container-fluid chat-container">
-        <div class="row">
+
+    <div class="container-fluid chat-container d-flex flex-column">
+        <div class="row flex-md-nowrap h-100 w-100">
             <!-- Sidebar -->
-            <div class="col-md-3 col-lg-3 sidebar">
+            <div class="col-12 col-md-3 col-lg-3 sidebar">
                 <div class="sidebar-header">
                     <h5 class="mb-0">Chat</h5>
-                    <button class="btn btn-sm btn-light"><i class="fas fa-edit"></i></button>
                 </div>
-                
+
                 <div class="search-container">
                     <div class="input-group">
-                        <span class="input-group-text bg-light border-0"><i class="fas fa-search"></i></span>
-                        <input type="text" class="form-control border-0 bg-light" placeholder="Search user, or message">
+                        <span class="input-group-text bg-light border-0"><i class="bi bi-search"></i></span>
+                        <input type="text" id="searchInput" class="form-control border-0 bg-light" placeholder="Search user or message">
                     </div>
                 </div>
-                
+
                 <div class="contact-list">
-                    <!-- Contacts -->
-                    <div class="contact-item active">
-                        <div class="d-flex">
-                            <div class="avatar">
-                                <i class="fas fa-user"></i>
+                    <% contacts.forEach(contact => { %>
+                        <a href="/messages?contactId=<%= contact._id %>" class="text-decoration-none text-dark contact-link">
+                            <div class="contact-item <%= selectedContact && contact._id.toString() === selectedContact._id.toString() ? 'active' : '' %>" 
+                                 data-email="<%= contact.email %>" 
+                                 data-message="<%= (contact.lastMessage || '') %>">
+                                <div class="d-flex">
+                                    <div class="avatar">
+                                        <i class="bi bi-person-fill"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold"><%= contact.email %></div>
+                                        <div class="user-info"><%= contact.lastMessage || 'No messages yet' %></div>
+                                    </div>
+                                </div>
                             </div>
-                            <div>
-                                <div class="fw-bold">User Name</div>
-                                <div class="user-info">User: Text Content</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="contact-item">
-                        <div class="d-flex">
-                            <div class="avatar">
-                                <i class="fas fa-user"></i>
-                            </div>
-                            <div>
-                                <div class="fw-bold">User Name</div>
-                                <div class="user-info">User: Text Content</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="contact-item">
-                        <div class="d-flex">
-                            <div class="avatar">
-                                <i class="fas fa-user"></i>
-                            </div>
-                            <div>
-                                <div class="fw-bold">User Name</div>
-                                <div class="user-info">User: Text Content</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="contact-item">
-                        <div class="d-flex">
-                            <div class="avatar">
-                                <i class="fas fa-user"></i>
-                            </div>
-                            <div>
-                                <div class="fw-bold">User Name</div>
-                                <div class="user-info">User: Text Content</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="contact-item">
-                        <div class="d-flex">
-                            <div class="avatar">
-                                <i class="fas fa-user"></i>
-                            </div>
-                            <div>
-                                <div class="fw-bold">User Name</div>
-                                <div class="user-info">User: Text Content</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="contact-item">
-                        <div class="d-flex">
-                            <div class="avatar">
-                                <i class="fas fa-user"></i>
-                            </div>
-                            <div>
-                                <div class="fw-bold">User Name</div>
-                                <div class="user-info">User: Text Content</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="contact-item">
-                        <div class="d-flex">
-                            <div class="avatar">
-                                <i class="fas fa-user"></i>
-                            </div>
-                            <div>
-                                <div class="fw-bold">User Name</div>
-                                <div class="user-info">User: Text Content</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="contact-item">
-                        <div class="d-flex">
-                            <div class="avatar">
-                                <i class="fas fa-user"></i>
-                            </div>
-                            <div>
-                                <div class="fw-bold">User Name</div>
-                                <div class="user-info">User: Text Content</div>
-                            </div>
-                        </div>
-                    </div>
+                        </a>
+                    <% }); %>
                 </div>
             </div>
-            
+
             <!-- Chat Content -->
-            <div class="col-md-9 col-lg-9 chat-content">
-                <div class="chat-header">
-                    <div class="avatar">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    <div>
-                        <div class="fw-bold">User Name</div>
-                    </div>
-                </div>
-                
-                <div class="messages-container">
-                    <!-- Messages -->
-                    <div class="message received">
-                        <div class="avatar">
-                            <i class="fas fa-user"></i>
-                        </div>
-                        <div class="message-content">
-                            Text Content
+            <div class="col-12 col-md-9 col-lg-9 chat-content">
+                <% if (selectedContact) { %>
+                    <div class="chat-header d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center">
+                            <button class="btn btn-light d-md-none me-2" onclick="toggleSidebar()">
+                                <i class="bi bi-list"></i>
+                            </button>
+                            <div class="avatar">
+                                <i class="bi bi-person-fill"></i>
+                            </div>
+                            <div>
+                                <div class="fw-bold"><%= selectedContact.email %></div>
+                            </div>
                         </div>
                     </div>
-                    
-                    <div class="message sent">
-                        <div class="message-content">
-                            Text Content
-                        </div>
-                        <div class="avatar">
-                            <i class="fas fa-user"></i>
-                        </div>
+
+                    <div class="messages-container">
+                        <% messages.forEach(message => { %>
+                            <div class="message <%= message.sender.toString() === currentUserId.toString() ? 'sent' : 'received' %>">
+                                <% if (message.sender.toString() !== currentUserId.toString()) { %>
+                                    <div class="avatar">
+                                        <i class="bi bi-person-fill"></i>
+                                    </div>
+                                <% } %>
+                                <div class="message-content"><%= message.text %>
+                                    <% if (message.attachment) { %>
+                                        <% if (message.attachment.endsWith('.jpg') || message.attachment.endsWith('.jpeg') || message.attachment.endsWith('.png')) { %>
+                                            <img src="<%= message.attachment %>" alt="Image" class="message-image">
+                                        <% } else { %>
+                                            <a href="<%= message.attachment %>" target="_blank" class="file-link">Download file</a>
+                                        <% } %>
+                                    <% } %>
+                                </div>
+                                <% if (message.sender.toString() === currentUserId.toString()) { %>
+                                    <div class="avatar">
+                                        <i class="bi bi-person-fill"></i>
+                                    </div>
+                                <% } %>
+                            </div>
+                        <% }) %>
                     </div>
-                    
-                    <div class="message received">
-                        <div class="avatar">
-                            <i class="fas fa-user"></i>
-                        </div>
-                        <div class="message-content">
-                            Text Content
-                        </div>
+
+                    <div class="chat-input-container">
+                        <form id="chatForm" class="d-flex w-100" method="POST" action="/message" enctype="multipart/form-data">
+                            <input type="hidden" name="recipientId" value="<%= selectedContact._id %>">
+                            <input type="file" id="imageInput" name="image" accept="image/*" style="display: none;" />
+                            <input type="file" id="fileInput" name="file" accept=".pdf,.doc,.docx,.xls,.xlsx,.txt" style="display: none;" />
+                            <button class="btn btn-light me-2" type="button" onclick="document.getElementById('imageInput').click();">
+                                <i class="bi bi-image"></i>
+                            </button>
+                            <button class="btn btn-light me-2" type="button" onclick="document.getElementById('fileInput').click();">
+                                <i class="bi bi-paperclip"></i>
+                            </button>
+
+                            <input type="text" class="form-control input-message" name="text" placeholder="Write something" required>
+                            <button class="btn btn-primary ms-2" type="submit"><i class="bi bi-send-fill"></i></button>
+                        </form>
                     </div>
-                    
-                    <div class="message received">
-                        <div class="avatar">
-                            <i class="fas fa-user"></i>
-                        </div>
-                        <div class="message-content">
-                            Text Content
-                        </div>
+                <% } else { %>
+                    <div class="d-flex justify-content-center align-items-center h-100">
+                        <h4>Select a conversation to start chatting</h4>
                     </div>
-                    
-                    <div class="message sent">
-                        <div class="message-content">
-                            Text Content
-                        </div>
-                        <div class="avatar">
-                            <i class="fas fa-user"></i>
-                        </div>
-                    </div>
-                    
-                    <div class="message received">
-                        <div class="avatar">
-                            <i class="fas fa-user"></i>
-                        </div>
-                        <div class="message-content">
-                            Text Content
-                        </div>
-                    </div>
-                    
-                    <div class="message received">
-                        <div class="avatar">
-                            <i class="fas fa-user"></i>
-                        </div>
-                        <div class="message-content">
-                            Text Content
-                        </div>
-                    </div>
-                    
-                    <div class="message sent">
-                        <div class="message-content">
-                            Text Content
-                        </div>
-                        <div class="avatar">
-                            <i class="fas fa-user"></i>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="chat-input-container">
-                    <button class="btn btn-light me-2"><i class="fas fa-image"></i></button>
-                    <button class="btn btn-light me-2"><i class="fas fa-paperclip"></i></button>
-                    <button class="btn btn-light me-2"><i class="far fa-smile"></i></button>
-                    <input type="text" class="form-control input-message" placeholder="Write something">
-                    <button class="btn btn-primary ms-2"><i class="fas fa-paper-plane"></i></button>
-                </div>
+                <% } %>
             </div>
         </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const socket = io();
+
+const currentUserId = "<%= currentUserId %>";
+const recipientId = "<%= selectedContact ? selectedContact._id : '' %>";
+
+if (recipientId) {
+    socket.emit("joinRoom", currentUserId);
+}
+
+const form = document.getElementById("chatForm");
+const input = form.querySelector("input[name='text']");
+const messagesContainer = document.querySelector(".messages-container");
+const imageInput = document.getElementById('imageInput');
+const fileInput = document.getElementById('fileInput');
+
+function updateLastMessageInContactList(userId, messageText) {
+    const contactLink = document.querySelector(`a[href="/messages?contactId=${userId}"]`);
+    if (contactLink) {
+        const infoEl = contactLink.querySelector(".user-info");
+        if (infoEl) {
+            infoEl.textContent = messageText;
+        }
+    }
+}
+
+function scrollToBottom() {
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+window.addEventListener("DOMContentLoaded", scrollToBottom);
+
+// Auto-upload when a file is selected (for both image and regular files)
+imageInput.addEventListener('change', function() {
+    if (this.files.length > 0) {
+        uploadFile(this.files[0]);
+    }
+});
+
+fileInput.addEventListener('change', function() {
+    if (this.files.length > 0) {
+        uploadFile(this.files[0]);
+    }
+});
+
+// Function to handle file uploads
+function uploadFile(file) {
+    // Show loading indicator or feedback
+    const loadingDiv = document.createElement('div');
+    loadingDiv.className = 'message sent';
+    loadingDiv.innerHTML = `<div class="message-content">Uploading ${file.name}... <i class="bi bi-arrow-repeat spinning"></i></div>
+                           <div class="avatar"><i class="bi bi-person-fill"></i></div>`;
+    messagesContainer.appendChild(loadingDiv);
+    scrollToBottom();
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    fetch('/uploads', {
+        method: 'POST',
+        body: formData,
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        // Remove loading indicator
+        messagesContainer.removeChild(loadingDiv);
+        
+        // Create a full URL for the attachment
+        const fileUrl = data.fileUrl;
+        console.log("Uploaded file URL:", fileUrl);
+        
+        // Get message text
+        const text = `Sent a file: ${file.name}`;
+        
+        // Send the message with attachment
+        socket.emit("sendMessage", {
+            senderId: currentUserId,
+            recipientId,
+            text: text,
+            attachment: fileUrl
+        });
+
+        // Create message element
+        const msgEl = document.createElement("div");
+        msgEl.className = "message sent";
+        
+        let attachmentHTML = '';
+        if (file.type.startsWith('image/')) {
+            attachmentHTML = `<img src="${fileUrl}" alt="Image" class="message-image">`;
+        } else {
+            attachmentHTML = `<a href="${fileUrl}" target="_blank" class="file-link">Download ${file.name}</a>`;
+        }
+        
+        msgEl.innerHTML = `<div class="message-content">${text}<br>${attachmentHTML}</div>
+                          <div class="avatar"><i class="bi bi-person-fill"></i></div>`;
+        messagesContainer.appendChild(msgEl);
+        scrollToBottom();
+        
+        // Update the contact list
+        updateLastMessageInContactList(recipientId, text);
+    })
+    .catch(error => {
+        console.error("File upload failed", error);
+        // Remove loading indicator and show error
+        messagesContainer.removeChild(loadingDiv);
+        
+        const errorEl = document.createElement("div");
+        errorEl.className = "message sent error";
+        errorEl.innerHTML = `<div class="message-content">Failed to upload ${file.name}. Please try again.</div>
+                            <div class="avatar"><i class="bi bi-person-fill"></i></div>`;
+        messagesContainer.appendChild(errorEl);
+        scrollToBottom();
+        
+        alert('File upload failed: ' + error.message);
+    });
+}
+
+form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    const message = input.value;
+    
+    if (!message.trim()) {
+        return; // Don't send empty messages
+    }
+
+    socket.emit("sendMessage", {
+        senderId: currentUserId,
+        recipientId,
+        text: message,
+    });
+
+    const msgEl = document.createElement("div");
+    msgEl.className = "message sent";
+    msgEl.innerHTML = `<div class="message-content">${message}</div><div class="avatar"><i class="bi bi-person-fill"></i></div>`;
+    messagesContainer.appendChild(msgEl);
+    scrollToBottom();
+    updateLastMessageInContactList(recipientId, message);
+    input.value = "";
+});
+
+socket.on("receiveMessage", (data) => {
+    console.log("Received message data:", data);
+    const activeContactId = recipientId;
+
+    if (data.senderId === activeContactId) {
+        let attachmentHTML = '';
+        if (data.attachment) {
+            console.log("Processing attachment:", data.attachment);
+            if (data.attachment.match(/\.(jpg|jpeg|png|gif)$/i)) {
+                attachmentHTML = `<br><img src="${data.attachment}" alt="Image" class="message-image">`;
+            } else {
+                // Extract filename from path if possible
+                const filename = data.attachment.split('/').pop();
+                attachmentHTML = `<br><a href="${data.attachment}" target="_blank" class="file-link">Download ${filename}</a>`;
+            }
+        }
+        
+        const msgEl = document.createElement("div");
+        msgEl.className = "message received";
+        msgEl.innerHTML = `<div class="avatar"><i class="bi bi-person-fill"></i></div>
+                           <div class="message-content">${data.text || ""}${attachmentHTML}</div>`;
+        messagesContainer.appendChild(msgEl);
+        scrollToBottom();
+    } else {
+        showUnreadIndicator(data.senderId);
+    }
+
+    updateLastMessageInContactList(data.senderId, data.text);
+});
+
+function toggleSidebar() {
+    const sidebar = document.querySelector(".sidebar");
+    sidebar.classList.toggle("show");
+}
+
+document.getElementById("searchInput").addEventListener("input", function () {
+    const searchTerm = this.value.toLowerCase();
+    const contactLinks = document.querySelectorAll(".contact-link");
+
+    contactLinks.forEach(link => {
+        const contactItem = link.querySelector(".contact-item");
+        const email = contactItem.getAttribute("data-email");
+        const message = contactItem.getAttribute("data-message");
+
+        if (email.toLowerCase().includes(searchTerm) || (message && message.toLowerCase().includes(searchTerm))) {
+            link.style.display = "";
+        } else {
+            link.style.display = "none";
+        }
+    });
+});
+
+// Add CSS for spinner
+const style = document.createElement('style');
+style.textContent = `
+    .spinning {
+        animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    .message.error .message-content {
+        background-color: #ffdddd;
+    }
+    .message-image {
+        max-width: 100%;
+        max-height: 300px;
+        margin-top: 8px;
+        border-radius: 8px;
+    }
+    .file-link {
+        display: inline-block;
+        padding: 5px 10px;
+        background: #f0f0f0;
+        border-radius: 4px;
+        margin-top: 8px;
+        text-decoration: none;
+        color: #0066cc;
+    }
+    .file-link:hover {
+        background: #e0e0e0;
+    }
+`;
+document.head.appendChild(style);
+
+// 🔴 Red dot unread indicator
+function showUnreadIndicator(userId) {
+    const contactLink = document.querySelector(`a[href="/messages?contactId=${userId}"]`);
+    if (contactLink) {
+        let badge = contactLink.querySelector(".unread-badge");
+        if (!badge) {
+            badge = document.createElement("span");
+            badge.className = "unread-badge";
+            badge.style.cssText = `
+                width: 10px;
+                height: 10px;
+                background: red;
+                border-radius: 50%;
+                display: inline-block;
+                margin-left: 5px;
+            `;
+            const target = contactLink.querySelector(".fw-bold");
+            if (target) target.appendChild(badge);
+        }
+    }
+}
+    </script>
 </body>
 </html>
