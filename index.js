@@ -46,6 +46,7 @@ const userSettingsRoutes = require("./routes/userSetting");
 const adminRoutes = require("./routes/adminRoutes");
 const userProfileRoutes = require("./routes/userProfileRoutes");
 const institution = require("./routes/institutionRoutes");
+const searchRoutes = require("./routes/searchRoutes");
 
 
 
@@ -63,6 +64,7 @@ app.use("/admin", adminRoutes);
 app.use("/userSettings", userSettingsRoutes);
 app.use("/userProfile", userProfileRoutes);
 app.use("/courses", courseRoutes);
+app.use("/search", searchRoutes);
 // app.use("/institution", institution);
 // app.use("/payment", coinPaymentRoutes);
 app.use('/navbar', (req,res) => {
