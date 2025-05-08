@@ -150,7 +150,7 @@ router.post("/create", upload.single("courseImage"), async (req, res) => {
   }
 });
 
-// Get individual course page
+
 router.get("/:id", async (req, res) => {
   try {
     const course = await Course.findById(req.params.id);

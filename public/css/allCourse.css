@@ -1,8 +1,8 @@
 /* All button */
 .btn-all {
-  background-color: orange;
-  color: white;
-  border: none;
+  background-color: white;
+  color: black;
+  border: 1px solid lightsalmon;
 }
 
 .btn-all.active {
@@ -11,7 +11,7 @@
 }
 
 .btn-all:hover {
-  background-color: #e07b4f;
+  background-color: orange;
   color: white;
 }
 
