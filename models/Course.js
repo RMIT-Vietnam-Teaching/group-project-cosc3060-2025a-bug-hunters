@@ -37,6 +37,16 @@ const courseSchema = new Schema({
         enum: ["Not Started", "On Going", "Finished"],
         default: "Not Started",
     },
+    category: {
+        type: String,
+
+        trim: true,
+    },
+    description: {
+        type: String,
+
+        trim: true,
+    },
 });
 
 module.exports = mongoose.model("Course", courseSchema);

@@ -18,7 +18,17 @@ const storage = new CloudinaryStorage({
     },
 });
 
+const forumStorage = new CloudinaryStorage({
+    cloudinary,
+    params: {
+        folder: "forum_posts",
+        allowed_formats: ["jpg", "png", "jpeg", "mp4"],
+        transformation: [{ width: 1080, crop: "limit" }],
+    },
+});
+
 module.exports = {
     cloudinary,
+    forumStorage,
     storage,
 };
