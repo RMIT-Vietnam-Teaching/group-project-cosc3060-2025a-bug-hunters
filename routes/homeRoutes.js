@@ -11,6 +11,7 @@ router.get("/", async (req, res) => {
     const popularCourses = await Course.find().sort({ rating: -1 }).limit(9);
 
     res.render("homepage", {
+      user: res.locals.user,
       newCourses,
       popularCourses,
     });
@@ -18,6 +19,7 @@ router.get("/", async (req, res) => {
     console.error("Error loading homepage courses:", err);
     // Just render the homepage with empty arrays if there's an error
     res.render("homepage", {
+      user: res.locals.user,
       newCourses: [],
       popularCourses: [],
     });

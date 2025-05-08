@@ -39,6 +39,8 @@ function requireOwnUserAccess(req, res, next) {
 
   next();
 }
+
+
 module.exports = {
   sessionMiddleware,
   setUserFromCookie,

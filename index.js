@@ -35,12 +35,6 @@ app.use(setUserFromCookie);
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Make session user available in all views
-app.use((req, res, next) => {
-  console.log("res.locals.user set to:", req.session.user);
-  res.locals.user = req.session.user || null;
-  next();
-});
 
 // Connect to MongoDB
 connectDB();

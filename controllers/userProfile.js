@@ -2,7 +2,7 @@ const User = require("../models/User");
 
 exports.renderUserProfileByParam = async (req, res) => {
   const loggedInUserId = req.signedCookies?.userId;
-  const routeUserId = req.params.userId;
+  const routeUserId = req.signedCookies?.userId;
 
   if (!loggedInUserId || loggedInUserId !== routeUserId) {
     return res.status(403).send("Unauthorized access.");
