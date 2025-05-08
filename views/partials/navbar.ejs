@@ -1,91 +1,258 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-white">
-  <div class="container-fluid">
+<nav
+    class="navbar navbar-expand-lg shadow-sm"
+    style="
+        background-color: #fff;
+        padding: 10px 24px;
+        border-bottom: 1px solid #eaeaea;
+    "
+>
+    <div class="container-fluid" style="flex-wrap: nowrap">
+        <!-- Brand -->
+        <a
+            class="navbar-brand fw-bold text-dark"
+            href="/"
+            style="font-size: 1.4rem"
+            >Level Up</a
+        >
 
-    <!-- Toggler + Logo -->
-    <div class="d-flex align-items-center flex-shrink-0 me-2">
-      <button class="navbar-toggler me-2 d-inline-block d-md-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent, #mobileLinks"
-        aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <a class="navbar-brand me-0" href="#">
-        <div class="logo">Logo</div>
-      </a>
-    </div>
+        <!-- Toggler -->
+        <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarMain"
+            aria-controls="navbarMain"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+        >
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-    <!-- Search + Dropdown -->
-    <div class="d-flex align-items-center flex-nowrap flex-grow-1 min-width-0">
-      <div class="search-container me-3">
-        <input type="text" class="search-input" placeholder="Search for courses now!">
-      </div>
+        <!-- Navbar Content -->
+        <div class="collapse navbar-collapse" id="navbarMain">
+            <!-- Search Bar -->
+            <form class="d-flex flex-grow-1 me-4" style="max-width: 600px">
+                <input
+                    class="form-control"
+                    type="search"
+                    placeholder="Search for courses..."
+                    aria-label="Search"
+                    style="
+                        background-color: #f2f2f2;
+                        border: none;
+                        border-radius: 50px;
+                        padding: 8px 20px;
+                    "
+                />
+            </form>
 
-      <% if (!user) { %>
-      
-        <div class="dropdown course-dropdown">
-          <button class="btn btn-light dropdown-toggle p-2" type="button" id="coursesDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-              All Courses
-          </button>
-          <ul class="dropdown-menu" aria-labelledby="coursesDropdown">
-          <li><a class="dropdown-item" href="#">All Courses</a></li>
-          <li><a class="dropdown-item" href="#">Featured Courses</a></li>
-          <li><a class="dropdown-item" href="#">New Courses</a></li>
-          </ul>
-        </div>
-
-            <!-- Right: Desktop Auth Buttons -->
-        <div class="desktop-auth d-none d-md-flex flex-shrink-0 ms-auto mx-2">
-          <a href="/auth/login" class="btn login-btn mx-2">Login</a>
-          <a href="/auth/register" class="btn signup-btn">Sign Up</a>
-        </div>
-
-      </div>
-
-  </div>
-    
-                <!-- Mobile Auth Buttons (inside collapsible content) -->
-      <div class="collapse navbar-collapse px-3" id="navbarContent">
-            <ul class="navbar-nav w-100 mt-2">
-              <li class="nav-item">
-                <a href="/auth/login" class="btn login-btn w-100 mb-2">Login</a>
-              </li>
-              <li class="nav-item">
-                <a href="/auth/register" class="btn signup-btn w-100">Sign Up</a>
-              </li>
+            <% if (!user) { %>
+            <!-- Guest View -->
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item dropdown">
+                    <a
+                        class="nav-link dropdown-toggle"
+                        href="#"
+                        id="courseDropdown"
+                        role="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                        style="min-width: 120px"
+                    >
+                        Courses
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="courseDropdown">
+                        <li>
+                            <a class="dropdown-item" href="#">All Courses</a>
+                        </li>
+                        <li><a class="dropdown-item" href="#">Featured</a></li>
+                        <li><a class="dropdown-item" href="#">New</a></li>
+                    </ul>
+                </li>
             </ul>
-      </div>
 
+            <div class="d-flex gap-2">
+                <a
+                    href="/auth/login"
+                    class="btn px-4 fw-semibold"
+                    style="
+                        border: 2px solid #ff8c42;
+                        color: #ff8c42;
+                        border-radius: 30px;
+                        background-color: transparent;
+                        transition: all 0.3s ease;
+                    "
+                    onmouseover="this.style.backgroundColor='#ff8c42'; this.style.color='white'"
+                    onmouseout="this.style.backgroundColor='transparent'; this.style.color='#ff8c42'"
+                >
+                    Login
+                </a>
+                <a
+                    href="/auth/register"
+                    class="btn px-4 fw-semibold"
+                    style="
+                        background-color: #ff8c42;
+                        color: white;
+                        border: 2px solid #ff8c42;
+                        border-radius: 30px;
+                        transition: all 0.3s ease;
+                    "
+                    onmouseover="this.style.backgroundColor='#e6762f'"
+                    onmouseout="this.style.backgroundColor='#ff8c42'"
+                >
+                    Register
+                </a>
+            </div>
 
-      
+            <% } else { %>
+            <!-- Authenticated View -->
+            <ul
+                class="navbar-nav me-auto mb-2 mb-lg-0 d-none d-md-flex align-items-center"
+                style="gap: 1rem"
+            >
+                <li class="nav-item">
+                    <a
+                        class="nav-link text-dark"
+                        href="#"
+                        style="font-weight: 500"
+                        >All Courses</a
+                    >
+                </li>
+                <li class="nav-item">
+                    <a
+                        class="nav-link text-dark"
+                        href="#"
+                        style="font-weight: 500"
+                        >My Courses</a
+                    >
+                </li>
+                <li class="nav-item">
+                    <a
+                        class="nav-link text-dark"
+                        href="#"
+                        style="font-weight: 500"
+                        >Forum</a
+                    >
+                </li>
+            </ul>
 
-      <% } else { %>
-      <!-- dropdown replaced by nav link  -->
-      <div class="d-none d-md-flex flex-shrink-0 ms-2 mx-5 align-items-center nav-links desktop-links">
-        <a href="#">All Courses</a>
-        <a href="#">My Courses</a>
-        <a href="#">Forum</a>
-      </div>
+            <!-- Icons & Profile -->
+            <div class="d-flex align-items-center gap-3">
+                <a href="#" class="text-dark"
+                    ><i class="bi bi-cart3 fs-5"></i
+                ></a>
+                <a href="#" class="text-dark"
+                    ><i class="bi bi-bell fs-5"></i
+                ></a>
+                <a href="#" class="text-dark"
+                    ><i class="bi bi-chat-dots fs-5"></i
+                ></a>
 
-      <!-- RIght icons  -->
-      <div class="d-flex align-items-center gap-2 flex-shrink-0 ms-auto">
-        <button class="icon-btn"><i class="bi bi-cart3"></i></button>
-        <button class="icon-btn"><i class="bi bi-bell"></i></button>
-        <button class="icon-btn"><i class="bi bi-chat-dots"></i></button>
-        <button class="icon-btn"><i class="bi bi-person-circle"></i></button>
-      </div>
+                <!-- Avatar Dropdown -->
+                <div class="dropdown">
+                    <!-- Trigger with avatar and black arrow -->
+                    <a
+                        href="#"
+                        id="profileMenu"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                        class="d-flex align-items-center text-dark text-decoration-none dropdown-toggle"
+                        style="gap: 6px"
+                    >
+                        <img
+                            src="<%= user.avatar %>"
+                            alt="Avatar"
+                            style="
+                                width: 40px;
+                                height: 40px;
+                                border-radius: 50%;
+                                object-fit: cover;
+                            "
+                        />
+                    </a>
 
+                    <ul
+                        class="dropdown-menu dropdown-menu-end shadow"
+                        aria-labelledby="profileMenu"
+                        style="
+                            min-width: 260px;
+                            border-radius: 12px;
+                            overflow: hidden;
+                        "
+                    >
+                        <!-- User Info -->
+                        <li
+                            class="px-3 py-3 d-flex align-items-center gap-2"
+                            style="border-bottom: 1px solid #dee2e6"
+                        >
+                            <img
+                                src="<%= user.avatar %>"
+                                alt="Avatar"
+                                style="
+                                    width: 48px;
+                                    height: 48px;
+                                    border-radius: 50%;
+                                    object-fit: cover;
+                                "
+                            />
+                            <div class="d-flex flex-column">
+                                <span class="fw-bold"
+                                    ><%= user.firstName %> <%= user.lastName
+                                    %></span
+                                >
+                                <small class="text-muted"
+                                    ><%= user.email %></small
+                                >
+                            </div>
+                        </li>
+
+                        <!-- Learning -->
+                        <li class="py-2">
+                            <a class="dropdown-item" href="#">My learning</a>
+                        </li>
+
+                        <!-- Cart -->
+                        <li
+                            class="py-2"
+                            style="border-bottom: 1px solid #dee2e6"
+                        >
+                            <a class="dropdown-item" href="#">My Cart</a>
+                        </li>
+
+                        <!-- Notifications -->
+                        <li class="py-2">
+                            <a class="dropdown-item" href="#">Notifications</a>
+                        </li>
+
+                        <!-- Messages -->
+                        <li
+                            class="py-2"
+                            style="border-bottom: 1px solid #dee2e6"
+                        >
+                            <a class="dropdown-item" href="#">Messages</a>
+                        </li>
+
+                        <!-- Edit Profile -->
+                        <li
+                            class="py-2"
+                            style="border-bottom: 1px solid #dee2e6"
+                        >
+                            <a class="dropdown-item" href="#">Edit Profile</a>
+                        </li>
+
+                        <!-- Logout -->
+                        <li class="py-2">
+                            <a
+                                class="dropdown-item text-danger fw-semibold"
+                                href="/auth/logout"
+                            >
+                                Logout
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <% } %>
+        </div>
     </div>
-
-
-  </div>
-
-          <!-- navlink bar but collapse  -->
-      <div class="collapse navbar-collapse px-3" id="mobileLinks">
-        <ul class="navbar-nav w-100 mt-2 ">
-          <li class="nav-item "><a class="nav-link" href="#">All Courses</a></li>
-          <li class="nav-item"><a class="nav-link" href="#">My Courses</a></li>
-          <li class="nav-item"><a class="nav-link" href="#">Forum</a></li>
-        </ul>
-      </div> 
-    
-    <% } %>
- 
 </nav>
