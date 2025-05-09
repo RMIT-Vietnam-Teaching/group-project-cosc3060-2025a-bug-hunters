@@ -1,12 +1,11 @@
 const User = require("../models/User");
 
 exports.renderUserProfileByParam = async (req, res) => {
-  const loggedInUserId = req.signedCookies?.userId;
-  const routeUserId = req.signedCookies?.userId;
+  const loggedInUserId = req.signedCookies?.userId;   
+  const routeUserId = req.params.id;                 
 
-  if (!loggedInUserId || loggedInUserId !== routeUserId) {
-    return res.status(403).send("Unauthorized access.");
-  }
+  console.log("🔐 Logged-in user:", loggedInUserId);
+  console.log("👤 Viewing profile of:", routeUserId);
 
   try {
     const user = await User.findById(routeUserId);
@@ -14,7 +13,8 @@ exports.renderUserProfileByParam = async (req, res) => {
       return res.status(404).send("User not found.");
     }
 
-    res.render("userProfile", { user });
+    const isOwner = loggedInUserId === routeUserId;
+    res.render("userProfile", { user, isOwner });
   } catch (err) {
     console.error("Error loading user profile:", err);
     res.status(500).send("Server error.");
@@ -22,17 +22,19 @@ exports.renderUserProfileByParam = async (req, res) => {
 };
 
 exports.renderUserProfileByQuery = async (req, res) => {
-  const userId = req.signedCookies?.userId;
+  const routeUserId = req.query.id; 
+  const loggedInUserId = req.signedCookies?.userId; 
 
-
-  if (!userId) {
+  if (!routeUserId) {
     return res.status(400).send("No user ID provided.");
   }
 
   try {
-    const user = await User.findById(userId);
-    if (!user) return res.status(404).send("User not found.");
-    res.render("userProfile", { user });
+    const user = await User.findById(routeUserId);
+    if (!user) {
+      return res.status(404).send("User not found.");
+    }
+    res.render("userProfile", { user});
   } catch (err) {
     console.error("Error loading user profile:", err);
     res.status(500).send("Server error.");

@@ -36,19 +36,22 @@
 
     <!-- buttons -->
     <div class="col-12 mt-4 d-flex justify-content-center gap-3" style="margin-left: 80px;" id="button-group">
-      <button class="btn btn-light shadow rounded-pill px-4 py-2 d-flex align-items-center gap-2 rounded-pill">
-        <img src="/images/followIcon.png" alt="Follow" width="30" height="30">
-        <span>Follow</span>
-      </button>
-      <button class="btn btn-light shadow rounded-pill px-4 py-2 d-flex align-items-center gap-2 rounded-pill" data-bs-toggle="modal" data-bs-target="#messageModal">
-        <img src="/images/messageIcon.png" alt="Message" width="30" height="30">
-        <span>Message</span>
-      </button>
+      <% if (!isOwner) { %>
+        <button class="btn btn-light shadow rounded-pill px-4 py-2 d-flex align-items-center gap-2 rounded-pill">
+          <img src="/images/followIcon.png" alt="Follow" width="30" height="30">
+          <span>Follow</span>
+        </button>
+        <button class="btn btn-light shadow rounded-pill px-4 py-2 d-flex align-items-center gap-2 rounded-pill" data-bs-toggle="modal" data-bs-target="#messageModal">
+          <img src="/images/messageIcon.png" alt="Message" width="30" height="30">
+          <span>Message</span>
+        </button>
+      <% } %>
       <button id="shareBtn" class="btn btn-light shadow rounded-pill px-4 py-2 d-flex align-items-center gap-2 rounded-pill">
         <img src="/images/shareIcon.png" alt="Share" width="20" height="20">
         <i class="bi bi-share"></i> Share
       </button>
     </div>
+    
   </div>
 </div>
 

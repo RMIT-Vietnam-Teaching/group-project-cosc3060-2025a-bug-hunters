@@ -7,13 +7,11 @@ body {
 /* side bar section */
 nav .nav-link {
   color: #333;
-  font-size: 18px;
-  font-weight: 500;
   transition: all 0.3s ease;
-  border-radius: 8px;
+  /* border-radius: 8px; */
   margin: 5px 10px;
-  padding: 12px 0;
 }
+
 
 nav .nav-link:hover {
   background-color: #ffeadb; 
@@ -33,16 +31,6 @@ nav .nav-link.active {
 #sidebarDropdown {
   margin-left: 0 !important;
   padding-left: 0 !important;
-}
-
-/* Navbar */
-body[data-theme="dark"] .navbar {
-  background-color: #1a1a1a !important;
-}
-/* Light  (default) */
-light {
-  background-color: #ffffff;
-  color: #212529;
 }
 
 /* Dark  */
