@@ -1,75 +1,141 @@
-<footer class="text-white pt-5 pb-3" style="background-color: #e17758">
-  <div class="container">
-    <div class="row">
-      <!-- About -->
-      <div class="col-md-2 mb-4">
-        <h4 class="fw-bold">About</h4>
-        <ul class="list-unstyled">
-          <li>
-            <a href="#" class="text-white text-decoration-none">Our Story</a>
-          </li>
-          <li>
-            <a href="#" class="text-white text-decoration-none">Contact</a>
-          </li>
-          <li>
-            <a href="#" class="text-white text-decoration-none">Careers</a>
-          </li>
-        </ul>
-      </div>
+<footer
+    style="
+        width: 100%;
+        background: linear-gradient(to right, #f27059, #f48c71);
+        color: #fff;
+        padding: 4rem 1.5rem 2rem;
+        border-top-left-radius: 28px;
+        border-top-right-radius: 28px;
+        font-family: 'Inter', 'Segoe UI', sans-serif;
+        letter-spacing: 0.3px;
+    "
+>
+    <div class="container-fluid" style="max-width: 1440px; margin: 0 auto">
+        <div class="row gx-4 gy-5 justify-content-between">
+            <!-- About -->
+            <div class="col-12 col-sm-6 col-md-3">
+                <h5 style="font-weight: 600; margin-bottom: 1rem">About</h5>
+                <ul class="list-unstyled" style="line-height: 1.8">
+                    <li>
+                        <a href="#" class="text-white text-decoration-none"
+                            >Our Story</a
+                        >
+                    </li>
+                    <li>
+                        <a href="#" class="text-white text-decoration-none"
+                            >Contact</a
+                        >
+                    </li>
+                    <li>
+                        <a href="#" class="text-white text-decoration-none"
+                            >Careers</a
+                        >
+                    </li>
+                </ul>
+            </div>
 
-      <!-- Support -->
-      <div class="col-md-2 mb-4">
-        <h4 class="fw-bold">Support</h4>
-        <ul class="list-unstyled">
-          <li>
-            <a href="#" class="text-white text-decoration-none">Help Center</a>
-          </li>
-          <li><a href="#" class="text-white text-decoration-none">FAQs</a></li>
-          <li>
-            <a href="#" class="text-white text-decoration-none"
-              >Accessibility</a
-            >
-          </li>
-        </ul>
-      </div>
+            <!-- Support -->
+            <div class="col-12 col-sm-6 col-md-3">
+                <h5 style="font-weight: 600; margin-bottom: 1rem">Support</h5>
+                <ul class="list-unstyled" style="line-height: 1.8">
+                    <li>
+                        <a href="#" class="text-white text-decoration-none"
+                            >Help Center</a
+                        >
+                    </li>
+                    <li>
+                        <a href="#" class="text-white text-decoration-none"
+                            >FAQs</a
+                        >
+                    </li>
+                    <li>
+                        <a href="#" class="text-white text-decoration-none"
+                            >Accessibility</a
+                        >
+                    </li>
+                </ul>
+            </div>
 
             <!-- Courses -->
-      <div class="col-md-2 mb-4">
-        <h4 class="fw-bold">Courses</h4>
-        <ul class="list-unstyled">
-          <li>
-            <a href="#" class="text-white text-decoration-none">Programming</a>
-          </li>
-          <li><a href="#" class="text-white text-decoration-none">Design</a></li>
-          <li>
-            <a href="#" class="text-white text-decoration-none"
-              >Business</a
+            <div class="col-12 col-sm-6 col-md-3">
+                <h5 style="font-weight: 600; margin-bottom: 1rem">Courses</h5>
+                <ul class="list-unstyled" style="line-height: 1.8">
+                    <li>
+                        <a href="#" class="text-white text-decoration-none"
+                            >Programming</a
+                        >
+                    </li>
+                    <li>
+                        <a href="#" class="text-white text-decoration-none"
+                            >Design</a
+                        >
+                    </li>
+                    <li>
+                        <a href="#" class="text-white text-decoration-none"
+                            >Business</a
+                        >
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Newsletter -->
+            <div class="col-12 col-sm-6 col-md-3">
+                <h5 style="font-weight: 600; margin-bottom: 1rem">
+                    Stay Connected
+                </h5>
+                <form class="d-flex flex-column gap-2 mt-2">
+                    <input
+                        type="email"
+                        placeholder="Your email"
+                        class="form-control"
+                        style="
+                            border-radius: 8px;
+                            padding: 10px 14px;
+                            border: none;
+                        "
+                    />
+                    <button
+                        type="submit"
+                        class="btn"
+                        style="
+                            background-color: #1e1e1e;
+                            color: #fff;
+                            font-weight: 500;
+                            border-radius: 8px;
+                            padding: 10px;
+                        "
+                    >
+                        Subscribe
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Divider -->
+        <hr
+            style="
+                border-color: rgba(255, 255, 255, 0.25);
+                margin: 2.5rem 0 1.5rem;
+            "
+        />
+
+        <!-- Footer Bottom -->
+        <div
+            class="d-flex flex-column flex-md-row justify-content-between align-items-center text-center"
+            style="gap: 1rem; font-size: 0.9rem"
+        >
+            <a
+                href="#"
+                data-bs-toggle="modal"
+                data-bs-target="#contactModal"
+                style="color: #fff; text-decoration: underline"
             >
-          </li>
-        </ul>
-      </div>
-
-      <!-- Stay Connected -->
-      <div class="col-md-6 mb-3">
-        <h4 class="fw-bold">Stay Connectd With Us!</h4>
-        <form class="d-flex flex-column flex-md-row gap-2 mt-2">
-          <input
-            type="email"
-            class="form-control"
-            placeholder="Your email"
-            required
-          />
-          <button type="submit" class="btn btn-dark px-4 fw-bold">
-            Subscribe
-          </button>
-        </form>
-      </div>
+                Contact Us
+            </a>
+            <div>
+                © 2025 <strong>LearnNow Inc.</strong> — Designed for the next
+                generation.
+            </div>
+        </div>
     </div>
-
-    <!-- Footer Bottom -->
-    <hr class="border-white my-4" />
-    <div class="text-center small">
-      © 2025 <strong>LevelUp, Inc.</strong> All rights reserved.
-    </div>
-  </div>
 </footer>
