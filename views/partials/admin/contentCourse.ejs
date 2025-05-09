@@ -10,9 +10,11 @@
                 placeholder="Search..."
                 class="admin-search-input"
             />
-            <button class="admin-add-button">
-                Add <i class="bi bi-plus-circle ms-1"></i>
-            </button>
+            <a href="/admin/courses/add" class="text-decoration-none">
+                <button class="admin-add-button">
+                    Add <i class="bi bi-plus-circle ms-1"></i>
+                </button>
+            </a>
         </div>
     </div>
 
@@ -24,26 +26,36 @@
             <thead class="table-light">
                 <tr>
                     <th class="sortable" data-sort="name">Name</th>
-                    <th class="sortable" data-sort="author">Author</th>
-                    <th class="sortable" data-sort="students">
-                        Student Enrolled
-                    </th>
+                    <th class="sortable" data-sort="author">Instructor</th>
+                    <th class="sortable" data-sort="students">Enrolled</th>
                     <th class="sortable" data-sort="price">Price</th>
-                    <th>Date Created</th>
+                    <th class="sortable" data-sort="status">Status</th>
+                    <th class="sortable" data-sort="created">Created</th>
                 </tr>
             </thead>
-
             <tbody>
                 <% courses.forEach(course => { %>
-                <tr style="cursor: pointer">
+                <tr style="cursor: pointer" data-id="<%= course._id %>">
                     <td><%= course.name %></td>
-                    <td><%= course.author %></td>
-                    <td><%= course.students %></td>
-                    <td>$<%= course.price %></td>
-                    <td><%= course.date %></td>
+                    <td>
+                        <%= course.author?.firstName || "Unknown" %> <%=
+                        course.author?.lastName || "" %>
+                    </td>
+                    <td><%= course.studentsEnrolled?.length || 0 %></td>
+                    <td>$<%= course.price?.toFixed(2) || "0.00" %></td>
+                    <td>
+                        <span
+                            class="badge text-bg-<%= course.status === 'Finished' ? 'success' : course.status === 'On Going' ? 'warning' : 'secondary' %>"
+                        >
+                            <%= course.status %>
+                        </span>
+                    </td>
+                    <td>
+                        <%= new
+                        Date(course.dateCreated).toLocaleDateString('en-GB') %>
+                    </td>
                 </tr>
                 <% }) %>
-                <!-- Close the loop properly -->
             </tbody>
         </table>
     </div>

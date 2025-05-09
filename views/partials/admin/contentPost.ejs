@@ -1,139 +1,142 @@
-<main class="col-md-10 admin-main px-5">
+<main
+    class="col-md-10 admin-main"
+    style="padding-left: 400px; padding-right: 400px; padding-top: 50px"
+>
     <!-- Header -->
     <div
         class="admin-header d-flex justify-content-between align-items-center mb-4"
     >
         <h2 class="fw-bold m-0">Posts</h2>
-        <div class="d-flex align-items-center gap-2">
-            <input
-                type="text"
-                placeholder="Search..."
-                class="admin-search-input"
-            />
-        </div>
     </div>
 
     <!-- Posts -->
-    <% posts.forEach(post => { %>
-    <div
-        class="position-relative mb-5 border rounded shadow-sm p-4"
-        style="background-color: white"
-    >
-        <!-- Post Header -->
-        <div class="d-flex justify-content-between align-items-start mb-3">
-            <div class="d-flex align-items-center">
-                <div
-                    class="rounded-circle me-3"
-                    style="width: 50px; height: 50px; border: 1px solid black"
-                ></div>
-                <div>
-                    <strong class="d-block"><%= post.author %></strong>
-                    <small class="text-muted"><%= post.time %></small>
+    <div class="d-flex flex-column gap-5">
+        <% posts.forEach(post => { %>
+        <div
+            class="border rounded shadow-sm bg-white p-5"
+            style="padding-left: 40px; padding-right: 40px"
+        >
+            <!-- Post Header -->
+            <div class="d-flex justify-content-between align-items-start mb-3">
+                <div class="d-flex align-items-center gap-3">
+                    <img
+                        src="<%= post.avatar || '/default-avatar.png' %>"
+                        alt="User Avatar"
+                        class="rounded-circle"
+                        style="width: 50px; height: 50px; object-fit: cover"
+                    />
+                    <div>
+                        <strong><%= post.author %></strong><br />
+                        <small class="text-muted">
+                            <%= post.timeAgo %> <% if (post.privacy ===
+                            "public") { %> • 🌍 Public <% } else { %> • 🔒
+                            Private <% } %>
+                        </small>
+                    </div>
+                </div>
+
+                <!-- Dropdown -->
+                <div class="dropdown">
+                    <i
+                        class="bi bi-three-dots-vertical fs-5"
+                        role="button"
+                        data-bs-toggle="dropdown"
+                    ></i>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li>
+                            <form
+                                action="/admin/posts/achieve/<%= post._id %>"
+                                method="POST"
+                            >
+                                <button type="submit" class="dropdown-item">
+                                    Archive
+                                </button>
+                            </form>
+                        </li>
+                        <li>
+                            <form
+                                action="/admin/posts/delete/<%= post._id %>"
+                                method="POST"
+                            >
+                                <button
+                                    type="submit"
+                                    class="dropdown-item text-danger"
+                                >
+                                    Delete
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
                 </div>
             </div>
-            <!-- Admin Actions Buttons (Top Right) -->
-            <div class="d-flex flex-column gap-2">
-                <button
-                    class="btn btn-danger btn-sm px-3 fw-semibold rounded-pill"
-                >
-                    Achieve
-                </button>
-                <button
-                    class="btn btn-secondary btn-sm px-3 fw-semibold rounded-pill"
-                >
-                    Delete
-                </button>
-            </div>
-        </div>
 
-        <!-- Post Content -->
-        <div class="mb-3 border rounded p-3 text-muted fw-semibold text-center">
-            <%= post.content %>
-        </div>
+            <!-- Post Content -->
+            <p style="font-size: 1.2rem" class="mb-3"><%= post.content %></p>
 
-        <!-- Post Media -->
-        <% if (post.media) { %>
-        <div class="mb-3 border rounded p-3 text-muted fw-semibold text-center">
-            <img
-                src="<%= post.media %>"
-                alt="Post Media"
-                class="img-fluid rounded"
-            />
-        </div>
-        <% } else { %>
-        <div class="mb-3 border rounded p-3 text-muted fw-semibold text-center">
-            Post picture(s) and/or videos (optional)
-        </div>
-        <% } %>
-
-        <!-- Likes and Comments Count -->
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <div class="text-muted">
-                <i class="bi bi-heart me-1"></i><%= post.likes.toLocaleString()
-                %>
-            </div>
-            <div class="text-muted">
-                <i class="bi bi-chat-dots me-1"></i><%=
-                post.commentsCount.toLocaleString() %>
-            </div>
-        </div>
-
-        <!-- Action Buttons -->
-        <div class="d-flex justify-content-between mb-3">
-            <button
-                class="btn btn-outline-dark btn-sm rounded-pill w-25 fw-semibold"
-            >
-                Like
-            </button>
-            <button
-                class="btn btn-outline-dark btn-sm rounded-pill w-25 fw-semibold"
-            >
-                Comment
-            </button>
-            <button
-                class="btn btn-outline-dark btn-sm rounded-pill w-25 fw-semibold"
-            >
-                Share
-            </button>
-        </div>
-
-        <!-- Add Comment -->
-        <div class="d-flex align-items-center mb-3">
-            <div
-                class="rounded-circle me-2"
-                style="width: 40px; height: 40px; border: 1px solid black"
-            ></div>
-            <div class="flex-grow-1 position-relative">
-                <input
-                    type="text"
-                    class="form-control rounded-pill shadow-sm ps-3 pe-5"
-                    placeholder="Add a comment..."
+            <!-- Post Media -->
+            <% if (post.media) { %>
+            <div class="mb-4 text-center">
+                <img
+                    src="<%= post.media %>"
+                    alt="Post Media"
+                    class="img-fluid shadow-sm rounded-4"
+                    style="
+                        width: 100%;
+                        object-fit: cover;
+                        border-radius: 16px;
+                        max-height: 800px;
+                    "
                 />
-                <span
-                    class="position-absolute end-0 top-50 translate-middle-y me-3"
-                    style="cursor: pointer"
-                >
-                    😊
-                </span>
             </div>
-        </div>
+            <% } %>
 
-        <!-- Comments Section -->
-        <% post.comments.forEach(comment => { %>
-        <div class="d-flex align-items-center bg-light rounded p-2 mb-2">
+            <!-- Reactions -->
             <div
-                class="rounded-circle me-2"
-                style="width: 40px; height: 40px; border: 1px solid black"
-            ></div>
-            <div class="flex-grow-1">
-                <strong><%= comment.name %></strong>
-                <div><%= comment.text %></div>
+                class="d-flex justify-content-between align-items-center text-muted mb-4"
+            >
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-heart-fill" style="color: red"></i>
+                    <%= post.likes %>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-chat-dots-fill text-primary"></i>
+                    <%= post.commentsCount %>
+                </div>
             </div>
-            <button class="btn btn-link text-danger p-0 ms-2">
-                <i class="bi bi-trash"></i>
-            </button>
+
+            <!-- Comments (FULL WIDTH FIXED) -->
+            <% post.comments.forEach(comment => { %>
+            <div class="d-flex align-items-start gap-3 mb-3 w-100">
+                <img
+                    src="<%= comment.avatar || '/default-avatar.png' %>"
+                    alt="Comment Avatar"
+                    class="rounded-circle"
+                    style="width: 38px; height: 38px; object-fit: cover"
+                />
+                <div
+                    class="bg-light p-3 rounded-4 flex-grow-1 w-100"
+                    style="
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                    "
+                >
+                    <div>
+                        <strong><%= comment.name %></strong>
+                        <div class="mt-1 text-muted"><%= comment.text %></div>
+                    </div>
+                    <form action="#" method="POST">
+                        <button
+                            class="btn btn-link text-danger p-0 ms-3"
+                            type="button"
+                        >
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <% }) %>
         </div>
         <% }) %>
     </div>
-    <% }) %>
 </main>
