@@ -1,6 +1,21 @@
 // const express = require('express');
-
+const user = require('../models/User');
 // const {loadStripe} = require ('@stripe/stripe-js');
+
+
+exports.renderCartPage = (req, res) => {
+  try {
+    const cartItems = req.session.cart || [];
+
+    res.render('cart', {
+      cartItems
+    });
+  } catch (error) {
+    console.error('Error rendering cart page:', error.message, error.stack);
+
+    res.status(500).send('Internal Server Error');
+  }
+};
 
 // const makePaymnet = async (req, res) => {
 //     const stripe = await loadStripe(process.env.STRIPE_PRIVATE_KEY);
