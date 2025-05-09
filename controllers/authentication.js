@@ -5,59 +5,14 @@ const axios = require("axios");
 //render register page
 exports.renderRegisterPage = async (req, res) => {
     try {
-      // Extract fields from the request body
-      const { userFirstName, userLastName, userEmail, userPassword, userRole, recaptchaToken } = req.body;
-  
-      // Verify CAPTCHA with Google
-      const secretKey = process.env.RECAPTCHA_SECRET_KEY;
-      const verifyResponse = await axios.post(
-        "https://www.google.com/recaptcha/api/siteverify",
-        new URLSearchParams({
-          secret: secretKey,
-          response: recaptchaToken
-        })
-      );
-  
-      if (!verifyResponse.data.success) {
-        return res.render("register", {
-          error: "CAPTCHA verification failed. Try again.",
-          formData: req.body
+        res.render("register");
+    } catch (error) {
+        console.log("Error rendering register page:", error);
+        res.status(500).render("register", {
+            error: "An error occurred while loading the registration page.",
         });
-      }
-  
-      // Check if email already exists
-      const existingUser = await User.findOne({ userEmail });
-      if (existingUser) {
-        return res.render("register", {
-          error: "Email already registered.",
-          formData: req.body
-        });
-      }
-  
-      // Hash password
-      const hashedPassword = await bcrypt.hash(userPassword, 10);
-  
-      // Create and save user
-      const newUser = new User({
-        userFirstName,
-        userLastName,
-        userEmail,
-        userPassword: hashedPassword,
-        userRole
-      });
-  
-      await newUser.save();
-      res.redirect("/");
-  
-    } catch (err) {
-      console.error("Registration Error:", err);
-      res.status(500).render("register", {
-        error: "An error occurred during registration.",
-        formData: req.body
-      });
     }
-  };
-
+};
 
 //render Login page
 exports.renderLoginPage = async (req, res) => {
@@ -201,20 +156,19 @@ exports.loginUser = async (req, res) => {
             maxAge: 7 * 24 * 60 * 60 * 1000,
             signed: true,
         });
-     
+
         res.cookie("userRole", user.role, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
             sameSite: "Lax",
             maxAge: 7 * 24 * 60 * 60 * 1000,
             signed: true,
-            
         });
         // Redirect based on role
         if (user.role === "Admin") {
             return res.redirect("/admin/users");
         } else {
-            return res.redirect(`/userProfile?id=${user._id}`);
+            return res.redirect(`/`);
         }
     } catch (err) {
         console.error("Login Error:", err);
@@ -327,7 +281,7 @@ exports.logout = async (req, res) => {
         res.clearCookie("userId");
         res.clearCookie("userRole");
         req.session.destroy(() => {
-        res.redirect("/");
+            res.redirect("/");
         });
     } catch (err) {
         console.error("Logout Error:", err);

@@ -55,6 +55,11 @@ if (postForm) {
             "content",
             document.getElementById("contentInput").value
         );
+        formData.append(
+            "privacy",
+            postForm.querySelector('[name="privacy"]').value
+        ); // ✅ FIXED
+
         [...mediaInput.files].forEach((file) => formData.append("media", file));
 
         try {

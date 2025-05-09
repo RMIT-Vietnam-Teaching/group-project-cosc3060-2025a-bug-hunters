@@ -37,6 +37,40 @@ const courseSchema = new Schema({
         enum: ["Not Started", "On Going", "Finished"],
         default: "Not Started",
     },
+
+    rating: {
+        type: Number,
+        default: 0,
+        min: 0,
+        max: 5,
+    },
+
+    image: {
+        type: String,
+        default: "images/defaultCourse.png",
+    },
+
+    reviews: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: "Review",
+        },
+    ],
+    category: {
+        type: String,
+    },
+    description: {
+        type: String,
+        required: true,
+        trim: true,
+    },
+    lessons: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: "Lesson",
+        },
+    ],
+    
 });
 
 module.exports = mongoose.model("Course", courseSchema);

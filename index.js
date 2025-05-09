@@ -66,9 +66,6 @@ app.use("/search", searchRoutes);
 // app.use("/institution", institution);
 // app.use("/payment", coinPaymentRoutes);
 
-app.use("/navbar", (req, res) => {
-    res.render("partials/navbar");
-});
 app.use("/user", userRoutes);
 app.use("/api", subscriptionRoutes);
 

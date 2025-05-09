@@ -1,8 +1,10 @@
 const express = require("express");
 const router = express.Router();
-// const Course = require("../models/course");
 
-// sampleData.js
+const User = require("../models/User");
+const Course = require("../models/Course");
+
+const { preventAuthAccess } = require("../middlewares/auth");
 
 const sampleCourses = [
     {
@@ -10,7 +12,7 @@ const sampleCourses = [
         description:
             "Learn to build complete web apps using MERN stack with real-world projects.",
         instructor: "Alex Pham",
-        imageUrl: "/images/webdev.jpg",
+        imageUrl: "/images/defaultCourse.png",
         category: "Web Development",
         duration: "12h 30m",
         rating: 4.8,
@@ -21,7 +23,7 @@ const sampleCourses = [
         description:
             "Master the basics of Python, pandas, and data visualization techniques.",
         instructor: "Dr. Jane Tran",
-        imageUrl: "/images/datascience.jpg",
+        imageUrl: "/images/defaultCourse.png",
         category: "Data Science",
         duration: "10h 45m",
         rating: 4.5,
@@ -31,7 +33,7 @@ const sampleCourses = [
         title: "Creative UI/UX Design",
         description: "Design interfaces users love using Figma and Adobe XD.",
         instructor: "Minh Chau",
-        imageUrl: "/images/design.jpg",
+        imageUrl: "/images/defaultCourse.png",
         category: "Design",
         duration: "8h",
         rating: 4.6,
@@ -41,7 +43,7 @@ const sampleCourses = [
         title: "Digital Marketing 101",
         description: "Explore SEO, SEM, and social media marketing strategies.",
         instructor: "Linh Vu",
-        imageUrl: "/images/marketing.jpg",
+        imageUrl: "/images/defaultCourse.pngg",
         category: "Marketing",
         duration: "6h 30m",
         rating: 4.3,
@@ -52,7 +54,7 @@ const sampleCourses = [
         description:
             "Understand threats, firewalls, encryption, and how to protect your systems.",
         instructor: "Anh Tuan",
-        imageUrl: "/images/cybersecurity.jpg",
+        imageUrl: "/images/defaultCourse.png",
         category: "Cybersecurity",
         duration: "7h",
         rating: 4.7,
@@ -63,7 +65,7 @@ const sampleCourses = [
         description:
             "Learn how to validate ideas, attract investors, and grow a startup.",
         instructor: "Nguyen Huy",
-        imageUrl: "/images/business.jpg",
+        imageUrl: "/images/defaultCourse.pngs",
         category: "Business",
         duration: "5h 45m",
         rating: 4.2,
@@ -73,6 +75,9 @@ const sampleCourses = [
 
 router.get("/", async (req, res) => {
     try {
+        const userId = req.signedCookies.userId;
+        const user = await User.findById(userId).lean();
+
         const newCourses = [...sampleCourses]
             .sort((a, b) => b.createdAt - a.createdAt)
             .slice(0, 3);
@@ -80,15 +85,16 @@ router.get("/", async (req, res) => {
             .sort((a, b) => b.rating - a.rating)
             .slice(0, 3);
 
+        console.log(user);
         res.render("homepage", {
-            user: res.locals.user,
+            user,
             newCourses,
             popularCourses,
         });
     } catch (err) {
         console.error("Error loading homepage courses:", err);
         res.render("homepage", {
-            user: res.locals.user,
+            user,
             newCourses: [],
             popularCourses: [],
         });
