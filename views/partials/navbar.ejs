@@ -57,26 +57,29 @@
           <a href="#" class="text-dark"><i class="bi bi-chat-dots fs-5"></i></a>
   
           <!-- Avatar Dropdown -->
+          <% if (loggedInUser) { %>
           <div class="dropdown">
             <a href="#" id="profileMenu" data-bs-toggle="dropdown" aria-expanded="false" class="d-flex align-items-center text-dark text-decoration-none dropdown-toggle" style="gap: 6px">
-              <img src="<%= user.avatar %>" alt="Avatar" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;" />
+              <img src="<%= loggedInUser.avatar %>" alt="Avatar" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;" />
             </a>
   
             <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="profileMenu" style="min-width: 260px; border-radius: 12px; overflow: hidden;">
               <li class="px-3 py-3 d-flex align-items-center gap-2 border-bottom">
-                <a href="/userProfile/<%= user._id %>" class="d-flex align-items-center text-decoration-none text-dark w-100">
-                  <img src="<%= user.avatar %>" alt="Avatar" style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover;" />
+              
+                <a href="/userProfile/<%= loggedInUser._id %>" class="d-flex align-items-center text-decoration-none text-dark w-100">
+                  <img src="<%= loggedInUser.avatar %>" alt="Avatar" style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover;" />
                   <div class="d-flex flex-column ms-2">
                     <span class="fw-bold"><%= user.firstName %> <%= user.lastName %></span>
                     <small class="text-muted"><%= user.email %></small>
                   </div>
                 </a>
+                <% } %>
               </li>
               <li class="py-2"><a class="dropdown-item" href="#">My learning</a></li>
               <li class="py-2 border-bottom"><a class="dropdown-item" href="#">My Cart</a></li>
               <li class="py-2"><a class="dropdown-item" href="#">Notifications</a></li>
                 <li class="py-2 border-bottom"><a class="dropdown-item" href="#">Messages</a></li>
-                <li class="py-2 border-bottom"><a class="dropdown-item" href="/userSettings/profilePreference/<%= user._id %>">Edit Profile</a></li>
+                <li class="py-2 border-bottom"><a class="dropdown-item" href="/userSettings/profilePreference/<%= loggedInUser._id %>">Edit Profile</a></li>
               <li class="py-2"><a class="dropdown-item text-danger fw-semibold" href="/auth/logout">Logout</a></li>
             </ul>
           </div>

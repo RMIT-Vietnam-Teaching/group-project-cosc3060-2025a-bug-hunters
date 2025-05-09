@@ -10,13 +10,15 @@ exports.renderUserPreference = async (req, res) => {
     if (!user) {
       return res.status(404).send("User not found");
     }
-
+    const loggedInUserId = req.signedCookies?.userId; // Get the logged-in user ID from cookies
     const success = req.query.success;
+      const loggedInUser = await User.findById(loggedInUserId);
 
     res.render("userSettingProfilePreference", {
       user,
       activePage: "profileSetting",
       success,
+      loggedInUser,
     });
   } catch (error) {
     console.error("Error rendering user profile settings:", error);
@@ -56,12 +58,13 @@ exports.renderDisplay = async (req, res) => {
 
   try {
     const user = await User.findById(req.params.userId);
-
+    const loggedInUserId = req.signedCookies?.userId;
+      const loggedInUser = await User.findById(loggedInUserId);
     if (!user) {
       return res.status(404).send("User not found");
     }
 
-    res.render("userSettingDisplay", { user, activePage: "display" });
+    res.render("userSettingDisplay", { user, activePage: "display", loggedInUser });
   } catch (error) {
     console.error("Error rendering user profile settings:", error);
     res.status(500).send("Failed to render user profile settings");
@@ -72,7 +75,8 @@ exports.renderAccountSecurity = async (req, res) => {
 
   try {
     const user = await User.findById(req.params.userId);
-
+    const loggedInUserId = req.signedCookies?.userId;
+      const loggedInUser = await User.findById(loggedInUserId);
     if (!user) {
       return res.status(404).send("User not found");
     }
@@ -81,7 +85,8 @@ exports.renderAccountSecurity = async (req, res) => {
       user,
       activePage: "security",
       success: req.query.success === '1' || req.query.success === 'true',
-      error: req.query.error || null
+      error: req.query.error || null,
+      loggedInUser
     });
   } catch (error) {
     console.error("Error rendering user profile settings:", error);
@@ -92,7 +97,8 @@ exports.renderAccountBalance = async (req, res) => {
 
   try {
     const user = await User.findById(req.params.userId);
-
+    const loggedInUserId = req.signedCookies?.userId;
+    const loggedInUser = await User.findById(loggedInUserId);
     if (!user) {
       return res.status(404).send("User not found");
     }
@@ -101,6 +107,7 @@ exports.renderAccountBalance = async (req, res) => {
       user,
       activePage: "balance",
       success: req.query.success,
+      loggedInUser
     });
   } catch (error) {
     console.error("Error rendering user profile settings:", error);
