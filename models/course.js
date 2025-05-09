@@ -1,48 +1,42 @@
-// const mongoose = require("mongoose");
+const mongoose = require("mongoose");
+const { Schema } = mongoose;
 
-// const courseSchema = new mongoose.Schema({
-//     title: {
-//         type: String,
-//         required: true,
-//     },
-//     description: {
-//         type: String,
-//         required: true,
-//     },
-//     instructor: {
-//         type: String,
-//         required: true,
-//     },
-//     imageUrl: {
-//         type: String,
-//         default: "images/course-placeholder.jpg",
-//     },
-//     category: {
-//         type: String,
-//         required: true,
-//         enum: [
-//             "Web Development",
-//             "Data Science",
-//             "Design",
-//             "Marketing",
-//             "Cybersecurity",
-//             "Business",
-//         ],
-//     },
-//     duration: {
-//         type: String,
-//         required: true,
-//     },
-//     rating: {
-//         type: Number,
-//         default: 0,
-//     },
-//     createdAt: {
-//         type: Date,
-//         default: Date.now,
-//     },
-// });
+const courseSchema = new Schema({
+    name: {
+        type: String,
+        required: true,
+        trim: true,
+    },
 
-// const Course = mongoose.model("Course", courseSchema);
+    author: {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+        required: true,
+    },
 
-// module.exports = Course;
+    studentsEnrolled: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: "User",
+        },
+    ],
+
+    price: {
+        type: Number,
+        required: true,
+        min: 0,
+    },
+
+    dateCreated: {
+        type: Date,
+        default: Date.now,
+    },
+
+    status: {
+        type: String,
+        enum: ["Not Started", "On Going", "Finished"],
+        default: "Not Started",
+    },
+});
+
+module.exports = mongoose.model("Course", courseSchema);
