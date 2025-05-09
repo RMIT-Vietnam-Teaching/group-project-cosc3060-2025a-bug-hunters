@@ -16,7 +16,7 @@ router.get("/my-courses", async (req, res) => {
   }
 });
 
-// User profile page - NO AUTHENTICATION CHECK FOR DEVELOPMENT
+// User profile page - NO AUTHENTICATIO CHECK FOR DEVELOPMENT
 router.get("/profile", (req, res) => {
   // For development: create a mock user object
   const mockUser = {

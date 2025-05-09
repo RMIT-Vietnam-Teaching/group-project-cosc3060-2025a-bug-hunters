@@ -214,7 +214,7 @@ exports.loginUser = async (req, res) => {
         if (user.role === "Admin") {
             return res.redirect("/admin/users");
         } else {
-            return res.redirect(`/userProfile?id=${user._id}`);
+            return res.redirect(`/`);
         }
     } catch (err) {
         console.error("Login Error:", err);

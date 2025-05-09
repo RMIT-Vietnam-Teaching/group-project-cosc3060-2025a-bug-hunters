@@ -50,7 +50,6 @@ const institution = require("./routes/institutionRoutes");
 
 
 
-
 // const coinPaymentRoutes = require("./routes/coinPayment");
 const courseRoutes = require("./routes/courseRoutes");
 const userRoutes = require("./routes/userRoutes");
@@ -63,13 +62,14 @@ app.use("/admin", adminRoutes);
 app.use("/userSettings", userSettingsRoutes);
 app.use("/userProfile", userProfileRoutes);
 app.use("/courses", courseRoutes);
+app.use("/user", userRoutes);
+app.use("/api", subscriptionRoutes);
+
 // app.use("/institution", institution);
 // app.use("/payment", coinPaymentRoutes);
 app.use('/navbar', (req,res) => {
     res.render('partials/navbar');
 });
-app.use("/user", userRoutes);
-app.use("/api", subscriptionRoutes);
 
 // Start Server
 app.listen(port, () => {
