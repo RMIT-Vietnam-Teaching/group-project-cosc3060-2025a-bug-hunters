@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const User = require("../models/User");
+const Course = require("../models/Course");
 const Post = require("../models/Post");
 const Like = require("../models/Like");
 const Comment = require("../models/Comment");
@@ -30,13 +31,11 @@ router.get("/", async (req, res) => {
         const likes = await Like.find({ user: userId }).lean();
         const likedPostIds = likes.map((like) => like.post.toString());
 
-        user.enrolledPrograms = [
-            "Intro to Cybersecurity",
-            "Data Science 101",
-            "Advanced Physics – C3",
-            "Big Data Dive",
-            "UI/UX Crash Course",
-        ];
+        const courses = await Course.find({}).lean();
+
+        user.enrolledPrograms = courses.map((course) => ({
+            name: course.name,
+        }));
 
         const users = await User.find({ _id: { $ne: userId } }).lean();
         const instructors = users.map((u) => ({
