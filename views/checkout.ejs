@@ -102,7 +102,7 @@
 
           <div class="coin-input-box">
             <label class="form-label fw-bold">Coin you have</label>
-            <input type="text" class="form-control mb-3" placeholder="Coin">
+            <input type="text" class="form-control mb-3" placeholder="122" readonly style="background-color: #f9f9f9; cursor: not-allowed;">
             <a href="/payment/addcoin" class="add-btn text-decoration-none text-white d-inline-block text-center mb-3">Add more coin</a>
           </div>
         </form>
@@ -222,7 +222,8 @@
 
 
       } else if (result.paymentIntent.status === 'succeeded') {
-        window.location.href = "/payment/confirmation";
+        window.location.href = "/payment/confirmation"; 
+
       }
     });
   </script>
