@@ -106,7 +106,7 @@
               </div>
             </div>
           
-            <div class="special-deal-item d-flex justify-content-between align-items-center" data-base="1000" data-bonus="10">
+            <div class="special-deal-item d-flex justify-content-between align-items-center" data-base="1000" data-bonus="100">
               <span>Buy 1000 Coins, Get 100 Extra</span>            
               <div>
                 <button type="button" class="select-btn me-2 add-package">Select</button>
@@ -217,10 +217,25 @@
   
     // Manual input clears selected package
     coinInput.addEventListener('input', () => {
-      selectedPackage = null;
-      updateSummary();
-    });
-  
+  const entered = parseInt(coinInput.value) || 0;
+
+  // Check if the input matches any special deal
+  const match = Array.from(document.querySelectorAll('.special-deal-item')).find(item => {
+    return parseInt(item.getAttribute('data-base')) === entered;
+  });
+
+  if (match) {
+    const base = parseInt(match.getAttribute('data-base'));
+    const bonus = parseInt(match.getAttribute('data-bonus'));
+    const label = match.querySelector('span').textContent.trim();
+    selectedPackage = { base, bonus, label };
+  } else {
+    selectedPackage = null;
+  }
+
+  updateSummary();
+});
+
     // Handle special deal selection
     document.querySelectorAll('.special-deal-item').forEach(item => {
       const base = parseInt(item.getAttribute('data-base')) || 0;
