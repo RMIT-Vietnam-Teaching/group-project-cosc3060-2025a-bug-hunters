@@ -2,6 +2,25 @@ const Course = require("../models/Course");
 const User = require("../models/User");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
+const multer = require("multer");
+const path = require("path");
+
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "public/uploads/");
+  },
+  filename: function (req, file, cb) {
+    const ext = path.extname(file.originalname);
+    const filename = file.fieldname + "-" + Date.now() + ext;
+    cb(null, filename);
+  }
+});
+
+const upload = multer({ storage });
+
+// Export the multer middleware
+exports.uploadCourseImage = upload.single("imageFile");
 
 exports.renderCourses = async (req, res) => {
   try {
@@ -84,28 +103,25 @@ exports.renderCourseFeedbackPage = async (req, res) => {
 
 exports.updateCourse = async (req, res) => {
   try {
-    const { id } = req.params;
-    const returnTo = req.query.returnTo || "/institution/manageCourses";
+    const { title, price, description, author } = req.body;
+    const imagePath = req.file ? `/uploads/${req.file.filename}` : req.body.currentImage;
 
-    const { title, description, price, duration, startDate, endDate, author } =
-      req.body;
-
-    await Course.findByIdAndUpdate(id, {
+    await Course.findByIdAndUpdate(req.params.id, {
       name: title,
-      description,
       price,
-      duration,
-      startDate,
-      endDate,
-      author 
+      description,
+      image: imagePath,
+      author
     });
 
-    res.redirect(returnTo);
+    res.redirect(req.query.returnTo || "/institution/manageCourses");
   } catch (err) {
-    console.error("Error updating course:", err);
-    res.status(500).send("Error updating course");
+    console.error("Update error:", err);
+    res.status(500).send("Internal Server Error");
   }
 };
+
+
 
 exports.deleteCourseFromManageCourse = async (req, res) => {
   try {
@@ -125,19 +141,42 @@ exports.deleteCourseFromInstitution = async (req, res) => {
   try {
     console.log("DELETE request received for course:", req.params.id);
     const { id } = req.params;
-    const deletedCourse = await Course.findByIdAndDelete(id);
+    const { tutorId } = req.query;
 
-    console.log();
+    const deletedCourse = await Course.findByIdAndDelete(id);
     if (!deletedCourse) {
       console.log("Course not found");
       return res.status(404).json({ message: "Course not found" });
     }
-    res.redirect("/institution/manageCourses");
+
+    return res.redirect(`/institution/tutorDetail/${tutorId}`);
   } catch (error) {
     console.error("Error deleting course:", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+exports.addCourseForTutor = async (req, res) => {
+  try {
+    const { name, price, description, image, tutorId } = req.body;
+
+    const newCourse = new Course({
+      name,
+      price,
+      description,
+      image,
+      author: tutorId
+    });
+
+    await newCourse.save();
+
+    res.redirect(`/institution/tutorDetail/${tutorId}`);
+  } catch (error) {
+    console.error("Error adding course:", error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
 
 // exports.deleteTutorFromInstitution = async (req, res) => {
 //   try {
@@ -164,10 +203,6 @@ exports.createTutor = async (req, res) => {
   try {
     const { firstName, lastName, email, password, headline, description } =
       req.body;
-
-    if (!firstName || !lastName || !email || !password) {
-      return res.status(400).send("Missing required fields");
-    }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -250,10 +285,11 @@ exports.createCourse = async (req, res) => {
     const { title, price, description, instructor } = req.body;
     const students = JSON.parse(req.body.studentsEnrolled || "[]");
 
+
     const newCourse = new Course({
       name: title,
       price,
-      description,
+      description: description.trim(),
       author: instructor,
       studentsEnrolled: students
     });
@@ -265,6 +301,7 @@ exports.createCourse = async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 };
+
 
 
 

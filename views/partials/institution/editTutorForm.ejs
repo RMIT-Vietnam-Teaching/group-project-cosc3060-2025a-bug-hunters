@@ -15,9 +15,25 @@
     </div>
 
     <div class="mb-3">
-      <label class="form-label">Description</label>
-      <textarea name="description" class="form-control" rows="4" required><%= course.description %></textarea>
+      <label class="form-label">Description <span class="text-danger">*</span></label>
+      <textarea
+        name="description"
+        class="form-control"
+        rows="4"
+        required
+        oninput="this.setCustomValidity(this.value.trim() === '' ? 'Please enter a description.' : '')"
+      ><%= course.description %></textarea>
+    </div>    
+    <div class="mb-3">
+      <label class="form-label">Image URL</label>
+      <input type="text" name="image" class="form-control" value="<%= course.image %>" />
     </div>
+    <% if (course.image) { %>
+      <div class="text-center mb-3">
+        <img src="<%= course.image %>" alt="Course Image" style="max-height: 160px;" class="img-fluid rounded shadow-sm">
+      </div>
+    <% } %>
+        
 
     <!-- <div class="row mb-3">
       <div class="col-md-4">
