@@ -2,16 +2,13 @@ const express = require("express");
 const chalk = require("chalk");
 const cors = require("cors");
 const dotenv = require("dotenv");
-<<<<<<< HEAD
 const session = require("express-session"); 
 
 
-=======
 const app = express();
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
 const User = require("./models/User"); 
->>>>>>> userSetting
 const connectDB = require("./utils/db");
 const { sessionMiddleware, setUserFromCookie } = require("./middlewares/setUser");
 

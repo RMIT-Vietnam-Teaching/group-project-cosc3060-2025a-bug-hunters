@@ -115,40 +115,6 @@ const userSchema = new mongoose.Schema({
     description: {
         type: String,
         trim: true,
-<<<<<<< HEAD
-    },
-    coin: {
-        type: Number,
-        default: 0,
-    },
-    theme: {
-        type: String,
-        enum: ["light", "dark"],
-        default: "light",
-    },
-    SearchingHistory: [String],
-    cardPaymentInfo: {
-        cardNumber: {
-            type: String,
-            required: true,
-        },
-        cardHolderName: {
-            type: String,
-            required: true,
-        },
-        expirationDate: {
-            type: String,
-            required: true,
-        },
-        cvv: {
-            type: String,
-            required: true,
-        },
-    },
-});
-
-module.exports = mongoose.model("User", userSchema);
-=======
     },
     coin: {
         type: Number,
@@ -183,4 +149,3 @@ module.exports = mongoose.model("User", userSchema);
 });
 
 module.exports = mongoose.model("User", userSchema);
->>>>>>> userSetting
