@@ -51,23 +51,11 @@
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item dropdown">
                     <a
-                        class="nav-link dropdown-toggle"
-                        href="#"
-                        id="courseDropdown"
-                        role="button"
-                        data-bs-toggle="dropdown"
-                        aria-expanded="false"
-                        style="min-width: 120px"
+                        class="nav-link text-dark"
+                        href="/courses"
+                        style="font-weight: 500"
+                        >All Courses</a
                     >
-                        Courses
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="courseDropdown">
-                        <li>
-                            <a class="dropdown-item" href="#">All Courses</a>
-                        </li>
-                        <li><a class="dropdown-item" href="#">Featured</a></li>
-                        <li><a class="dropdown-item" href="#">New</a></li>
-                    </ul>
                 </li>
             </ul>
 
@@ -76,14 +64,14 @@
                     href="/auth/login"
                     class="btn px-4 fw-semibold"
                     style="
-                        border: 2px solid #ff8c42;
-                        color: #ff8c42;
+                        border: 2px solid #ee6c4d;
+                        color: #ee6c4d;
                         border-radius: 30px;
                         background-color: transparent;
                         transition: all 0.3s ease;
                     "
-                    onmouseover="this.style.backgroundColor='#ff8c42'; this.style.color='white'"
-                    onmouseout="this.style.backgroundColor='transparent'; this.style.color='#ff8c42'"
+                    onmouseover="this.style.backgroundColor='#ee6c4d'; this.style.color='white'"
+                    onmouseout="this.style.backgroundColor='transparent'; this.style.color='#ee6c4d'"
                 >
                     Login
                 </a>
@@ -91,14 +79,14 @@
                     href="/auth/register"
                     class="btn px-4 fw-semibold"
                     style="
-                        background-color: #ff8c42;
+                        background-color: #ee6c4d;
                         color: white;
-                        border: 2px solid #ff8c42;
+                        border: 2px solid #ee6c4d;
                         border-radius: 30px;
                         transition: all 0.3s ease;
                     "
-                    onmouseover="this.style.backgroundColor='#e6762f'"
-                    onmouseout="this.style.backgroundColor='#ff8c42'"
+                    onmouseover="this.style.backgroundColor='#c9644b'"
+                    onmouseout="this.style.backgroundColor='#ee6c4d'"
                 >
                     Register
                 </a>
@@ -113,7 +101,7 @@
                 <li class="nav-item">
                     <a
                         class="nav-link text-dark"
-                        href="#"
+                        href="/courses"
                         style="font-weight: 500"
                         >All Courses</a
                     >
@@ -121,7 +109,7 @@
                 <li class="nav-item">
                     <a
                         class="nav-link text-dark"
-                        href="#"
+                        href="/about-us"
                         style="font-weight: 500"
                         >About Us</a
                     >
@@ -130,30 +118,64 @@
                 <li class="nav-item">
                     <a
                         class="nav-link text-dark"
-                        href="#"
-                        style="font-weight: 500"
-                        >My Courses</a
-                    >
-                </li>
-                <li class="nav-item">
-                    <a
-                        class="nav-link text-dark"
                         href="/forum"
                         style="font-weight: 500"
                         >Forum</a
                     >
                 </li>
+
+                <% if (user.role === 'Student') { %>
+                <li class="nav-item">
+                    <a
+                        class="nav-link"
+                        href="/user/my-courses"
+                        style="
+                            font-weight: 600;
+                            color: #ffffff;
+                            background-color: #ee6c4d;
+                            padding: 6px 16px;
+                            border-radius: 20px;
+                            box-shadow: 0 2px 6px rgba(238, 108, 77, 0.4);
+                            transition: all 0.3s ease;
+                        "
+                        onmouseover="this.style.backgroundColor='#d6593f'"
+                        onmouseout="this.style.backgroundColor='#ee6c4d'"
+                    >
+                        My Courses
+                    </a>
+                </li>
+                <% } else { %>
+                <li class="nav-item">
+                    <a
+                        class="nav-link"
+                        href="/instructor/my-courses"
+                        style="
+                            font-weight: 600;
+                            color: #ffffff;
+                            background-color: #ee6c4d;
+                            padding: 6px 16px;
+                            border-radius: 20px;
+                            box-shadow: 0 2px 6px rgba(238, 108, 77, 0.4);
+                            transition: all 0.3s ease;
+                        "
+                        onmouseover="this.style.backgroundColor='#d6593f'"
+                        onmouseout="this.style.backgroundColor='#ee6c4d'"
+                    >
+                        My Teaching
+                    </a>
+                </li>
+                <% } %>
             </ul>
 
             <!-- Icons & Profile -->
             <div class="d-flex align-items-center gap-3">
-                <a href="#" class="text-dark"
+                <a href="/cart" class="text-dark"
                     ><i class="bi bi-cart3 fs-5"></i
                 ></a>
-                <a href="#" class="text-dark"
+                <!-- <a href="#" class="text-dark"
                     ><i class="bi bi-bell fs-5"></i
-                ></a>
-                <a href="#" class="text-dark"
+                ></a> -->
+                <a href="/message" class="text-dark"
                     ><i class="bi bi-chat-dots fs-5"></i
                 ></a>
 
@@ -218,7 +240,9 @@
                         <% if (user.role === 'Student') { %>
                         <!-- Learning -->
                         <li class="py-2">
-                            <a class="dropdown-item" href="#">My learning</a>
+                            <a class="dropdown-item" href="/my-courses"
+                                >My learning</a
+                            >
                         </li>
 
                         <!-- Cart -->
@@ -226,7 +250,7 @@
                             class="py-2"
                             style="border-bottom: 1px solid #dee2e6"
                         >
-                            <a class="dropdown-item" href="#">My Cart</a>
+                            <a class="dropdown-item" href="/cart">My Cart</a>
                         </li>
                         <% } else if (user.role === 'Instructor') { %>
 
@@ -241,16 +265,18 @@
                         <% } %>
 
                         <!-- Notifications -->
-                        <li class="py-2">
+                        <!-- <li class="py-2">
                             <a class="dropdown-item" href="#">Notifications</a>
-                        </li>
+                        </li> -->
 
                         <!-- Messages -->
                         <li
                             class="py-2"
                             style="border-bottom: 1px solid #dee2e6"
                         >
-                            <a class="dropdown-item" href="#">Messages</a>
+                            <a class="dropdown-item" href="/message"
+                                >Messages</a
+                            >
                         </li>
 
                         <!-- Edit Profile -->
@@ -258,7 +284,11 @@
                             class="py-2"
                             style="border-bottom: 1px solid #dee2e6"
                         >
-                            <a class="dropdown-item" href="#">Edit Profile</a>
+                            <a
+                                class="dropdown-item"
+                                href="/profilePreference/:userId"
+                                >Edit Profile</a
+                            >
                         </li>
 
                         <!-- Logout -->

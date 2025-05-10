@@ -4,6 +4,10 @@ const Post = require("../models/Post");
 const Like = require("../models/Like");
 const Comment = require("../models/Comment");
 
+const dayjs = require("dayjs");
+const relativeTime = require("dayjs/plugin/relativeTime");
+dayjs.extend(relativeTime);
+
 exports.renderForumPage = async (req, res) => {
     try {
         const userId = req.signedCookies.userId;

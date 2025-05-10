@@ -41,8 +41,6 @@ const upload = multer({
 
 // Get all courses with optional category filter
 router.get("/", async (req, res) => {
-    console.log("GET /courses route was hit ✅");
-
     const selectedCategory = req.query.category;
     let filter = {};
 

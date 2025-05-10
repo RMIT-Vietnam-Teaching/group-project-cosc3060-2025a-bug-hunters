@@ -85,7 +85,6 @@ router.get("/", async (req, res) => {
             .sort((a, b) => b.rating - a.rating)
             .slice(0, 3);
 
-        console.log(user);
         res.render("homepage", {
             user,
             newCourses,
