@@ -25,7 +25,7 @@ exports.renderAddCoin = async (req, res) => {
         const cartItems = req.session.cart || [];
         res.render('addMoreCoin', {
             cartItems,
-            cardInfo: user.cardPaymentInfo,
+            cardInfo: routeUser.cardPaymentInfo,
             routeUser,
         });
       } catch (error) {

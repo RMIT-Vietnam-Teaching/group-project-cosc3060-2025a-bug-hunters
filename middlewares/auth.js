@@ -15,7 +15,7 @@ exports.preventAuthAccess = (req, res, next) => {
    
         exports.requireOwnUserAccess = (req, res, next) => {
             const loggedInUserId = req.signedCookies.userId;
-            const routeUserId = req.params.userId;
+            const routeUserId = req.params.userRouteId;
           
             console.log("🔐 Logged-in user ID from cookie:", loggedInUserId);
             console.log("🧭 Route param user ID:", routeUserId);

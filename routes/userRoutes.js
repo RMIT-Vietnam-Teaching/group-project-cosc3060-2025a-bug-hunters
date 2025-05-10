@@ -9,10 +9,8 @@ router.get("/my-courses", async (req, res) => {
     // For development: always render the page with empty enrolledCourses
     // The demo script in myCourses.ejs will populate sample courses
     const enrolledCourses = [];
-    const loggedInUserId = req.signedCookies?.userId;
-    const loggedInUser = await User.findById(loggedInUserId);
 
-    res.render("myCourses", { enrolledCourses, loggedInUser });
+    res.render("myCourses", { enrolledCourses });
   } catch (err) {
     console.error("Error loading enrolled courses:", err);
     res.status(500).send("Failed to load your enrolled courses");
@@ -21,15 +19,13 @@ router.get("/my-courses", async (req, res) => {
 
 // User profile page - NO AUTHENTICATIO CHECK FOR DEVELOPMENT
 router.get("/profile", async (req, res) => {
-  const loggedInUserId = req.signedCookies?.userId;
-  const loggedInUser = await User.findById(loggedInUserId);
   // For development: create a mock user object
   const mockUser = {
     name: "Test User",
     email: "test@example.com",
   };
 
-  res.render("userProfile", { user: mockUser, loggedInUser });
+  res.render("userProfile", { user: mockUser });
 });
 
 module.exports = router;

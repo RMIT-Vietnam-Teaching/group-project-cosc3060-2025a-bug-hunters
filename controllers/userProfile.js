@@ -8,18 +8,13 @@ exports.renderUserProfile = async (req, res) => {
     if (!routeUser) return res.status(404).send("User not found.");
 
     const loggedInUserId = req.signedCookies?.userId;
-    let loggedInUser = null;
+    const loggedInUser = loggedInUserId ? await User.findById(loggedInUserId) : null;
 
-    if (loggedInUserId && loggedInUserId.match(/^[0-9a-fA-F]{24}$/)) {
-      loggedInUser = await User.findById(loggedInUserId);
-    }
-
-    const isOwner = loggedInUserId === routeUser.id;
+    const isOwner = loggedInUserId && loggedInUserId === routeUser._id.toString();
 
     res.render("userProfile", {
-      user: loggedInUser,          // Used by navbar
-      loggedInUser,                // Optional for internal logic
-      profileUser: routeUser,
+      user: loggedInUser,         // for navbar
+      profileUser: routeUser,     // profile being viewed
       isOwner
     });
   } catch (err) {
