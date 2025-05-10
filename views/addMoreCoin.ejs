@@ -78,7 +78,7 @@
           <div class="row form-section align-items-end">
             <div class="col-md-6">
               <label class="form-label fw-bold">Insert Coin You Want to Add</label>
-              <input type="text" class="form-control" placeholder="Enter amount" id="coinInput">
+              <input type="number" class="form-control" placeholder="Enter amount" id="coinInput">
             </div>
             <div class="col-md-6 text-end">
               <label class="form-label fw-bold">Current Coin: <span class="text-primary">1234</span></label>
@@ -90,24 +90,24 @@
           <div class="form-section">
             <label class="form-label fw-bold mb-2">Special Deals</label>
           
-            <div class="special-deal-item d-flex justify-content-between align-items-center" data-amount="110">
-              <span>Buy 100 Coins, Get 10 Extra</span>
+            <div class="special-deal-item d-flex justify-content-between align-items-center" data-base="100" data-bonus="10">
+              <span>Buy 100 Coins, Get 10 Extra</span>            
               <div>
                 <button type="button" class="select-btn me-2 add-package">Select</button>
                 <button type="button" class="btn btn-sm btn-outline-danger remove-package d-none">Remove</button>
               </div>
             </div>
           
-            <div class="special-deal-item d-flex justify-content-between align-items-center" data-amount="300">
-              <span>Buy 250 Coins, Get 50 Extra</span>
+            <div class="special-deal-item d-flex justify-content-between align-items-center" data-base="250" data-bonus="50">
+              <span>Buy 250 Coins, Get 50 Extra</span>            
               <div>
                 <button type="button" class="select-btn me-2 add-package">Select</button>
                 <button type="button" class="btn btn-sm btn-outline-danger remove-package d-none">Remove</button>
               </div>
             </div>
           
-            <div class="special-deal-item d-flex justify-content-between align-items-center" data-amount="1010">
-              <span>Buy 1000 Coins, Get 10 Extra</span>
+            <div class="special-deal-item d-flex justify-content-between align-items-center" data-base="1000" data-bonus="10">
+              <span>Buy 1000 Coins, Get 100 Extra</span>            
               <div>
                 <button type="button" class="select-btn me-2 add-package">Select</button>
                 <button type="button" class="btn btn-sm btn-outline-danger remove-package d-none">Remove</button>
@@ -142,6 +142,7 @@
           <hr>
           <p class="mb-1">Purchased Coin: <strong id="coinAmount">$20</strong></p>
           <p class="mb-3">Total Price: <strong id="totalPrice">$200</strong></p>
+          <p id="bonusInfo" class="text-success fw-semibold mb-3"></p>          
           <button class="checkout-btn mb-3">Pay Now</button>
 
           <ul class="list-group mt-3" id="selectedPackagesList"></ul>
@@ -153,7 +154,7 @@
   <script>
     const stripe = Stripe("pk_test_51RF2PRFJwUJkAaIQvype4JOTw2HaUHLBdkLiZb5FUDNPKucWhetwjl69sLtM80gBUhFNPxjLms9TBdGKWLJfsuZJ00hOmtFPa2");
     const elements = stripe.elements();
-    
+  
     const style = {
       base: {
         fontSize: '16px',
@@ -166,95 +167,86 @@
         iconColor: '#e5424d'
       }
     };
-    
+  
     const cardNumber = elements.create('cardNumber', { style });
     cardNumber.mount('#card-number');
     const cardExpiry = elements.create('cardExpiry', { style });
     cardExpiry.mount('#card-expiry');
     const cardCvc = elements.create('cardCvc', { style });
     cardCvc.mount('#card-cvc');
-    
-    // Variables
+  
     const coinInput = document.getElementById('coinInput');
     const coinAmountDisplay = document.getElementById('coinAmount');
     const totalPriceDisplay = document.getElementById('totalPrice');
     const selectedPackagesList = document.getElementById('selectedPackagesList');
-    
-    let manualAmount = 0;
-    let selectedPackages = [];
-    
-    // Update Summary
+  
+    let selectedPackage = null;
+  
     function updateSummary() {
-      const totalCoin = manualAmount + selectedPackages.reduce((sum, p) => sum + p.amount, 0);
-      const totalPrice = (totalCoin / 10).toFixed(2);
-      coinAmountDisplay.textContent = `$${totalPrice}`;
+      const base = selectedPackage?.base || parseInt(coinInput.value) || 0;
+      const bonus = selectedPackage?.bonus || 0;
+      const totalCoin = base + bonus;
+      const totalPrice = base.toFixed(2); // 1 coin = $1
+  
+      coinAmountDisplay.textContent = `${totalCoin} Coins`;
       totalPriceDisplay.textContent = `$${totalPrice}`;
-    
-      // Render selected packages
+  
       selectedPackagesList.innerHTML = '';
-      selectedPackages.forEach((pkg, index) => {
-        const li = document.createElement('li');
-        li.className = 'list-group-item d-flex justify-content-between align-items-center';
-        li.innerHTML = `
-          ${pkg.label}
-          <button class="btn btn-sm btn-outline-danger" onclick="removePackage(${index})">Remove</button>
+  
+      if (selectedPackage) {
+        const labelLi = document.createElement('li');
+        labelLi.className = 'list-group-item d-flex justify-content-between align-items-center';
+        labelLi.innerHTML = `
+          ${selectedPackage.label}
+          <button class="btn btn-sm btn-outline-danger" onclick="removePackage()">Remove</button>
         `;
-        selectedPackagesList.appendChild(li);
-      });
-    
-      // Manual coin input display (optional)
-      if (manualAmount > 0) {
-        const li = document.createElement('li');
-        li.className = 'list-group-item d-flex justify-content-between align-items-center';
-        li.innerHTML = `
-          Manual Amount: ${manualAmount} Coins
-          <button class="btn btn-sm btn-outline-danger" onclick="clearManual()">Clear</button>
-        `;
-        selectedPackagesList.appendChild(li);
+        selectedPackagesList.appendChild(labelLi);
+  
+        document.getElementById('bonusInfo').textContent = `🎁 Extra coin: ${bonus}`;
+      } else {
+        document.getElementById('bonusInfo').textContent = '';
+      
       }
     }
-    
-    // Input change
-    coinInput.addEventListener('input', () => {
-      manualAmount = parseInt(coinInput.value) || 0;
-      updateSummary();
-    });
-    
-    // Add/remove package buttons
-    document.querySelectorAll('.special-deal-item').forEach(item => {
-      const amount = parseInt(item.getAttribute('data-amount'));
-      const label = item.querySelector('span').textContent.trim();
-    
-      item.querySelector('.add-package').addEventListener('click', () => {
-        selectedPackages.push({ amount, label });
-        updateSummary();
-      });
-    });
-    
-    // Remove functions
-    function removePackage(index) {
-      selectedPackages.splice(index, 1);
-      updateSummary();
-    }
-    function clearManual() {
-      manualAmount = 0;
+  
+    function removePackage() {
+      selectedPackage = null;
       coinInput.value = '';
       updateSummary();
     }
-    
+  
+    // Manual input clears selected package
+    coinInput.addEventListener('input', () => {
+      selectedPackage = null;
+      updateSummary();
+    });
+  
+    // Handle special deal selection
+    document.querySelectorAll('.special-deal-item').forEach(item => {
+      const base = parseInt(item.getAttribute('data-base')) || 0;
+      const bonus = parseInt(item.getAttribute('data-bonus')) || 0;
+      const label = item.querySelector('span').textContent.trim();
+  
+      item.querySelector('.add-package').addEventListener('click', () => {
+        selectedPackage = { base, bonus, label };
+        coinInput.value = base;
+        updateSummary();
+      });
+    });
+  
     // Checkout
     document.querySelector('.checkout-btn').addEventListener('click', async () => {
-      const totalCoin = manualAmount + selectedPackages.reduce((sum, p) => sum + p.amount, 0);
-      const cents = Math.floor((totalCoin / 10) * 100);
-    
+      const baseAmount = selectedPackage?.base || parseInt(coinInput.value) || 0;
+      const cents = baseAmount * 100;
+  
       const res = await fetch('/payment/create-payment-intent', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ amount: cents })
       });
-    
+  
       const { clientSecret } = await res.json();
-    
+  
       const result = await stripe.confirmCardPayment(clientSecret, {
         payment_method: {
           card: cardNumber,
@@ -263,14 +255,15 @@
           }
         }
       });
-    
+  
       if (result.error) {
         alert("❌ " + result.error.message);
       } else if (result.paymentIntent.status === 'succeeded') {
         window.location.href = "/payment/confirmation";
       }
     });
-    </script>
+  </script>
+  
     
   
 </body>
