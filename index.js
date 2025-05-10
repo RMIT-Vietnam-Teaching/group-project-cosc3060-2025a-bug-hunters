@@ -6,7 +6,6 @@ const session = require("express-session");
 
 
 const app = express();
-const session = require("express-session");
 const cookieParser = require("cookie-parser");
 const User = require("./models/User"); 
 const connectDB = require("./utils/db");
@@ -49,11 +48,8 @@ const userSettingsRoutes = require("./routes/userSetting");
 const adminRoutes = require("./routes/adminRoutes");
 const userProfileRoutes = require("./routes/userProfileRoutes");
 const institution = require("./routes/institutionRoutes");
-
-
-
-
-// const coinPaymentRoutes = require("./routes/coinPayment");
+const cartRoutes = require("./routes/cartRoutes");
+const paymentRoutes = require("./routes/paymentRoutes");
 const courseRoutes = require("./routes/courseRoutes");
 const userRoutes = require("./routes/userRoutes");
 const subscriptionRoutes = require("./routes/subscriptionRoutes");
@@ -62,10 +58,8 @@ const subscriptionRoutes = require("./routes/subscriptionRoutes");
 app.use("/", homeRoutes);
 app.use("/auth", authRoutes);
 app.use("/admin", adminRoutes);
-app.use("/settings", settingsRoutes);
 app.use("/cart", cartRoutes);
 app.use("/payment", paymentRoutes);
-// app.use("/checkout", coinPayment);
 
 
 
