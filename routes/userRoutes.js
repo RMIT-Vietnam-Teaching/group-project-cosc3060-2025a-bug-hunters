@@ -1,17 +1,35 @@
 const express = require("express");
 const router = express.Router();
+const Course = require("../models/course");
 const User = require("../models/User");
-const userController = require("../controllers/userControllers");
 
+// My Courses page route - NO AUTHENTICATION CHECK FOR DEVELOPMENT
+router.get("/my-courses", async (req, res) => {
+  try {
+    // For development: always render the page with empty enrolledCourses
+    // The demo script in myCourses.ejs will populate sample courses
+    const enrolledCourses = [];
+    const loggedInUserId = req.signedCookies?.userId;
+    const loggedInUser = await User.findById(loggedInUserId);
 
-router.get("/userProfile", (req, res) => { // userprofile
-    const raw = req.params.usernameProfile;
-    const username = raw.replace("Profile", "");
-    const picture = req.query.picture || "images/defaultAvatar.png";
-    try {
-      const user = { name: username, picture: picture};
-      res.render("userProfile", { user }); 
-    } catch (error) {
-      res.status(500).send("Something went wrong");
+    res.render("myCourses", { enrolledCourses, loggedInUser });
+  } catch (err) {
+    console.error("Error loading enrolled courses:", err);
+    res.status(500).send("Failed to load your enrolled courses");
   }
-  });
+});
+
+// User profile page - NO AUTHENTICATIO CHECK FOR DEVELOPMENT
+router.get("/profile", async (req, res) => {
+  const loggedInUserId = req.signedCookies?.userId;
+  const loggedInUser = await User.findById(loggedInUserId);
+  // For development: create a mock user object
+  const mockUser = {
+    name: "Test User",
+    email: "test@example.com",
+  };
+
+  res.render("userProfile", { user: mockUser, loggedInUser });
+});
+
+module.exports = router;

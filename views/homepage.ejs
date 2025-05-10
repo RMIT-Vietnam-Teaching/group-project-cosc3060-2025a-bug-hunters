@@ -1,5 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Homepage</title>
+
+        <!-- Bootstrap CDN -->
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+        />
+        <!-- Bootstrap Icons (for bi-cart3 etc.) -->
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
+            rel="stylesheet"
+        />
+    </head>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -17,12 +33,24 @@
       rel="stylesheet"
     />
 
-    <!-- Your custom CSS -->
-    <link rel="stylesheet" href="/css/style.css" />
+    <!-- NavBar CSS -->
+    <link rel="stylesheet" href="/css/navBarStyle.css" />
+    <!-- Carousel CSS -->
+    <link rel="stylesheet" href="/css/carousel.css" />
+    <!-- Course Cards CSS -->
+    <link rel="stylesheet" href="/css/courseSection.css" />
+    <!-- Student Stories CSS -->
+    <link rel="stylesheet" href="/css/studentStories.css" />
+    <!-- Learning Path CSS -->
+    <link rel="stylesheet" href="/css/learningPath.css" />
+        <!-- Dark Mode CSS -->
+    <link rel="stylesheet" href="/css/darkMode.css">
+
   </head>
   <body>
-    <%- include('partials/navbar') %>
-
+  
+      <%- include('partials/navbar') %>
+    
     <!-- Main content -->
     <!--Hero Banner Section -->
     <section id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
@@ -75,7 +103,9 @@
         <div class="carousel-item" data-bs-interval="3000">
           <img src="images/heroBanner3.jpg" class="d-block w-100 banner-img" />
           <div class="carousel-caption text-center">
-            <h1 class="banner-text">Empower Your Future - Through Knowledge.</h1>
+            <h1 class="banner-text">
+              Empower Your Future - Through Knowledge.
+            </h1>
           </div>
         </div>
       </div>
@@ -105,7 +135,7 @@
     <!--Toggle Buttons (New Courses and Popular Courses)-->
     <!-- Course Toggle Buttons -->
     <div class="text-center my-5">
-      <button class="btn newCourse-btn" id="newCoursesBtn">
+      <button class="btn newCourse-btn active" id="newCoursesBtn">
         New Courses
       </button>
       <button class="btn btn-outline-secondary" id="popularCoursesBtn">
@@ -113,38 +143,44 @@
       </button>
     </div>
 
-    <!-- FAKE Course Cards Grid -->
+    <!-- Course Cards Grid -->
     <div class="container">
-      <div class="row" id="courseList">
-        <!-- Sample Course Card -->
+      <!-- New Courses Section -->
+      <div class="row" id="newCoursesList">
+        <% if (newCourses && newCourses.length > 0) { %> <%
+        newCourses.forEach(course => { %>
         <div class="col-md-4 mb-4">
           <div class="card h-100 shadow-sm">
             <img
-              src="images/cybersecurity.jpg"
+              src="<%= course.imageUrl || course.imageURL || 'images/course-placeholder.jpg' %>"
               class="card-img-top"
-              alt="Cybersecurity course"
+              alt="<%= course.title %>"
             />
             <div class="card-body">
               <h5 class="card-title fw-bold text-center fst-italic">
-                Introduction to Cybersecurity
+                <%= course.title %>
               </h5>
               <p class="text-center fst-italic text-muted">
-                by Dr. Alina Prest
+                by <%= course.instructor || 'Unknown Instructor' %>
               </p>
               <p class="card-text">
-                Kickstart your career in cybersecurity – start with the
-                essentials!
+                <% if (course.description) { %> <%=
+                course.description.substring(0, 100) %><%=
+                course.description.length > 100 ? '...' : '' %> <% } else { %>
+                No description available. <% } %>
               </p>
               <div class="d-flex justify-content-start align-items-center mb-1">
-                <i class="bi bi-clock me-2"></i> 350 hours
+                <i class="bi bi-clock me-2"></i> <%= course.duration ||
+                'Duration not specified' %>
               </div>
               <div class="d-flex justify-content-start align-items-center">
-                <i class="bi bi-star-fill me-2"></i> 4.7 (10,000)
+                <i class="bi bi-star-fill me-2"></i> <%= course.rating || 0 %>
+                (<%= Math.floor(Math.random() * 1000) %>)
               </div>
             </div>
             <div class="card-footer bg-white text-center">
               <a
-                href="#"
+                href="/courses/<%= course._id %>"
                 class="btn btn-lg rounded-pill text-white"
                 style="background-color: #ee6c4d"
                 >Enroll</a
@@ -152,40 +188,113 @@
             </div>
           </div>
         </div>
+        <% }); %> <% } else { %>
+        <div class="col-12 text-center py-5">
+          <p>
+            No courses available yet. Be the first to
+            <a href="/courses/create">create a course</a>!
+          </p>
+        </div>
+        <% } %>
+      </div>
+
+      <!-- Popular Courses Section (hidden by default) -->
+      <div class="row" id="popularCoursesList" style="display: none">
+        <% if (popularCourses && popularCourses.length > 0) { %> <%
+        popularCourses.forEach(course => { %>
+        <div class="col-md-4 mb-4">
+          <div class="card h-100 shadow-sm">
+            <img
+              src="<%= course.imageUrl || course.imageURL || 'images/course-placeholder.jpg' %>"
+              class="card-img-top"
+              alt="<%= course.title %>"
+            />
+            <div class="card-body">
+              <h5 class="card-title fw-bold text-center fst-italic">
+                <%= course.title %>
+              </h5>
+              <p class="text-center fst-italic text-muted">
+                by <%= course.instructor || 'Unknown Instructor' %>
+              </p>
+              <p class="card-text">
+                <% if (course.description) { %> <%=
+                course.description.substring(0, 100) %><%=
+                course.description.length > 100 ? '...' : '' %> <% } else { %>
+                No description available. <% } %>
+              </p>
+              <div class="d-flex justify-content-start align-items-center mb-1">
+                <i class="bi bi-clock me-2"></i> <%= course.duration ||
+                'Duration not specified' %>
+              </div>
+              <div class="d-flex justify-content-start align-items-center">
+                <i class="bi bi-star-fill me-2"></i> <%= course.rating || 0 %>
+                (<%= Math.floor(Math.random() * 1000) %>)
+              </div>
+            </div>
+            <div class="card-footer bg-white text-center">
+              <a
+                href="/courses/<%= course._id %>"
+                class="btn btn-lg rounded-pill text-white"
+                style="background-color: #ee6c4d"
+                >Enroll</a
+              >
+            </div>
+          </div>
+        </div>
+        <% }); %> <% } else { %>
+        <div class="col-12 text-center py-5">
+          <p>No popular courses available yet.</p>
+        </div>
+        <% } %>
       </div>
     </div>
 
+    <!-- JavaScript for toggling between course lists -->
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const newCoursesBtn = document.getElementById("newCoursesBtn");
+        const popularCoursesBtn = document.getElementById("popularCoursesBtn");
+        const newCoursesList = document.getElementById("newCoursesList");
+        const popularCoursesList =
+          document.getElementById("popularCoursesList");
 
-    <!--Course Cards (REAL)-->
-    <section class="container my-5">
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h2>New Courses</h2>
-    <a href="/courses" class="btn btn-outline-primary">View All</a>
-  </div>
-  <div class="row">
-    <% newCourses.forEach(course => { %>
-      <div class="col-md-4 mb-4">
-        <div class="card h-100 shadow-sm">
-          <img src="<%= course.imageURL %>" class="card-img-top" alt="<%= course.title %>">
-          <div class="card-body">
-            <h5 class="card-title"><%= course.title %></h5>
-            <p class="card-text"><%= course.description.substring(0, 100) %>...</p>
-          </div>
-          <div class="card-footer d-flex justify-content-between align-items-center">
-            <small class="text-muted">Instructor: <%= course.instructor %></small>
-            <a href="/courses/<%= course._id %>" class="btn btn-sm btn-primary">Enroll</a>
-          </div>
-        </div>
-      </div>
-    <% }) %>
-  </div>
-</section>
+        newCoursesBtn.addEventListener("click", function () {
+          newCoursesList.style.display = "flex";
+          popularCoursesList.style.display = "none";
+          newCoursesBtn.classList.add("active");
+          newCoursesBtn.classList.remove("btn-outline-secondary");
+          popularCoursesBtn.classList.remove("active");
+          popularCoursesBtn.classList.add("btn-outline-secondary");
+        });
 
+        popularCoursesBtn.addEventListener("click", function () {
+          newCoursesList.style.display = "none";
+          popularCoursesList.style.display = "flex";
+          popularCoursesBtn.classList.add("active");
+          popularCoursesBtn.classList.remove("btn-outline-secondary");
+          newCoursesBtn.classList.remove("active");
+          newCoursesBtn.classList.add("btn-outline-secondary");
+        });
+      });
+    </script>
+
+    <!--Student Stories Section-->
+    <%- include('partials/learningPath') %>
+
+    <!--Student Stories Section-->
+    <%- include('partials/studentStories') %>
 
     <!--Page Footer-->
     <%- include('partials/footer') %>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Subcription Form-->
+    <script src="/js/footer.js"></script>
+
+    <!-- Dark Mode JavaScript -->
+    <script src="/js/darkMode.js"></script>
+
   </body>
 </html>

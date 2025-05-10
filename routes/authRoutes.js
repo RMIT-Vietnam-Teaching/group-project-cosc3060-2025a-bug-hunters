@@ -1,42 +1,47 @@
 const express = require("express");
 const router = express.Router();
-const {loginUser,registerUser,forgetPasswordUser,resetPasswordUser} = require("../controllers/authentication");
+const {
+    renderRegisterPage,
+    renderLoginPage,
+    renderForgetPasswordPage,
+    renderResetPasswordPage,
+    loginUser,
+    registerUser,
+    forgetPasswordUser,
+    resetPasswordUser,
+    logout,
+} = require("../controllers/authentication");
+
+const { preventAuthAccess } = require("../middlewares/auth");
 
 // Render registration page
-router.get("/register", (req, res) => {
-    res.render("register");
-});
+router.get("/register", preventAuthAccess, renderRegisterPage);
 
 // Handle registration
-router.post("/register",registerUser);
+router.post("/register", registerUser);
 
 // Render Login page
-router.get("/login", (req, res) => {
-    res.render("login");
-});
+router.get("/login", preventAuthAccess, renderLoginPage);
 
 // Handle login
 router.post("/login", loginUser);
 
-
 // Render forget password page
-router.get("/forgetPassword", (req, res) => {
-    res.render("forgetPassword");
-});
+router.get("/forgetPassword", preventAuthAccess, renderForgetPasswordPage);
 
 // Handle forget password
 router.post("/forgetPassword", forgetPasswordUser);
 
 // Render reset password page
-router.get("/forgetPassword/resetPassword", (req, res) => {
-    res.render("resetPassword");
-});
+router.get(
+    "/forgetPassword/resetPassword",
+    preventAuthAccess,
+    renderResetPasswordPage
+);
 
-router.post("/forgetPassword/resetPassword",resetPasswordUser);
+// Handle reset password
+router.post("/forgetPassword/resetPassword", resetPasswordUser);
 
-
-router.get("/navbar", (req, res) => {
-    res.render("partials/navbarLogin");
-});
+router.get("/logout", logout);
 
 module.exports = router;

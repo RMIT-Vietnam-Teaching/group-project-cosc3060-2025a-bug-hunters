@@ -1,0 +1,62 @@
+<!-- Left Hamburger Menu Toggle -->
+
+<div class="d-flex align-items-center gap-3 mb-4">
+  <button id="leftSidebarToggle" class="mobile-menu-button" aria-label="Toggle left sidebar">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+  <h1 class="h4 m-0">Account Security</h1>
+</div>
+
+      
+     
+
+   <!-- Email -->
+<form method="POST" action="/userSettings/security/update/<%= user._id %>" class="d-flex justify-content-center mb-5">
+  <div style="max-width: 500px; width: 100%;">
+    <div class="mb-3">
+      <input type="email" name="newEmail" class="form-control" value="<%= user.email %>" placeholder="User Email" required />
+    </div>
+    <div class="text-end">
+      <button type="submit" class="btn btn-outline-danger">Change Email</button>
+    </div>
+  </div>
+</form>
+
+
+<!-- Password -->
+<form method="POST" action="/userSettings/security/update/<%= user._id %>" class="d-flex justify-content-center">
+  <div style="max-width: 500px; width: 100%;">
+    <hr class="my-4" />
+    <div class="mb-3">
+      <input type="password" name="oldPassword" class="form-control" placeholder="Enter old password" required />
+    </div>
+    <div class="mb-3">
+      <input type="password" name="newPassword" class="form-control" placeholder="Enter new password" required />
+    </div>
+    <div class="mb-4">
+      <input type="password" name="confirmPassword" class="form-control" placeholder="Re-type new password" required />
+    </div>
+    <div class="text-end">
+      <button type="submit" class="btn btn-outline-danger">Change password</button>
+    </div>
+  </div>
+</form>
+
+
+<% if (success) { %>
+  <div id="success-alert" class="alert alert-success ...">
+    ✅ Security settings updated successfully!
+  </div>
+<% } %>
+
+<% if (error) { %>
+  <div id="error-alert" class="alert alert-danger text-center fw-semibold rounded-pill shadow-sm px-4 py-2 mt-3" style="max-width: 400px; margin: auto;">
+    ❌ <%= decodeURIComponent(error) %>
+  </div>
+<% } %>
+
+
+      
+      <script src="/js/userSecurity.js?v=1"></script>
