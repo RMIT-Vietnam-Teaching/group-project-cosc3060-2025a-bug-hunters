@@ -18,7 +18,7 @@
   <div class="row align-items-center">
     <div class="col-md-4 text-center">
       <img  src="<%= user.avatar || 'https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3467.jpg' %>"  alt="Profile Picture" class="rounded-circle" width="180" height="180" style="background-color: #efedea;">
-      <h3 class="mt-3 fw-semibold"><%= user.firstName %> <%= user.lastName %></h3>
+      <h3 class="mt-3 fw-semibold"><%= profileUser.firstName %> <%= profileUser.lastName %></h3>
       <!-- <h3 class="mt-3 fw-semibold user-name"></h3> -->
     </div>
 
@@ -26,9 +26,9 @@
       <div class="bg-white p-4 rounded-4 shadow-sm" style="box-shadow: 2px 4px 6px rgba(0,0,0,0.1);">
         <div class="row">
           <div class="col-12">
-            <p><strong>Role</strong><br><%= user?.role?.user || 'Student' %></p>
-            <p><strong>Headline</strong><br><%= user.headline %></p>
-            <p><strong>About me</strong><br><%= user.description %></p>
+            <p><strong>Role</strong><br><%= profileUser?.role?.profileUser || 'Student' %></p>
+            <p><strong>Headline</strong><br><%= profileUser.headline %></p>
+            <p><strong>About me</strong><br><%= profileUser.description %></p>
           </div>
         </div>
       </div>

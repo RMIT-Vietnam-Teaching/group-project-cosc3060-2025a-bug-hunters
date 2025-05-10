@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Add Coins</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
   <script src="https://js.stripe.com/v3/"></script>
 
   <style>
@@ -67,9 +68,37 @@
       border-bottom: 1px solid #eee;
       padding: 8px 0;
     }
+    .toggle-visibility {
+      position: absolute;
+      top: 50%;
+      right: 16px;
+      transform: translateY(-50%);
+      cursor: pointer;
+      font-size: 18px;
+      color: #666;
+      z-index: 10;
+    }
+    .toggle-visibility-icon {
+      position: absolute;
+      top: 50%;
+      right: 16px;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: #666;
+      font-size: 18px;
+      z-index: 10;
+    }
+
+
   </style>
 </head>
 <body>
+
+  <!-- navbar -->
+  <%- include('partials/navbar') %>
+
+  <!-- main content -->
   <div class="container py-5">
     <h3 class="fw-bold mb-4">Add More Coin</h3>
     <div class="row">
@@ -116,23 +145,36 @@
           </div>
           
           <hr class="my-3">
-          <div class="form-section">
+          <div class="form-section position-relative">
             <label class="form-label fw-bold">Card Number</label>
-            <div id="card-number" class="form-control p-3"></div>
-          </div>
+            <div class="position-relative">
+              <input type="text" class="form-control pe-5" id="cardNumberInput"
+                     readonly
+                     value="**** **** **** <%= cardInfo?.cardNumber?.slice(-4) || '4242' %>">
+            </div>
+          </div>          
+          
           <div class="row form-section">
             <div class="col-md-6">
               <label class="form-label fw-bold">Expiry Date</label>
-              <div id="card-expiry" class="form-control p-3"></div>
+              <input type="text" class="form-control" name="expirationDate" placeholder="MM/YY"
+                     value="<%= cardInfo?.expirationDate || '' %>" pattern="\d{2}/\d{2}" required>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-6 position-relative">
               <label class="form-label fw-bold">CVC</label>
-              <div id="card-cvc" class="form-control p-3"></div>
+              <div class="position-relative">
+                <input type="password" class="form-control pe-5" id="cvcInput" name="cvv" 
+                       placeholder="CVC"
+                       value="<%= cardInfo?.cvv || '' %>" maxlength="4" pattern="[0-9]{3,4}" required>
+                <button type="button" class="btn toggle-visibility-icon" onclick="toggleVisibility('cvcInput', this)">
+                  <i class="bi bi-eye-fill"></i>
+                </button>
+              </div>
             </div>
           </div>
           <div class="form-section">
             <label class="form-label fw-bold">Name on Card</label>
-            <input type="text" class="form-control" id="cardholder-name" placeholder="Name on Card">
+            <input type="text" class="form-control" id="cardholder-name" placeholder="Name on Card" value="<%= cardInfo?.cardHolderName || '' %>">
           </div>
         </form>
       </div>
@@ -152,132 +194,57 @@
     </div>
   </div>
   <script>
-    const stripe = Stripe("pk_test_51RF2PRFJwUJkAaIQvype4JOTw2HaUHLBdkLiZb5FUDNPKucWhetwjl69sLtM80gBUhFNPxjLms9TBdGKWLJfsuZJ00hOmtFPa2");
-    const elements = stripe.elements();
-  
-    const style = {
-      base: {
-        fontSize: '16px',
-        color: '#333',
-        fontFamily: '"Segoe UI", Tahoma, Geneva, Verdana, sans-serif',
-        '::placeholder': { color: '#aaa' }
-      },
-      invalid: {
-        color: '#e5424d',
-        iconColor: '#e5424d'
-      }
-    };
-  
-    const cardNumber = elements.create('cardNumber', { style });
-    cardNumber.mount('#card-number');
-    const cardExpiry = elements.create('cardExpiry', { style });
-    cardExpiry.mount('#card-expiry');
-    const cardCvc = elements.create('cardCvc', { style });
-    cardCvc.mount('#card-cvc');
-  
     const coinInput = document.getElementById('coinInput');
     const coinAmountDisplay = document.getElementById('coinAmount');
     const totalPriceDisplay = document.getElementById('totalPrice');
-    const selectedPackagesList = document.getElementById('selectedPackagesList');
-  
-    let selectedPackage = null;
-  
+    const bonusInfo = document.getElementById('bonusInfo');
+    
+    // Update summary logic
     function updateSummary() {
-      const base = selectedPackage?.base || parseInt(coinInput.value) || 0;
-      const bonus = selectedPackage?.bonus || 0;
-      const totalCoin = base + bonus;
-      const totalPrice = base.toFixed(2); // 1 coin = $1
-  
-      coinAmountDisplay.textContent = `${totalCoin} Coins`;
-      totalPriceDisplay.textContent = `$${totalPrice}`;
-  
-      selectedPackagesList.innerHTML = '';
-  
-      if (selectedPackage) {
-        const labelLi = document.createElement('li');
-        labelLi.className = 'list-group-item d-flex justify-content-between align-items-center';
-        labelLi.innerHTML = `
-          ${selectedPackage.label}
-          <button class="btn btn-sm btn-outline-danger" onclick="removePackage()">Remove</button>
-        `;
-        selectedPackagesList.appendChild(labelLi);
-  
-        document.getElementById('bonusInfo').textContent = `🎁 Extra coin: ${bonus}`;
-      } else {
-        document.getElementById('bonusInfo').textContent = '';
-      
-      }
+      const amount = parseInt(coinInput.value) || 0;
+      let bonus = 0;
+    
+      if (amount >= 100 && amount < 250) bonus = 10;
+      else if (amount >= 250 && amount < 1000) bonus = 50;
+      else if (amount >= 1000) bonus = 100;
+    
+      const total = amount + bonus;
+      coinAmountDisplay.textContent = `${total} Coins`;
+      totalPriceDisplay.textContent = `$${amount.toFixed(2)}`;
+      bonusInfo.textContent = bonus ? `🎁 Extra coin: ${bonus}` : '';
     }
-  
-    function removePackage() {
-      selectedPackage = null;
-      coinInput.value = '';
-      updateSummary();
-    }
-  
-    // Manual input clears selected package
+    
+    // Manual entry
     coinInput.addEventListener('input', () => {
-  const entered = parseInt(coinInput.value) || 0;
-
-  // Check if the input matches any special deal
-  const match = Array.from(document.querySelectorAll('.special-deal-item')).find(item => {
-    return parseInt(item.getAttribute('data-base')) === entered;
-  });
-
-  if (match) {
-    const base = parseInt(match.getAttribute('data-base'));
-    const bonus = parseInt(match.getAttribute('data-bonus'));
-    const label = match.querySelector('span').textContent.trim();
-    selectedPackage = { base, bonus, label };
-  } else {
-    selectedPackage = null;
-  }
-
-  updateSummary();
-});
-
-    // Handle special deal selection
+      updateSummary();
+    });
+    
+    // Package selection
     document.querySelectorAll('.special-deal-item').forEach(item => {
-      const base = parseInt(item.getAttribute('data-base')) || 0;
-      const bonus = parseInt(item.getAttribute('data-bonus')) || 0;
-      const label = item.querySelector('span').textContent.trim();
-  
+      const base = parseInt(item.dataset.base);
       item.querySelector('.add-package').addEventListener('click', () => {
-        selectedPackage = { base, bonus, label };
         coinInput.value = base;
         updateSummary();
       });
     });
-  
-    // Checkout
-    document.querySelector('.checkout-btn').addEventListener('click', async () => {
-      const baseAmount = selectedPackage?.base || parseInt(coinInput.value) || 0;
-      const cents = baseAmount * 100;
-  
-      const res = await fetch('/payment/create-payment-intent', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount: cents })
-      });
-  
-      const { clientSecret } = await res.json();
-  
-      const result = await stripe.confirmCardPayment(clientSecret, {
-        payment_method: {
-          card: cardNumber,
-          billing_details: {
-            name: document.getElementById('cardholder-name').value
-          }
-        }
-      });
-  
-      if (result.error) {
-        alert("❌ " + result.error.message);
-      } else if (result.paymentIntent.status === 'succeeded') {
-        window.location.href = "/payment/confirmation";
+    
+    // Toggle CVC
+    function toggleVisibility(inputId, btn) {
+      const input = document.getElementById(inputId);
+      const icon = btn.querySelector("i");
+      if (!input || !icon) return;
+      if (input.type === "password") {
+        input.type = "text";
+        icon.classList.remove("bi-eye-fill");
+        icon.classList.add("bi-eye-slash-fill");
+      } else {
+        input.type = "password";
+        icon.classList.remove("bi-eye-slash-fill");
+        icon.classList.add("bi-eye-fill");
       }
-    });
-  </script>
+    }
+    </script>
+    
   
     
   

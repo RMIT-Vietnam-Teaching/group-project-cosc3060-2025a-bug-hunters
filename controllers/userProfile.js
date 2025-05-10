@@ -1,40 +1,27 @@
 const User = require("../models/User");
 
-exports.renderUserProfileByParam = async (req, res) => {
-  const loggedInUserId = req.signedCookies?.userId;   
-  const routeUserId = req.params.id;              
-  const loggedInUser = await User.findById(loggedInUserId);
-  console.log("🔐 Logged-in user:", loggedInUserId);
-  console.log("👤 Viewing profile of:", routeUserId);
 
+exports.renderUserProfile = async (req, res) => {
   try {
-    const user = await User.findById(routeUserId);
-    if (!user) {
-      return res.status(404).send("User not found.");
+    const { userRouteId } = req.params;
+    const routeUser = await User.findById(userRouteId);
+    if (!routeUser) return res.status(404).send("User not found.");
+
+    const loggedInUserId = req.signedCookies?.userId;
+    let loggedInUser = null;
+
+    if (loggedInUserId && loggedInUserId.match(/^[0-9a-fA-F]{24}$/)) {
+      loggedInUser = await User.findById(loggedInUserId);
     }
 
-    const isOwner = loggedInUserId === routeUserId;
-    res.render("userProfile", { user, isOwner, loggedInUser });
-  } catch (err) {
-    console.error("Error loading user profile:", err);
-    res.status(500).send("Server error.");
-  }
-};
+    const isOwner = loggedInUserId === routeUser.id;
 
-exports.renderUserProfileByQuery = async (req, res) => {
-  const routeUserId = req.query.id; 
-  const loggedInUserId = req.signedCookies?.userId; 
-  const loggedInUser = await User.findById(loggedInUserId);
-  if (!routeUserId) {
-    return res.status(400).send("No user ID provided.");
-  }
-
-  try {
-    const user = await User.findById(routeUserId);
-    if (!user) {
-      return res.status(404).send("User not found.");
-    }
-    res.render("userProfile", { user, loggedInUserId, loggedInUser });
+    res.render("userProfile", {
+      user: loggedInUser,          // Used by navbar
+      loggedInUser,                // Optional for internal logic
+      profileUser: routeUser,
+      isOwner
+    });
   } catch (err) {
     console.error("Error loading user profile:", err);
     res.status(500).send("Server error.");

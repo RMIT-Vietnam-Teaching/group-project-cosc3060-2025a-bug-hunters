@@ -5,20 +5,22 @@ exports.renderUserPreference = async (req, res) => {
   try {
     const routeUserId = req.params.userId;
 
-    const user = await User.findById(routeUserId);
+    const loggedInUserId = req.signedCookies?.userId;
+    const routeUser = await User.findById(loggedInUserId);
+   
+    // console.log("Route User ID:", loggedInUserId);
 
-    if (!user) {
+    if (!routeUser) {
       return res.status(404).send("User not found");
     }
-    const loggedInUserId = req.signedCookies?.userId; // Get the logged-in user ID from cookies
+
+    console.log("Route User ID:", routeUser.id);
     const success = req.query.success;
-      const loggedInUser = await User.findById(loggedInUserId);
 
     res.render("userSettingProfilePreference", {
-      user,
+      user: routeUser,
       activePage: "profileSetting",
       success,
-      loggedInUser,
     });
   } catch (error) {
     console.error("Error rendering user profile settings:", error);
@@ -35,7 +37,7 @@ exports.updateUserPreference = async (req, res) => {
       firstName,
       lastName,
       email,
-
+      
       headline,
       description,
     };
@@ -57,14 +59,13 @@ exports.renderDisplay = async (req, res) => {
  
 
   try {
-    const user = await User.findById(req.params.userId);
-    const loggedInUserId = req.signedCookies?.userId;
-      const loggedInUser = await User.findById(loggedInUserId);
-    if (!user) {
+    const routeUserId = req.query.id; 
+    const routeUser = await User.findById(routeUserId);
+    if (!routeUser) {
       return res.status(404).send("User not found");
     }
 
-    res.render("userSettingDisplay", { user, activePage: "display", loggedInUser });
+    res.render("userSettingDisplay", { user: routeUser, activePage: "display", });
   } catch (error) {
     console.error("Error rendering user profile settings:", error);
     res.status(500).send("Failed to render user profile settings");
@@ -74,19 +75,17 @@ exports.renderDisplay = async (req, res) => {
 exports.renderAccountSecurity = async (req, res) => {
 
   try {
-    const user = await User.findById(req.params.userId);
-    const loggedInUserId = req.signedCookies?.userId;
-      const loggedInUser = await User.findById(loggedInUserId);
-    if (!user) {
+    const routeUserId = req.query.id; 
+    const routeUser = await User.findById(routeUserId);
+    if (!routeUser) {
       return res.status(404).send("User not found");
     }
 
     res.render("userSettingSecurity", {
-      user,
+      user: routeUser,
       activePage: "security",
       success: req.query.success === '1' || req.query.success === 'true',
       error: req.query.error || null,
-      loggedInUser
     });
   } catch (error) {
     console.error("Error rendering user profile settings:", error);
@@ -96,18 +95,16 @@ exports.renderAccountSecurity = async (req, res) => {
 exports.renderAccountBalance = async (req, res) => {
 
   try {
-    const user = await User.findById(req.params.userId);
-    const loggedInUserId = req.signedCookies?.userId;
-    const loggedInUser = await User.findById(loggedInUserId);
-    if (!user) {
+   const routeUserId = req.query.id; 
+   const routeUser = await User.findById(routeUserId);
+    if (!routeUser) {
       return res.status(404).send("User not found");
     }
 
     res.render("userSettingBalance", {
-      user,
+      user: routeUser,
       activePage: "balance",
       success: req.query.success,
-      loggedInUser
     });
   } catch (error) {
     console.error("Error rendering user profile settings:", error);
