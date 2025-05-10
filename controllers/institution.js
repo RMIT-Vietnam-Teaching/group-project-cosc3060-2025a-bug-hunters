@@ -5,9 +5,11 @@ const bcrypt = require("bcrypt");
 
 exports.renderCourses = async (req, res) => {
   try {
-    const courses = await Course.find().lean();
+    const courses = await Course.find().populate("author").populate("studentsEnrolled").lean();
+    const students = await User.find({ role: "Student" }).lean();
+    const instructors = await User.find({ role: "Instructor" }).lean();
     console.log("Courses fetched:", courses);
-    res.render("institutionCourses", { courses });
+    res.render("institutionCourses", { courses, instructors, students });
   } catch (error) {
     console.error("Error creating or fetching courses:", error);
     res.status(500).send("Internal Server Error");
@@ -26,15 +28,25 @@ exports.renderCourseDetail = async (req, res) => {
 };
 exports.renderEditCoursePage = async (req, res) => {
   try {
-    const course = await Course.findById(req.params.id);
-    const returnTo = req.query.returnTo || "/institution/manageCourses";
+    const course = await Course.findById(req.params.id)
+      .populate("studentsEnrolled") 
+      .populate("author");
 
-    res.render("institutionEditCourse", { course, returnTo });
-  } catch (error) {
-    console.error("Error rendering course edit page:", error);
-    res.status(500).send("Failed to load course edit page.");
+    const students = await User.find({ role: "Student" });
+    const instructors = await User.find({ role: "Instructor" });
+
+    res.render("institutionEditCourse", {
+      course,
+      students,
+      instructors,
+      returnTo: req.query.returnTo || "/institution/manageCourses"
+    });
+  } catch (err) {
+    res.status(500).send("Error loading course");
   }
 };
+
+
 
 exports.renderTutors = async (req, res) => {
   try {
@@ -75,7 +87,7 @@ exports.updateCourse = async (req, res) => {
     const { id } = req.params;
     const returnTo = req.query.returnTo || "/institution/manageCourses";
 
-    const { title, description, price, duration, startDate, endDate } =
+    const { title, description, price, duration, startDate, endDate, author } =
       req.body;
 
     await Course.findByIdAndUpdate(id, {
@@ -85,6 +97,7 @@ exports.updateCourse = async (req, res) => {
       duration,
       startDate,
       endDate,
+      author 
     });
 
     res.redirect(returnTo);
@@ -126,26 +139,26 @@ exports.deleteCourseFromInstitution = async (req, res) => {
   }
 };
 
-exports.deleteTutorFromInstitution = async (req, res) => {
-  try {
-    const { id } = req.params;
-    console.log("Deleting tutor with ID:", id);
+// exports.deleteTutorFromInstitution = async (req, res) => {
+//   try {
+//     const { id } = req.params;
+//     console.log("Deleting tutor with ID:", id);
 
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ message: "Invalid tutor ID" });
-    }
+//     if (!mongoose.Types.ObjectId.isValid(id)) {
+//       return res.status(400).json({ message: "Invalid tutor ID" });
+//     }
 
-    const deletedTutor = await User.findByIdAndDelete(id);
-    if (!deletedTutor) {
-      return res.status(404).json({ message: "Tutor not found" });
-    }
+//     const deletedTutor = await User.findByIdAndDelete(id);
+//     if (!deletedTutor) {
+//       return res.status(404).json({ message: "Tutor not found" });
+//     }
 
-    res.redirect("/institution/manageTutors");
-  } catch (error) {
-    console.error("Error deleting tutor:", error.message, error.stack);
-    res.status(500).json({ message: "Internal Server Error" });
-  }
-};
+//     res.redirect("/institution/manageTutors");
+//   } catch (error) {
+//     console.error("Error deleting tutor:", error.message, error.stack);
+//     res.status(500).json({ message: "Internal Server Error" });
+//   }
+// };
 
 exports.createTutor = async (req, res) => {
   try {
@@ -180,3 +193,79 @@ exports.createTutor = async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 };
+
+exports.addStudentToCourse = async (req, res) => {
+  const { courseId } = req.params;
+  const { studentId } = req.body;
+
+  console.log("Course ID:", courseId);
+  console.log("Student ID:", studentId);
+
+  try {
+    const course = await Course.findById(courseId);
+    if (!course) {
+      return res.status(404).send("Course not found");
+    }
+
+    const alreadyEnrolled = course.studentsEnrolled.some(enrolled =>
+      enrolled.equals(studentId) // This works only if both are ObjectId
+    );
+
+    if (!alreadyEnrolled) {
+      course.studentsEnrolled.push(studentId);
+      await course.save();
+    }
+
+    res.redirect(`/institution/editCourse/${courseId}?returnTo=/institution/manageCourses`);
+  } catch (error) {
+    console.error("Failed to add student:", error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+
+exports.removeStudentFromCourse = async (req, res) => {
+  const { courseId } = req.params;
+  const { studentId } = req.body;
+
+  try {
+    const course = await Course.findById(courseId);
+    if (!course) return res.status(404).send("Course not found");
+
+    course.studentsEnrolled = course.studentsEnrolled.filter(
+      (id) => id.toString() !== studentId
+    );
+
+    await course.save();
+    res.redirect(`/institution/editCourse/${courseId}?returnTo=/institution/manageCourses`);
+  } catch (error) {
+    console.error("Failed to remove student:", error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+
+exports.createCourse = async (req, res) => {
+  try {
+    const { title, price, description, instructor } = req.body;
+    const students = JSON.parse(req.body.studentsEnrolled || "[]");
+
+    const newCourse = new Course({
+      name: title,
+      price,
+      description,
+      author: instructor,
+      studentsEnrolled: students
+    });
+
+    await newCourse.save();
+    res.redirect("/institution/manageCourses");
+  } catch (error) {
+    console.error("Error creating course:", error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+
+
+

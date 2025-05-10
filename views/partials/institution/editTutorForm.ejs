@@ -1,44 +1,117 @@
 <div class="form-card">
-    <h4 class="mb-4"><i class="bi bi-pencil-square me-2"></i>Edit Course</h4>
-  
-    <form action="/institution/editCourse/<%= course._id %>?returnTo=<%= returnTo %>" method="POST">
-      <div class="mb-3">
+  <h4 class="mb-4 text-orange"><i class="bi bi-pencil-square me-2"></i>Edit Course</h4>
+
+  <!-- Main Course Edit Form -->
+  <form action="/institution/editCourse/<%= course._id %>?returnTo=<%= returnTo %>" method="POST">
+    <div class="row mb-3">
+      <div class="col-md-8">
         <label class="form-label">Course Title</label>
-        <input type="text" name="title" class="form-control" value="<%= course.title %>" required>
+        <input type="text" name="title" class="form-control" value="<%= course.name %>" required>
       </div>
-
-      <div class="mb-3">
-        <label class="form-label">Description</label>
-        <textarea name="description" class="form-control" rows="4" required><%= course.description %></textarea>
+      <div class="col-md-4">
+        <label class="form-label">Price</label>
+        <input type="number" name="price" class="form-control" value="<%= course.price %>" required>
       </div>
+    </div>
 
-      <div class="row">
-        <div class="col-md-6 mb-3">
-          <label class="form-label">Price</label>
-          <input type="number" name="price" class="form-control" value="<%= course.price %>" required>
-        </div>
+    <div class="mb-3">
+      <label class="form-label">Description</label>
+      <textarea name="description" class="form-control" rows="4" required><%= course.description %></textarea>
+    </div>
 
-        <div class="col-md-6 mb-3">
-          <label class="form-label">Duration</label>
-          <input type="text" name="duration" class="form-control" value="<%= course.duration %>" required>
-        </div>
+    <!-- <div class="row mb-3">
+      <div class="col-md-4">
+        <label class="form-label">Duration</label>
+        <input type="text" name="duration" class="form-control" value="<%= course.duration %>" required>
       </div>
-
-      <div class="row">
-        <div class="col-md-6 mb-3">
-          <label class="form-label">Start Date</label>
-          <input type="date" name="startDate" class="form-control" value="<%= course.startDate %>" required>
-        </div>
-
-        <div class="col-md-6 mb-3">
-          <label class="form-label">End Date</label>
-          <input type="date" name="endDate" class="form-control" value="<%= course.endDate %>" required>
-        </div>
+      <div class="col-md-4">
+        <label class="form-label">Start Date</label>
+        <input type="date" name="startDate" class="form-control"
+               value="<%= course.startDate ? course.startDate.toISOString().split('T')[0] : '' %>" required>
       </div>
-
-      <div class="text-end">
-        <a href="<%= returnTo %>" class="btn btn-secondary me-2">Cancel</a>
-        <button type="submit" class="btn btn-primary">Update Course</button>
+      <div class="col-md-4">
+        <label class="form-label">End Date</label>
+        <input type="date" name="endDate" class="form-control"
+               value="<%= course.endDate ? course.endDate.toISOString().split('T')[0] : '' %>" required>
       </div>
-    </form>
+    </div> -->
+
+    <div class="mb-4">
+      <label class="form-label">Instructor</label>
+      <select name="author" class="form-select" required>
+        <% instructors.forEach(inst => { %>
+          <option value="<%= inst._id %>" <%= String(inst._id) === String(course.author._id) ? 'selected' : '' %>>
+            <%= inst.firstName %> <%= inst.lastName %>
+          </option>
+        <% }) %>
+      </select>            
+    </div>
+
+    <div class="text-end">
+      <a href="<%= returnTo %>" class="btn btn-secondary me-2">Cancel</a>
+      <button type="submit" class="btn btn-warning text-white">Update Course</button>
+    </div>
+  </form>
+
+  <!-- Add Student Form -->
+  <hr class="my-4" />
+  <h5 class="mb-3 text-orange">Add Student to Course</h5>
+
+  <form action="/institution/addStudentToCourse/<%= course._id %>" method="POST" class="row g-2 align-items-center mb-4">
+    <div class="col-md-10">
+      <select name="studentId" class="form-select" required>
+        <% students.forEach(stu => { %>
+          <option value="<%= stu._id %>"><%= stu.firstName %> <%= stu.lastName %> - <%= stu.email %></option>
+        <% }) %>
+      </select>
+    </div>
+    <div class="col-md-2 text-end">
+      <button class="btn btn-warning w-100 text-white">Add</button>
+    </div>
+  </form>
+
+  <!-- Enrolled Students Table -->
+  <h5 class="mb-2">Enrolled Students</h5>
+  <div class="table-responsive">
+    <table class="table table-bordered align-middle">
+      <thead class="table-light">
+        <tr>
+          <th>#</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th class="text-center">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% course.studentsEnrolled?.forEach((stu, index) => { %>
+          <tr>
+            <td><%= index + 1 %></td>
+            <td><%= stu.firstName %> <%= stu.lastName %></td>
+            <td><%= stu.email %></td>
+            <td class="text-center">
+              <form action="/institution/removeStudentFromCourse/<%= course._id %>" method="POST" class="d-inline">
+                <input type="hidden" name="studentId" value="<%= stu._id %>" />
+                <button class="btn btn-sm btn-danger">Remove</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
   </div>
+</div>
+
+<!-- Styling -->
+<style>
+  .text-orange {
+    color: #e07b4f;
+  }
+  .btn-warning {
+    background-color: #e07b4f;
+    border-color: #e07b4f;
+  }
+  .btn-warning:hover {
+    background-color: #e36c00;
+    border-color: #e36c00;
+  }
+</style>

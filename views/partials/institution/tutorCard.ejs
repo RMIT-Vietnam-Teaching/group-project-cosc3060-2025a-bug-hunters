@@ -13,10 +13,10 @@
       </ul>
     </div>
     <a href="/institution/addTutor"
-    class="btn btn-outline-primary rounded-pill px-4 py-2 fw-medium shadow-sm d-flex align-items-center gap-2 ms-auto">
+    class="btn-orange-outline ms-auto">
    <i class="bi bi-person-plus-fill"></i>
    Add Tutor
- </a>
+ </a> 
   </div>
 </div>
   </div>
@@ -58,6 +58,31 @@
     </table>
   </div>
 </div>
+<style>
+  .btn-orange-outline {
+    border: 2px solid #e07b4f;
+    background-color: white;
+    color: #e07b4f;
+    border-radius: 50px;
+    padding: 8px 20px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease;
+    text-decoration: none;
+  }
+
+  .btn-orange-outline:hover {
+    background-color: #e07b4f;
+    color: white;
+  }
+
+  .btn-orange-outline i {
+    font-size: 16px;
+  }
+</style>
 
 <script>
   document.addEventListener("DOMContentLoaded", () => {
