@@ -13,7 +13,7 @@
     .radio-option { padding: 16px 24px; border-bottom: 1px solid #ccc; display: flex; align-items: center; }
     .coin-input-box, .card-input-box { padding: 24px; display: none; }
     .order-summary { border: 1px solid #ccc; padding: 20px; border-radius: 12px; background-color: #fff; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); }
-    .checkout-btn, .add-btn { background-color: #e26d4d; color: white; font-weight: 600; padding: 12px 24px; border-radius: 8px; border: none; transition: background-color 0.2s ease-in-out; }
+    .checkout-btn, .add-btn { background-color: #e26d4d; color: white; font-weight: 600; padding: 12px 24px; border-radius: 8px; border: none; transition: background-color 0.2s ease-in-out;  margin: 10px 20px 0; width: calc(100% - 40px); }
     .checkout-btn:hover, .add-btn:hover { background-color: #c95535; }
     .cart-img { width: 60px; height: 60px; background-color: #ccc; border-radius: 8px; margin-right: 16px; }
     .cart-item { box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.12); border-radius: 12px; margin-bottom: 1rem; padding: 1rem; background-color: white; }
@@ -24,6 +24,7 @@
 
   <div class="container py-5">
     <div class="row">
+      <!-- Card Details (DO NOT TOUCH) -->
       <div class="col-lg-8">
         <form class="form-box" onsubmit="return false;">
           <div class="radio-option">
@@ -35,7 +36,7 @@
               <label class="form-label fw-bold">Card Number</label>
               <div id="card-number-element" class="form-control p-3" style="height: auto;"></div>
             </div>
-          
+
             <div class="row form-section mb-3">
               <div class="col-md-6">
                 <label class="form-label fw-bold">Expiry Date</label>
@@ -46,14 +47,14 @@
                 <div id="card-cvc-element" class="form-control p-3" style="height: auto;"></div>
               </div>
             </div>
-          
+
             <div class="form-section">
               <label class="form-label fw-bold">Name on Card</label>
               <input type="text" id="cardholder-name" class="form-control" placeholder="Full Name" value="<%= cardInfo?.cardHolderName || '' %>">
             </div>
-          
+
             <div id="card-errors" class="text-danger mt-2"></div>
-          </div>          
+          </div>
 
           <div class="radio-option">
             <input class="form-check-input me-2" type="radio" name="paymentMethod" id="viaCoin">
@@ -66,22 +67,43 @@
             <a href="/payment/addcoin?id=<%= user._id %>" class="add-btn text-decoration-none text-white d-inline-block text-center mb-3">Add more coin</a>
           </div>
         </form>
+      </div>
 
+      <!-- Order Summary (JUST MOVED RIGHT, NO OTHER CHANGE) -->
+      <div class="col-lg-4">
+        <div class="order-summary">
+          <h5 class="fw-bold mb-3">Order Summary</h5>
+          <hr>
+          <p class="mb-1">Total (<%= cartItems.length %> Courses):
+            <strong>$<%= cartItems.reduce((sum, item) => sum + (parseFloat(item.price) || 0), 0).toFixed(2) %></strong>
+          </p>
+          <button type="button" class="checkout-btn">Pay Now</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Order Detail (NOW CONSTRAINED WIDTH) -->
+    <div class="row">
+      <div class="col-lg-8">
         <h5 class="fw-bold mb-3 mt-5">Order detail</h5>
-        <!-- <% cartItems.forEach(item => { %>
+        <% cartItems.forEach(item => { %>
           <div class="cart-item d-flex align-items-center">
-            <div class="cart-img"></div>
+            <img src="<%= item.imageUrl || '/images/course-placeholder.jpg' %>" class="cart-img">
             <div>
               <div class="fw-bold"><%= item.title %></div>
-              <div><%= item.description %></div>
+              <div>By <%= item.instructor %> · <%= item.duration %></div>
               <div><strong>$<%= item.price %></strong></div>
             </div>
           </div>
         <% }) %>
-      </div> -->
+      </div>
+    </div>
+  </div>
 
-       <!-- course list -->
+  
 
+       <!--  fake course list -->
+<!-- 
        <div class="cart-item d-flex align-items-center">
          <div class="cart-img"></div>
          <div>
@@ -98,18 +120,9 @@
            <div><strong>$29.00</strong></div>
          </div>
        </div>
-     </div>
+     </div> -->
 
-      <div class="col-lg-4">
-        <div class="order-summary">
-          <h5 class="fw-bold mb-3">Order Summary</h5>
-          <hr>
-          <p class="mb-1">Total (<%= cartItems.length %> Courses): <strong>$<%= cartItems.reduce((sum, item) => sum + item.price, 0) %></strong></p>
-          <button type="button" class="checkout-btn mb-3" style="z-index: 9999; position: relative;">Pay Now</button>
-        </div>
-      </div>
-    </div>
-  </div>
+    
 
  
 

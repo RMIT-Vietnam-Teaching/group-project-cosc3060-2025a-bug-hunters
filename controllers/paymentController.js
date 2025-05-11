@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const Course = require('../models/Course');
 
 exports.renderCheckoutPage = async (req, res) => {
   try {
@@ -7,9 +8,13 @@ exports.renderCheckoutPage = async (req, res) => {
 
     if (!routeUser) return res.redirect("/auth/login");
 
-    const cardInfo = routeUser.cardPaymentInfo || {}; 
+    // Retrieve course IDs from session cart
+    const cartCourseIds = req.session.cart || [];
 
-    const cartItems = req.session.cart || [];
+    // Fetch actual courses from database based on IDs stored in session
+    const cartItems = await Course.find({ _id: { $in: cartCourseIds } }).lean();
+
+    const cardInfo = routeUser.cardPaymentInfo || {};
 
     res.render("checkout", {
       cartItems,
@@ -44,28 +49,31 @@ exports.renderAddCoin = async (req, res) => {
       
 
 
-exports.useCoinPayment = async (req, res) => {
-  const { userId, courseIds, totalCost } = req.body;
-
-  if (!userId || !Array.isArray(courseIds) || typeof totalCost !== 'number') {
-    return res.status(400).json({ error: 'Invalid input' });
-  }
-
-  try {
-    const user = await User.findById(userId);
-    if (!user) return res.status(404).json({ error: 'User not found' });
-
-    if (user.coin < totalCost) {
-      return res.status(400).json({ error: 'Insufficient coins' });
-    }
-
-    user.coin -= totalCost;
-    await user.save();
-
-
-    res.json({ success: true, newBalance: user.coin });
-  } catch (err) {
-    console.error('Coin payment error:', err.message);
-    res.status(500).json({ error: 'Server error' });
-  }
-};
+      exports.useCoinPayment = async (req, res) => {
+        const { userId, totalCost } = req.body;
+        const courseIds = req.session.cart || [];
+      
+        if (!userId || !Array.isArray(courseIds) || typeof totalCost !== 'number') {
+          return res.status(400).json({ error: 'Invalid input' });
+        }
+      
+        try {
+          const user = await User.findById(userId);
+          if (!user) return res.status(404).json({ error: 'User not found' });
+      
+          if (user.coin < totalCost) {
+            return res.status(400).json({ error: 'Insufficient coins' });
+          }
+      
+          user.coin -= totalCost;
+          await user.save();
+      
+          req.session.cart = [];
+      
+          res.json({ success: true, newBalance: user.coin });
+        } catch (err) {
+          console.error('Coin payment error:', err.message);
+          res.status(500).json({ error: 'Server error' });
+        }
+      };
+      
