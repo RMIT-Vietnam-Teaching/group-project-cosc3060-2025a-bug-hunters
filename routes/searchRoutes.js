@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const Course = require("../models/Course");
+const Course = require("../models/course");
 // We'll add Post model import later when it's available
 
 // Handle search requests

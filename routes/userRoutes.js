@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const Course = require("../models/Course");
+const Course = require("../models/course");
 
 // My Courses page route - NO AUTHENTICATION CHECK FOR DEVELOPMENT
 router.get("/my-courses", async (req, res) => {
