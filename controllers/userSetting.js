@@ -59,7 +59,7 @@ exports.renderDisplay = async (req, res) => {
  
 
   try {
-    const routeUserId = req.query.id; 
+    const routeUserId = req.params.userId;
     const routeUser = await User.findById(routeUserId);
     if (!routeUser) {
       return res.status(404).send("User not found");
@@ -75,7 +75,7 @@ exports.renderDisplay = async (req, res) => {
 exports.renderAccountSecurity = async (req, res) => {
 
   try {
-    const routeUserId = req.query.id; 
+    const routeUserId = req.params.userId;
     const routeUser = await User.findById(routeUserId);
     if (!routeUser) {
       return res.status(404).send("User not found");
@@ -95,7 +95,7 @@ exports.renderAccountSecurity = async (req, res) => {
 exports.renderAccountBalance = async (req, res) => {
 
   try {
-   const routeUserId = req.query.id; 
+   const routeUserId = req.params.userId;
    const routeUser = await User.findById(routeUserId);
     if (!routeUser) {
       return res.status(404).send("User not found");

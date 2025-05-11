@@ -29,7 +29,7 @@ exports.requireOwnUserAccess = (req, res, next) => {
    
         exports.requireOwnUserAccess = (req, res, next) => {
             const loggedInUserId = req.signedCookies.userId;
-            const routeUserId = req.params.userRouteId;
+            const routeUserId = req.params.userId;
           
             console.log("🔐 Logged-in user ID from cookie:", loggedInUserId);
             console.log("🧭 Route param user ID:", routeUserId);
