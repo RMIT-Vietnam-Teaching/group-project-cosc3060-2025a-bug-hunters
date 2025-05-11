@@ -7,13 +7,15 @@ const session = require("express-session");
 
 const app = express();
 const cookieParser = require("cookie-parser");
-const User = require("./models/User"); 
+const User = require("./models/User");
 const connectDB = require("./utils/db");
-const { sessionMiddleware, setUserFromCookie } = require("./middlewares/setUser");
+const {
+    sessionMiddleware,
+    setUserFromCookie,
+} = require("./middlewares/setUser");
 
 const { port } = require("./configs/keys");
 const passport = require("passport");
-
 
 dotenv.config();
 
@@ -31,12 +33,9 @@ app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(sessionMiddleware);
 app.use(setUserFromCookie);
 
-
-
 // Initialize Passport
 app.use(passport.initialize());
 app.use(passport.session());
-
 
 // Connect to MongoDB
 connectDB();
@@ -46,10 +45,12 @@ const authRoutes = require("./routes/authRoutes");
 const homeRoutes = require("./routes/homeRoutes");
 const userSettingsRoutes = require("./routes/userSetting");
 const adminRoutes = require("./routes/adminRoutes");
+const forumRoutes = require("./routes/forumRoutes");
 const userProfileRoutes = require("./routes/userProfileRoutes");
 const institution = require("./routes/institutionRoutes");
 const cartRoutes = require("./routes/cartRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
+const searchRoutes = require("./routes/searchRoutes");
 const courseRoutes = require("./routes/courseRoutes");
 const userRoutes = require("./routes/userRoutes");
 const subscriptionRoutes = require("./routes/subscriptionRoutes");
@@ -65,24 +66,25 @@ app.use("/payment", paymentRoutes);
 
 // app.use("/user", userRoutes);
 
-
-
-
-
-
 app.use("/userSettings", userSettingsRoutes);
 app.use("/userProfile", userProfileRoutes);
 app.use("/courses", courseRoutes);
-app.use("/user", userRoutes);
-app.use("/api", subscriptionRoutes);
 
 // app.use("/institution", institution);
 // app.use("/payment", coinPaymentRoutes);
-app.use('/navbar', (req,res) => {
-    res.render('partials/navbar');
-});
+app.use("/forum", forumRoutes);
+app.use("/userSettings", userSettingsRoutes);
+app.use("/userProfile", userProfileRoutes);
+app.use("/courses", courseRoutes);
+app.use("/search", searchRoutes);
+
+// app.use("/institution", institution);
+// app.use("/payment", coinPaymentRoutes);
+
+app.use("/user", userRoutes);
+app.use("/api", subscriptionRoutes);
 
 // Start Server
 app.listen(port, () => {
-  console.log(chalk.green(`Server is running on http://localhost:${port}`));
+    console.log(chalk.green(`Server is running on http://localhost:${port}`));
 });

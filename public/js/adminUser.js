@@ -58,18 +58,34 @@ document.addEventListener("DOMContentLoaded", () => {
     rows.forEach((row) => {
         row.addEventListener("click", () => {
             const userId = row.dataset.id;
-            window.location.href = `/admin/user/${userId}`;
+            window.location.href = `/admin/users/${userId}`;
         });
     });
-});
 
-// Redirect to user profile on row click
-document.addEventListener("DOMContentLoaded", () => {
-    const rows = document.querySelectorAll(".user-row");
-    rows.forEach((row) => {
-        row.addEventListener("click", () => {
-            const userId = row.getAttribute("data-id");
-            window.location.href = `/admin/user/${userId}`;
+    const searchInput = document.querySelector(".admin-search-input");
+    const tableRows = document.querySelectorAll(".admin-table tbody tr");
+
+    searchInput.addEventListener("input", () => {
+        const query = searchInput.value.toLowerCase().trim();
+
+        tableRows.forEach((row) => {
+            const cells = row.querySelectorAll("td");
+            const firstName = cells[0].textContent.toLowerCase();
+            const lastName = cells[1].textContent.toLowerCase();
+            const email = cells[2].textContent.toLowerCase();
+            const role = cells[3].textContent.toLowerCase();
+            const status = cells[4].textContent.toLowerCase();
+            const dateJoined = cells[5].textContent.toLowerCase();
+
+            const matches =
+                firstName.includes(query) ||
+                lastName.includes(query) ||
+                email.includes(query) ||
+                role.includes(query) ||
+                status.includes(query) ||
+                dateJoined.includes(query);
+
+            row.style.display = matches ? "" : "none";
         });
     });
 });

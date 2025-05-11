@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { storage } = require("../utils/cloudinary");
-const multer = require('multer');
+const multer = require("multer");
 const upload = multer({ storage });
 const { requireOwnUserAccess } = require("../middlewares/auth");
 
@@ -9,12 +9,27 @@ const { requireOwnUserAccess } = require("../middlewares/auth");
 //   updateUserProfile,
 // } = require("../controllers/userSettings/profile");
 
-const {renderUserPreference, renderAccountSecurity, renderAccountBalance,renderDisplay, updateUserPreference, updateUserDisplay, updateUserSecurity, updateUserBalance } = require("../controllers/userSetting");
+const {
+    renderUserPreference,
+    renderAccountSecurity,
+    renderAccountBalance,
+    renderDisplay,
+    updateUserPreference,
+    updateUserDisplay,
+    updateUserSecurity,
+    updateUserBalance,
+} = require("../controllers/userSetting");
 
-
-router.get("/profilePreference/:userId", requireOwnUserAccess, renderUserPreference);
-router.post("/profilePreference/update/:userId", upload.single("avatar"), updateUserPreference);
-
+router.get(
+    "/profilePreference/:userId",
+    requireOwnUserAccess,
+    renderUserPreference
+);
+router.post(
+    "/profilePreference/update/:userId",
+    upload.single("avatar"),
+    updateUserPreference
+);
 
 router.get("/display/:userId", requireOwnUserAccess, renderDisplay);
 router.post("/display/update/:userId", updateUserDisplay);
@@ -24,14 +39,6 @@ router.post("/security/update/:userId", updateUserSecurity);
 
 router.get("/balance/:userId", requireOwnUserAccess, renderAccountBalance);
 router.post("/balance/update/:userId", updateUserBalance);
-
-
-
-
-
-
-
-
 
 // // go to messages page
 // router.get('/messages/:userId', async (req, res) => {
