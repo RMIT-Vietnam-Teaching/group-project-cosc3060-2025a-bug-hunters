@@ -2,15 +2,12 @@ const express = require('express');
 const router = require('express').Router();
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
-const { renderCheckoutPage, renderAddCoin, useCoinPayment } = require('../controllers/paymentController.js');
+const { renderCheckoutPage, renderConfirmationPage  } = require('../controllers/paymentController.js');
 
 router.get('/checkout', renderCheckoutPage);
-router.get('/addcoin', renderAddCoin);
-router.post('/use-coin', useCoinPayment);
+router.get('/confirmation', renderConfirmationPage);
 
-router.get('/confirmation', (req, res) => {
-    res.render('paymentConfirmation');
-  });
+
 
   
 // Improved version of your create-payment-intent endpoint

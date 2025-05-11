@@ -212,30 +212,25 @@
                         "
                     >
                         <!-- User Info -->
-                        <li
-                            class="px-3 py-3 d-flex align-items-center gap-2"
-                            style="border-bottom: 1px solid #dee2e6"
-                        >
-                            <img
+                        <a href="/userProfile/<%= user._id %>" class="d-block text-decoration-none text-dark">
+                            <li
+                              class="px-3 py-3 d-flex align-items-center gap-2"
+                              style="border-bottom: 1px solid #dee2e6"
+                            >
+                              <img
                                 src="<%= user.avatar %>"
                                 alt="Avatar"
-                                style="
-                                    width: 48px;
-                                    height: 48px;
-                                    border-radius: 50%;
-                                    object-fit: cover;
-                                "
-                            />
-                            <div class="d-flex flex-column">
-                                <span class="fw-bold"
-                                    ><%= user.firstName %> <%= user.lastName
-                                    %></span
-                                >
-                                <small class="text-muted"
-                                    ><%= user.email %></small
-                                >
-                            </div>
-                        </li>
+                                style="width:48px;height:48px;border-radius:50%;object-fit:cover;"
+                              />
+                              <div class="d-flex flex-column">
+                                <span class="fw-bold">
+                                  <%= user.firstName %> <%= user.lastName %>
+                                </span>
+                                <small class="text-muted"><%= user.email %></small>
+                              </div>
+                            </li>
+                          </a>
+                          
 
                         <% if (user.role === 'Student') { %>
                         <!-- Learning -->

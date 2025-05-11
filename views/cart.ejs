@@ -68,6 +68,22 @@
       font-weight: bold;
       font-size: 0.95rem;
     }
+    .empty-cart {
+      text-align: center;
+      padding: 60px 20px;
+      background-color: #f9f9f9;
+      border-radius: 12px;
+      margin-bottom: 20px;
+    }
+    .empty-cart i {
+      font-size: 60px;
+      color: #ccc;
+      margin-bottom: 20px;
+    }
+    .empty-cart h3 {
+      margin-bottom: 20px;
+      font-weight: 600;
+    }
   </style>
 </head>
 <body>
@@ -82,33 +98,52 @@
   
     <div class="row">
       <div class="col-lg-8" id="cartContainer">
-        <!-- Course Items -->
-        <% cartItems.forEach(course => { %>
-          <div class="p-3 bg-white cart-item d-flex justify-content-between align-items-center">
-            <div class="d-flex align-items-center">
-              <div class="cart-img"></div>
-              <div>
-                <div class="course-title"><%= course.title %></div>
-                <div class="course-desc"><%= course.description %></div>
-                <div class="course-price">$<%= course.price %></div>
+        <% if (cartItems.length > 0) { %>
+          <!-- Course Items -->
+          <% cartItems.forEach(course => { %>
+            <div class="p-3 bg-white cart-item d-flex justify-content-between align-items-center">
+              <div class="d-flex align-items-center">
+                <div class="cart-img"></div>
+                <div>
+                  <div class="course-title"><%= course.title %></div>
+                  <div class="course-desc"><%= course.description %></div>
+                  <div class="course-price">$<%= course.price %></div>
+                </div>
               </div>
+              <form method="POST" action="/cart/remove/<%= course._id %>">
+                <button type="submit" class="remove-btn">Remove</button>
+              </form>
             </div>
-            <form method="POST" action="/cart/remove/<%= course._id %>">
-              <button type="submit" class="remove-btn">Remove</button>
-            </form>
+          <% }) %>
+        <% } else { %>
+          <!-- Empty Cart Message -->
+          <div class="empty-cart">
+            <i class="bi bi-cart-x"></i>
+            <h3>Your cart is empty</h3>
+            <p>Looks like you haven't added any courses to your cart yet.</p>
+            <a href="/courses" class="continue-btn mt-3">Explore Courses</a>
           </div>
-        <% }) %>
+        <% } %>
       </div>
       
-      <!-- Order Summary moved to the right column, under the Continue Shopping button -->
+      <!-- Order Summary only shown when cart has items -->
       <div class="col-lg-4">
+        <% if (cartItems.length > 0) { %>
+        <!-- inside your order-summary block -->
         <div class="order-summary">
           <h5 class="fw-bold">Order Summary</h5>
           <hr>
-          <p>Total (<%= cartItems.length %> Courses): 
-             <strong>$<%= cartItems.reduce((sum, c) => sum + c.price, 0) %></strong></p>
+          <p>
+            Total (<%= cartItems.length %> Courses):
+            <strong>
+              $<%= cartItems
+                    .reduce((sum, c) => sum + (parseFloat(c.price) || 0), 0)
+                    .toFixed(2) %>
+            </strong>
+          </p>
           <a href="/payment/checkout?id=<%= user._id %>" class="checkout-btn">Checkout</a>
         </div>
+        <% } %>
       </div>
     </div>
   </div>

@@ -1,79 +1,69 @@
-const User = require('../models/User');
+
+const User   = require('../models/User');
 const Course = require('../models/Course');
+const Cart   = require('../models/Cart');
+   
+
 
 exports.renderCheckoutPage = async (req, res) => {
   try {
-    const routeUserId = req.query.id; 
-    const routeUser = await User.findById(routeUserId);  
+    const userId = req.signedCookies?.userId || req.query.id;
+    const user   = await User.findById(userId).lean();
+    if (!user) return res.redirect('/auth/login');
 
-    if (!routeUser) return res.redirect("/auth/login");
+    let cartIds;
+    if (userId) {
+      // logged-in users, read from DB cart
+      const userCart = await Cart.findOne({ userId });
+      cartIds = userCart?.items.map(id => id.toString()) || [];
+    } else {
+      // guests, session
+      cartIds = req.session.cart || [];
+    }
 
-    // Retrieve course IDs from session cart
-    const cartCourseIds = req.session.cart || [];
+    // fetch those courses
+    const cartItems = await Course.find({ _id: { $in: cartIds } }).lean();
 
-    // Fetch actual courses from database based on IDs stored in session
-    const cartItems = await Course.find({ _id: { $in: cartCourseIds } }).lean();
+    // compute total
+    const totalCost = cartItems
+      .reduce((sum, c) => sum + (parseFloat(c.price) || 0), 0);
 
-    const cardInfo = routeUser.cardPaymentInfo || {};
-
-    res.render("checkout", {
+    res.render('checkout', {
+      user,
+      cardInfo: user.cardPaymentInfo || {},
       cartItems,
-      user: routeUser,
-      cardInfo,
+      totalCost,
+      hasEnoughCoins: user.coin >= totalCost
     });
   } catch (err) {
-    console.error("Error rendering checkout page:", err.message, err.stack);
-    res.status(500).send("Server Error");
+    console.error('Error rendering checkout:', err);
+    res.status(500).send('Server Error');
   }
 };
 
+exports.renderConfirmationPage = async (req, res) => {
+  try {
+    const cartIds   = req.session.cart || [];
+    const cartItems = await Course.find({ _id: { $in: cartIds } }).lean();
+    const totalCost = cartItems
+      .reduce((sum, c) => sum + (parseFloat(c.price) || 0), 0);
 
+    // Generate an order number
+    const now    = new Date();
+    const date   = now.toISOString().slice(0,10).replace(/-/g,'');
+    const random = Math.floor(1000 + Math.random()*9000); 
+    const orderNumber = `ORD-${date}-${random}`;
 
-
-exports.renderAddCoin = async (req, res) => {
-    try {
-      const routeUserId = req.query.id; 
-      const routeUser = await User.findById(routeUserId);     
-      if (!routeUser) return res.redirect("/auth/login");
-        const cartItems = req.session.cart || [];
-        res.render('addMoreCoin', {
-            cartItems,
-            cardInfo: routeUser.cardPaymentInfo,
-            routeUser,
-        });
-      } catch (error) {
-        console.error('Error rendering add coin page:', error.message, error.stack);
-    
-        res.status(500).send('Internal Server Error');
-      }}
-      
-
-
-      exports.useCoinPayment = async (req, res) => {
-        const { userId, totalCost } = req.body;
-        const courseIds = req.session.cart || [];
-      
-        if (!userId || !Array.isArray(courseIds) || typeof totalCost !== 'number') {
-          return res.status(400).json({ error: 'Invalid input' });
-        }
-      
-        try {
-          const user = await User.findById(userId);
-          if (!user) return res.status(404).json({ error: 'User not found' });
-      
-          if (user.coin < totalCost) {
-            return res.status(400).json({ error: 'Insufficient coins' });
-          }
-      
-          user.coin -= totalCost;
-          await user.save();
-      
-          req.session.cart = [];
-      
-          res.json({ success: true, newBalance: user.coin });
-        } catch (err) {
-          console.error('Coin payment error:', err.message);
-          res.status(500).json({ error: 'Server error' });
-        }
-      };
-      
+    //  clear the cart
+    req.session.cart = [];
+    res.render('paymentConfirmation', {
+      cartItems,
+      totalCost,
+      orderNumber,
+      user: req.user
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Server Error');
+  }
+};
