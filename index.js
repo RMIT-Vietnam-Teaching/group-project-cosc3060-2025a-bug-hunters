@@ -33,7 +33,7 @@ app.use(async (req, res, next) => {
         try {
             const user = await User.findById(userId).lean();
             req.user = user;
-            res.locals.user = user; // makes <%= user %> work in views
+            res.locals.user = user; 
         } catch (err) {
             console.error("Error loading user from cookie:", err);
             req.user = null;
@@ -51,19 +51,17 @@ app.use(async (req, res, next) => {
 connectDB();
 
 // Import Routes
-const authRoutes = require("./routes/authRoutes");
 const homeRoutes = require("./routes/homeRoutes");
-const chatRoutes = require("./routes/chatRoutes");
-const userRoutes = require('./routes/user_test_purpose');
+const aboutUsRoutes = require('./routes/aboutUsRoutes');
 
 app.use("/", homeRoutes);
-app.use("/auth", authRoutes);
-app.use("/", chatRoutes);
-app.use('/user', userRoutes);
+app.use('/', aboutUsRoutes);
 
 
-// app.listen(port, () => {
-//     console.log(chalk.green(`Server is running on port ${port}`));
-// });
+
+
+app.listen(port, () => {
+    console.log(chalk.green(`Server is running on port ${port}`));
+});
 
 module.exports = app;
