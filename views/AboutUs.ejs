@@ -121,7 +121,7 @@
         <div class="col-lg-4">
           <div class="feature-box">
             <div class="feature-icon">
-              <i class="fas fa-leaf"></i>
+                <i class="bi bi-tree"></i> 
             </div>
             <h3> Learn on Your Terms</h3>
             <p>Our flexible online platform lets you study anytime, anywhere—perfect for busy schedules and self-paced learning.</p>
@@ -131,7 +131,7 @@
         <div class="col-lg-4">
           <div class="feature-box">
             <div class="feature-icon">
-              <i class="fas fa-truck"></i>
+                <i class="bi bi-truck"></i>   
             </div>
             <h3>Expert-Led Courses</h3>
             <p>Every course is designed and taught by industry professionals, ensuring you gain real-world skills that matter.</p>
@@ -141,7 +141,7 @@
         <div class="col-lg-4">
           <div class="feature-box">
             <div class="feature-icon">
-              <i class="fas fa-headset"></i>
+                <i class="bi bi-headset"></i> 
             </div>
             <h3>Supportive Learning Community</h3>
             <p>You're never alone—join a vibrant community of learners and get help, motivation, and guidance whenever you need it</p>
@@ -265,135 +265,148 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    // Team Carousel Functionality
-    const teamCarousel = document.querySelector('.team-carousel-inner');
-    const prevButton = document.getElementById('team-prev');
-    const nextButton = document.getElementById('team-next');
-    let currentPosition = 0;
-    const members = document.querySelectorAll('.team-member');
-    const memberWidth = members[0].offsetWidth + 20; // 20px for margin
+  // Team Carousel Functionality
+  const teamCarousel = document.querySelector('.team-carousel-inner');
+  const prevButton = document.getElementById('team-prev');
+  const nextButton = document.getElementById('team-next');
+  let currentPosition = 0;
+  const members = document.querySelectorAll('.team-member');
+  
+  // Function to calculate current dimensions and constraints
+  function calculateDimensions() {
+    // Get current member width including margin
+    const memberRect = members[0].getBoundingClientRect();
+    const memberWidth = memberRect.width;
+    
+    // Determine how many members should be visible based on screen size
     const visibleMembers = window.innerWidth < 768 ? 1 : 
                           window.innerWidth < 992 ? 2 : 3;
+    
+    // Calculate maximum position
     const maxPosition = Math.max(0, members.length - visibleMembers);
     
-    // Initialize counter display
-    document.querySelectorAll('.counter').forEach(counter => {
-      const target = counter.getAttribute('data-count');
-      counter.innerText = '0';
-      
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            let count = 0;
-            const updateCount = () => {
-              const increment = Math.ceil(target / 30);
-              if (count < target) {
-                count = Math.min(count + increment, target);
-                counter.innerText = count;
-                setTimeout(updateCount, 50);
-              }
-            };
-            updateCount();
-            observer.unobserve(entry.target);
-          }
-        });
-      }, { threshold: 0.5 });
-      
-      observer.observe(counter);
-    });
+    return { memberWidth, visibleMembers, maxPosition };
+  }
+  
+  // Initialize counter display
+  document.querySelectorAll('.counter').forEach(counter => {
+    const target = counter.getAttribute('data-count');
+    counter.innerText = '0';
     
-    // Carousel controls
-    function updateCarousel() {
-      teamCarousel.style.transform = `translateX(-${currentPosition * memberWidth}px)`;
-      
-      // Enable/disable buttons based on position
-      prevButton.disabled = currentPosition === 0;
-      nextButton.disabled = currentPosition >= maxPosition;
-      
-      if (prevButton.disabled) {
-        prevButton.classList.add('disabled');
-      } else {
-        prevButton.classList.remove('disabled');
-      }
-      
-      if (nextButton.disabled) {
-        nextButton.classList.add('disabled');
-      } else {
-        nextButton.classList.remove('disabled');
-      }
-    }
-    
-    prevButton.addEventListener('click', () => {
-      if (currentPosition > 0) {
-        currentPosition--;
-        updateCarousel();
-      }
-    });
-    
-    nextButton.addEventListener('click', () => {
-      if (currentPosition < maxPosition) {
-        currentPosition++;
-        updateCarousel();
-      }
-    });
-    
-    // Touch events for swiping on mobile
-    let touchStartX = 0;
-    let touchEndX = 0;
-    
-    teamCarousel.addEventListener('touchstart', (e) => {
-      touchStartX = e.changedTouches[0].screenX;
-    }, false);
-    
-    teamCarousel.addEventListener('touchend', (e) => {
-      touchEndX = e.changedTouches[0].screenX;
-      handleSwipe();
-    }, false);
-    
-    function handleSwipe() {
-      if (touchEndX < touchStartX && currentPosition < maxPosition) {
-        // Swipe left
-        currentPosition++;
-        updateCarousel();
-      } else if (touchEndX > touchStartX && currentPosition > 0) {
-        // Swipe right
-        currentPosition--;
-        updateCarousel();
-      }
-    }
-    
-    // Initialize carousel
-    updateCarousel();
-    
-    // Responsive handling
-    window.addEventListener('resize', () => {
-      const newVisibleMembers = window.innerWidth < 768 ? 1 : 
-                              window.innerWidth < 992 ? 2 : 3;
-      const newMaxPosition = Math.max(0, members.length - newVisibleMembers);
-      
-      // Adjust current position if needed
-      if (currentPosition > newMaxPosition) {
-        currentPosition = newMaxPosition;
-      }
-      
-      updateCarousel();
-    });
-    
-    
-    // Initialize timeline animation
-    const timelineItems = document.querySelectorAll('.timeline-item');
-    
-    const timelineObserver = new IntersectionObserver((entries) => {
+    const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          entry.target.classList.add('animate');
-          timelineObserver.unobserve(entry.target);
+          let count = 0;
+          const updateCount = () => {
+            const increment = Math.ceil(target / 30);
+            if (count < target) {
+              count = Math.min(count + increment, target);
+              counter.innerText = count;
+              setTimeout(updateCount, 50);
+            }
+          };
+          updateCount();
+          observer.unobserve(entry.target);
         }
       });
-    }, { threshold: 0.2 });
+    }, { threshold: 0.5 });
     
-    timelineItems.forEach(item => {
-      timelineObserver.observe(item);
-    });
+    observer.observe(counter);
   });
+  
+  // Carousel controls
+  function updateCarousel() {
+    const { memberWidth, maxPosition } = calculateDimensions();
+    
+    // Ensure currentPosition is within bounds after resize
+    if (currentPosition > maxPosition) {
+      currentPosition = maxPosition;
+    }
+    
+    // Apply translation to position the carousel
+    teamCarousel.style.transform = `translateX(-${currentPosition * memberWidth}px)`;
+    
+    // Enable/disable buttons based on position
+    prevButton.disabled = currentPosition === 0;
+    nextButton.disabled = currentPosition >= maxPosition;
+    
+    if (prevButton.disabled) {
+      prevButton.classList.add('disabled');
+    } else {
+      prevButton.classList.remove('disabled');
+    }
+    
+    if (nextButton.disabled) {
+      nextButton.classList.add('disabled');
+    } else {
+      nextButton.classList.remove('disabled');
+    }
+  }
+  
+  prevButton.addEventListener('click', () => {
+    const { maxPosition } = calculateDimensions();
+    if (currentPosition > 0) {
+      currentPosition--;
+      updateCarousel();
+    }
+  });
+  
+  nextButton.addEventListener('click', () => {
+    const { maxPosition } = calculateDimensions();
+    if (currentPosition < maxPosition) {
+      currentPosition++;
+      updateCarousel();
+    }
+  });
+  
+  // Touch events for swiping on mobile
+  let touchStartX = 0;
+  let touchEndX = 0;
+  
+  teamCarousel.addEventListener('touchstart', (e) => {
+    touchStartX = e.changedTouches[0].screenX;
+  }, false);
+  
+  teamCarousel.addEventListener('touchend', (e) => {
+    touchEndX = e.changedTouches[0].screenX;
+    handleSwipe();
+  }, false);
+  
+  function handleSwipe() {
+    const { maxPosition } = calculateDimensions();
+    if (touchEndX < touchStartX && currentPosition < maxPosition) {
+      // Swipe left
+      currentPosition++;
+      updateCarousel();
+    } else if (touchEndX > touchStartX && currentPosition > 0) {
+      // Swipe right
+      currentPosition--;
+      updateCarousel();
+    }
+  }
+  
+  // Initialize carousel
+  updateCarousel();
+  
+  // Responsive handling
+  window.addEventListener('resize', () => {
+    updateCarousel();
+  });
+  
+  // Initialize timeline animation
+  const timelineItems = document.querySelectorAll('.timeline-item');
+  
+  const timelineObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('animate');
+        timelineObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.2 });
+  
+  timelineItems.forEach(item => {
+    timelineObserver.observe(item);
+  });
+});
 </script>
