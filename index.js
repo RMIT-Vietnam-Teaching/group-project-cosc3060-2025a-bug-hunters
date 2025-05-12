@@ -54,6 +54,7 @@ const searchRoutes = require("./routes/searchRoutes");
 const courseRoutes = require("./routes/courseRoutes");
 const userRoutes = require("./routes/userRoutes");
 const subscriptionRoutes = require("./routes/subscriptionRoutes");
+const sitemapRoutes = require("./routes/sitemapRoutes");
 
 // Use Routes
 app.use("/", homeRoutes);
@@ -79,6 +80,7 @@ app.use("/search", searchRoutes);
 
 app.use("/user", userRoutes);
 app.use("/api", subscriptionRoutes);
+app.use("/sitemap", sitemapRoutes);
 
 // Start Server
 app.listen(port, () => {

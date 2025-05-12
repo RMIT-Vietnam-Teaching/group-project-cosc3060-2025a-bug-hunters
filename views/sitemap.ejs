@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Sitemap | Bug Hunters</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        :root {
+            /* Primary color updated */
+            --primary: #c95535;
+            --primary-dark: #c95535;
+            --secondary: #10b981;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --gray: #64748b;
+            --light-gray: #e2e8f0;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .dark-mode {
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --secondary: #10b981;
+            --dark: #f8fafc;
+            --light: #0f172a;
+            --gray: #94a3b8;
+            --light-gray: #1e293b;
+        }
+
+        header {
+            background-color: var(--light);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .Webname {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .Webname a {
+            text-decoration: none;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .navigation {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .navigation a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .navigation a:hover {
+            color: var(--primary);
+        }
+
+        .navigation a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background-color: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .navigation a:hover::after {
+            width: 100%;
+        }
+
+        .btnLogin {
+            background-color: var(--primary);
+            color: white !important;
+            padding: 0.5rem 1.2rem;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btnLogin:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .menu-icon, .close-icon {
+            display: none;
+            font-size: 1.8rem;
+            cursor: pointer;
+        }
+
+        .sitemap-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .sitemap-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .sitemap-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .sitemap-header p {
+            color: var(--gray);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .sitemap-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .sitemap-section {
+            background-color: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            border-top: 4px solid var(--primary);
+        }
+
+
+        .sitemap-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .sitemap-section h2 {
+            font-size: 1.3rem;
+            margin-top: 0;
+            margin-bottom: 1.2rem;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .sitemap-section ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sitemap-section li {
+            margin: 0.8rem 0;
+        }
+
+        .sitemap-section a {
+            text-decoration: none;
+            color: var(--gray);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s ease;
+            padding: 0.5rem 0;
+        }
+
+        .sitemap-section a:hover {
+            color: var(--primary);
+            transform: translateX(5px);
+        }
+
+        .sitemap-section i {
+            font-size: 1.2rem;
+            opacity: 0.7;
+        }
+
+        .side-bar {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 250px;
+            height: 100vh;
+            background-color: var(--light);
+            padding: 2rem 1rem;
+            transition: all 0.4s ease;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .side-bar.active {
+            right: 0;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .navigation {
+                display: none;
+            }
+
+            .menu-icon {
+                display: block;
+            }
+
+            .close-icon {
+                display: block;
+                align-self: flex-end;
+                margin-bottom: 1rem;
+            }
+
+            .side-bar a {
+                padding: 0.8rem 0;
+                display: block;
+                text-decoration: none;
+                color: var(--dark);
+                font-weight: 500;
+            }
+
+            .sitemap-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .sitemap-header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+        
+
+
+<%- include('partials/navbar') %>  
+
+
+    <div class="sitemap-container">
+        <div class="sitemap-header">
+            <h1>🗺️ Sitemap</h1>
+        </div>
+
+        <div class="sitemap-grid">
+            <div class="sitemap-section">
+                <h2><ion-icon name="home-outline"></ion-icon> Main Navigation</h2>
+                <ul>
+                    <li><a href="/"><ion-icon name="chevron-forward-outline"></ion-icon>Home</a></li>
+                    <li><a href="/sitemap"><ion-icon name="chevron-forward-outline"></ion-icon>Sitemap (You are here)</a></li>
+                </ul>
+            </div>
+
+            <div class="sitemap-section">
+                <h2><ion-icon name="person-outline"></ion-icon> My Account</h2>
+                <ul>
+                    <li><a href="/userProfile/<%= user._id %>"><ion-icon name="chevron-forward-outline"></ion-icon>Profile</a></li>
+                    <li><a href="/userSettings/profilePreference/<%= user._id %>"><ion-icon name="create-outline"></ion-icon>Edit Profile</a></li>
+                    <li><a href="/userSettings/security/<%= user._id %>"><ion-icon name="key-outline"></ion-icon>Change Password</a></li>
+                    <li><a href="/userSettings/balance/<%= user._id %>"><ion-icon name="wallet-outline"></ion-icon>Balance & Payments</a></li>
+                </ul>
+            </div>
+
+            <div class="sitemap-section">
+                <h2><ion-icon name="chatbubbles-outline"></ion-icon> Forum</h2>
+                <ul>
+                    <li><a href="/forum"><ion-icon name="chevron-forward-outline"></ion-icon>Forum Home</a></li>
+                    <li><a href="#"><ion-icon name="add-circle-outline"></ion-icon>Create New Post</a></li>
+                    <li><a href="#"><ion-icon name="document-text-outline"></ion-icon>My Posts</a></li>
+                </ul>
+            </div>
+
+            <div class="sitemap-section">
+                <h2><ion-icon name="school-outline"></ion-icon> Learning</h2>
+                <ul>
+                    <li><a href="/courses"><ion-icon name="book-outline"></ion-icon>All Courses</a></li>
+                    <li><a href="/user/my-courses"><ion-icon name="bookmark-outline"></ion-icon>My Courses</a></li>
+                </ul>
+            </div>
+
+            <div class="sitemap-section">
+                <h2><ion-icon name="cart-outline"></ion-icon> Orders</h2>
+                <ul>
+                    <li><a href="/cart"><ion-icon name="receipt-outline"></ion-icon>Order Summary</a></li>
+                </ul>
+            </div>
+
+            <div class="sitemap-section">
+                <h2><ion-icon name="log-out-outline"></ion-icon> Account Actions</h2>
+                <ul>
+                    <li><a href="/auth/logout"><ion-icon name="exit-outline"></ion-icon>Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <script>
+
+        // Mobile sidebar
+        function showSidebar() {
+            document.querySelector('.side-bar').classList.add('active');
+        }
+        function hideSidebar() {
+            document.querySelector('.side-bar').classList.remove('active');
+        }
+    </script>
+</body>
+</html>
