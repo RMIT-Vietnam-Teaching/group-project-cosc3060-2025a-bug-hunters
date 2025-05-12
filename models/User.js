@@ -74,24 +74,20 @@ const userSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
-    headline: {
-        type: String,
-        trim: true,
-    },
-    description: {
-        type: String,
-        trim: true,
-    },
+
     coin: {
         type: Number,
         default: 0,
     },
+
     theme: {
         type: String,
         enum: ["light", "dark"],
         default: "light",
     },
+
     SearchingHistory: [String],
+
     cardPaymentInfo: {
         cardNumber: {
             type: String,
@@ -106,7 +102,15 @@ const userSchema = new mongoose.Schema({
             type: String,
         },
     },
+
     following: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+        },
+    ],
+
+    followers: [
         {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
