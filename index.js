@@ -64,9 +64,5 @@ app.use("/auth", authRoutes);
 app.use("/", chatRoutes);
 app.use('/user', userRoutes);
 
-
-// app.listen(port, () => {
-//     console.log(chalk.green(`Server is running on port ${port}`));
-// });
-
+ 
 module.exports = app;
