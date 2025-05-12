@@ -6,12 +6,11 @@ const { port } = require("./configs/keys");
 const socketUtils = require("./utils/socket");
 const Message = require("./models/Message");
 const path = require("path");
-const fs = require("fs");
 
 const server = http.createServer(app);
 const io = socketUtils.init(server);
 
-app.set("io", io); // Make io accessible in controllers if needed
+app.set("io", io); // Make io accessible in controllers 
 
 io.on("connection", (socket) => {
   console.log("New client connected:", socket.id);

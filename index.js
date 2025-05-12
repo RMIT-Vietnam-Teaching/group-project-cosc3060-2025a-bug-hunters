@@ -55,7 +55,10 @@ const authRoutes = require("./routes/authRoutes");
 const homeRoutes = require("./routes/homeRoutes");
 const chatRoutes = require("./routes/chatRoutes");
 const userRoutes = require('./routes/user_test_purpose');
+const uploadRoutes = require('./routes/uploadRoutes');
 
+// Use the upload route
+app.use("/uploads", uploadRoutes);
 app.use("/", homeRoutes);
 app.use("/auth", authRoutes);
 app.use("/", chatRoutes);

@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const upload = require("../middlewares/MessageUpload");
 
-router.post("/uploads", upload.single("file"), (req, res) => {
+router.post("/", upload.single("file"), (req, res) => {
   console.log("Uploaded file:", req.file);
 
   if (!req.file) {
