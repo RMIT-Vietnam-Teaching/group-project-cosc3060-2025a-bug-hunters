@@ -41,55 +41,48 @@ exports.renderCheckoutPage = async (req, res) => {
   }
 };
 
+
 exports.renderConfirmationPage = async (req, res) => {
   try {
     const userId = req.signedCookies?.userId;
     if (!userId) return res.redirect('/auth/login');
-
-    // Load user
-    const user = await User.findById(userId);
+    const user = await User.findById(userId).lean();
     if (!user) return res.redirect('/auth/login');
 
-    // Pull query-params
-    const purchased = parseInt(req.query.purchased, 10);
-    const bonus     = parseInt(req.query.bonus, 10) || 0;
-    const orderNumber = req.query.orderNumber;
+    // grab the orderNumber from the query
+    const orderNumber = req.query.orderNumber || "—";
 
-    if (!isNaN(purchased)) {
-      // 1) Update the user's coin balance
-      const totalAdded = purchased + bonus;
-      user.coin = (user.coin || 0) + totalAdded;
-      await user.save();
-
-      // 2) Render with coin info
-      return res.render('paymentConfirmation', {
-        user: user.toObject(),
-        orderNumber,
-        purchased,
-        bonus,
-        // no courses
-        cartItems: null,
-        totalCost:  null
-      });
-    }
-
-    // === FALLBACK: course-purchase flow ===
-    const cartIds   = req.session.cart || [];
+    // === course‐checkout flow ===
+    // 1. load cart from DB (not session)
+    const userCart = await Cart.findOne({ userId });
+    const cartIds  = userCart?.items.map(id => id.toString()) || [];
     const cartItems = await Course.find({ _id: { $in: cartIds } }).lean();
-    const totalCost = cartItems.reduce((sum, c) => sum + (parseFloat(c.price)||0), 0);
+    const totalCost = cartItems
+      .reduce((sum, c) => sum + (parseFloat(c.price)||0), 0);
 
-    // clear session cart
+    // 2. mark those courses as purchased on the user
+    await User.findByIdAndUpdate(userId, {
+      $addToSet: { purchasedCourses: { $each: cartIds } }
+    });
+
+    // 3. clear the DB cart **and** session cart
+    await Cart.findOneAndUpdate({ userId }, { items: [] });
     req.session.cart = [];
 
-    res.render('paymentConfirmation', {
-      user: user.toObject(),
+    // 4. render your one confirmation page
+    return res.render('paymentConfirmation', {
+      user,
       orderNumber,
       cartItems,
-      totalCost
+      totalCost,
+      // leave purchased/bonus undefined so the EJS picks the “else” branch
+      purchased:   undefined,
+      bonus:       undefined
     });
+
   } catch (err) {
     console.error('Error rendering confirmation:', err);
-    res.status(500).send('Server Error');
+    return res.status(500).send('Server Error');
   }
 };
 
