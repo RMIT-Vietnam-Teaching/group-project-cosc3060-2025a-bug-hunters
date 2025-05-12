@@ -5,7 +5,7 @@ const Cart   = require('../models/Cart');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 
-exports.renderCheckoutPage = async (req, res) => {
+exports.renderCheckoutPage = async (req, res) => {  
   try {
     const userId = req.signedCookies?.userId || req.query.id;
     const user = await User.findById(userId).lean();
@@ -41,43 +41,38 @@ exports.renderCheckoutPage = async (req, res) => {
   }
 };
 
-
 exports.renderConfirmationPage = async (req, res) => {
   try {
     const userId = req.signedCookies?.userId;
     if (!userId) return res.redirect('/auth/login');
+
     const user = await User.findById(userId).lean();
     if (!user) return res.redirect('/auth/login');
 
-    // grab the orderNumber from the query
     const orderNumber = req.query.orderNumber || "—";
 
-    // === course‐checkout flow ===
-    // 1. load cart from DB (not session)
     const userCart = await Cart.findOne({ userId });
     const cartIds  = userCart?.items.map(id => id.toString()) || [];
     const cartItems = await Course.find({ _id: { $in: cartIds } }).lean();
-    const totalCost = cartItems
-      .reduce((sum, c) => sum + (parseFloat(c.price)||0), 0);
+    const totalCost = cartItems.reduce((sum, c) => sum + (parseFloat(c.price)||0), 0);
 
-    // 2. mark those courses as purchased on the user
-    await User.findByIdAndUpdate(userId, {
-      $addToSet: { purchasedCourses: { $each: cartIds } }
-    });
+    const isCoinTopUp = req.query.topup === '1';
+      if (!isCoinTopUp) {
+        await User.findByIdAndUpdate(userId, {
+          $addToSet: { purchasedCourses: { $each: cartIds } }
+        });
+        await Cart.findOneAndUpdate({ userId }, { items: [] });
+        req.session.cart = [];
+      }
 
-    // 3. clear the DB cart **and** session cart
-    await Cart.findOneAndUpdate({ userId }, { items: [] });
-    req.session.cart = [];
 
-    // 4. render your one confirmation page
     return res.render('paymentConfirmation', {
       user,
       orderNumber,
       cartItems,
       totalCost,
-      // leave purchased/bonus undefined so the EJS picks the “else” branch
-      purchased:   undefined,
-      bonus:       undefined
+      purchased: req.query.purchased,
+      bonus:     req.query.bonus
     });
 
   } catch (err) {
@@ -85,6 +80,7 @@ exports.renderConfirmationPage = async (req, res) => {
     return res.status(500).send('Server Error');
   }
 };
+
 
 
 exports.renderAddCoin = async (req, res) => {
@@ -222,7 +218,6 @@ exports.useCoin = async (req, res) => {
       }
     } catch (cartErr) {
       console.error('Error clearing cart:', cartErr);
-      // Don't fail the transaction if cart clearing fails
     }
 
     // Success response
@@ -236,3 +231,21 @@ exports.useCoin = async (req, res) => {
     return res.status(500).json({ error: 'Server error processing coin payment' });
   }
 };
+
+exports.updateUserCoin = async (req, res) => {
+  const { userId, coins } = req.body;
+  console.log("🔄 Updating coins:", { userId, coins });
+
+  if (!userId || coins == null) {
+    return res.status(400).send("Missing data");
+  }
+
+  try {
+    await User.findByIdAndUpdate(userId, { $inc: { coin: coins } });
+    return res.json({ success: true });
+  } catch (err) {
+    console.error('Coin update error:', err);
+    return res.status(500).json({ error: 'Failed to update coins' });
+  }
+};
+

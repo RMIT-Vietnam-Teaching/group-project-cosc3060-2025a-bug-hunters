@@ -11,7 +11,7 @@
 <form action="/userSettings/balance/update/<%= user._id %>" method="POST" class="row g-3">
   <div class="col-md-12">
     <label class="form-label fw-bold">Current Balance (Coin)</label>
-    <input type="text" class="form-control" value="$ <%= user.balance || '1034' %>" readonly disabled/>
+    <input type="text" class="form-control" value="$ <%= user.coin || '0' %>" readonly disabled/>
   </div>
 
   <!-- payment -->

@@ -164,7 +164,7 @@
   <% if (bonus>0) { %>
     <p><strong>Bonus Coins:</strong> +<%= bonus %></p>
   <% } %>
-  <p><strong>Total Added:</strong> <%= purchased+bonus %> coins</p>
+  <p><strong>Total Added:</strong> <%= Number(purchased) + Number(bonus) %> coins</p>
   <p><strong>New Balance:</strong> <%= user.coin %> coins</p>
 
 <% } else { %>

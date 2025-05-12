@@ -110,7 +110,10 @@
               <input type="number" class="form-control" placeholder="Enter amount" id="coinInput">
             </div>
             <div class="col-md-6 text-end">
-              <label class="form-label fw-bold">Current Coin: <span class="text-primary">1234</span></label>
+              <label class="form-label fw-bold">
+                Current Coin: 
+                <span class="text-primary" id="currentCoin"><%= user.coin %></span>
+              </label>                            
             </div>
           </div>
 
@@ -280,7 +283,27 @@
           if (raw >= 100 && raw < 250) bonus = 10;
           else if (raw >= 250 && raw < 1000) bonus = 50;
           else if (raw >= 1000) bonus = 100;
+          
+          const totalCoins = raw + bonus;
 
+         await fetch('/user/update-coin', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId: "<%= user._id %>",
+            coins: totalCoins
+          })
+
+          });
+          // Update the currentCoin element on the page
+          const currentCoinEl = document.getElementById("currentCoin");
+          if (currentCoinEl) {
+            const prevCoin = parseInt(currentCoinEl.textContent, 10) || 0;
+            const newCoin = prevCoin + totalCoins;
+            currentCoinEl.textContent = newCoin;
+            localStorage.setItem("updatedUserCoin", newCoin);
+          }
+          
           const orderNumber = new Date().toISOString().slice(0,10).replace(/-/g,'')
                               + '-' + Math.floor(1000+Math.random()*9000);
 

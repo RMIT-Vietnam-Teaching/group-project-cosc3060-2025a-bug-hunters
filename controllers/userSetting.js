@@ -185,27 +185,33 @@ exports.updateUserSecurity = async (req, res) => {
 exports.updateUserBalance = async (req, res) => {
   try {
     const { userId } = req.params;
-    const { cardNumber, expirationDate, cvv, cardHolderName } = req.body;
-    const sanitizedCardNumber = cardNumber.replace(/\s/g, "");
-    const last4 = sanitizedCardNumber.slice(-4);
+    const { cardNumber, expirationDate, cvv, cardHolderName, coin } = req.body;
 
-    console.log("Form data received:", req.body);
+    const updatePayload = {};
 
-    const updatedFields = {
-      cardPaymentInfo: {
+    // Update card details
+    if (cardNumber && expirationDate && cvv && cardHolderName) {
+      const sanitizedCardNumber = cardNumber.replace(/\s/g, "");
+      const last4 = sanitizedCardNumber.slice(-4);
+
+      updatePayload.cardPaymentInfo = {
         cardNumber: `**** **** **** ${last4}`,
         expirationDate,
         cvv,
         cardHolderName,
-      },
-    };
+      };
+    }
 
-    await User.findByIdAndUpdate(userId, updatedFields, { runValidators: true });
+    // Update coin balance if provided
+    if (coin !== undefined) {
+      updatePayload.coin = parseFloat(coin);
+    }
+
+    await User.findByIdAndUpdate(userId, updatePayload, { runValidators: true });
 
     res.redirect(`/userSettings/balance/${userId}?success=1`);
   } catch (error) {
-    console.error("Error updating user card info:", error);
-    res.status(500).send("Failed to update card info");
+    console.error("Error updating user balance:", error);
+    res.status(500).send("Failed to update user balance");
   }
 };
-
