@@ -70,16 +70,12 @@ app.use("/userSettings", userSettingsRoutes);
 app.use("/userProfile", userProfileRoutes);
 app.use("/courses", courseRoutes);
 
-// app.use("/institution", institution);
-// app.use("/payment", coinPaymentRoutes);
+app.use("/institution", institution);
 app.use("/forum", forumRoutes);
 app.use("/userSettings", userSettingsRoutes);
 app.use("/userProfile", userProfileRoutes);
 app.use("/courses", courseRoutes);
 app.use("/search", searchRoutes);
-
-// app.use("/institution", institution);
-// app.use("/payment", coinPaymentRoutes);
 
 app.use("/user", userRoutes);
 app.use("/api", subscriptionRoutes);

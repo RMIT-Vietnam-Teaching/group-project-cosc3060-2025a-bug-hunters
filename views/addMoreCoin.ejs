@@ -145,33 +145,21 @@
           </div>
           
           <hr class="my-3">
-          <div class="form-section position-relative">
-            <label class="form-label fw-bold">Card Number</label>
-            <div class="position-relative">
-              <input type="text" class="form-control pe-5" id="cardNumberInput"
-                     readonly
-                     value="**** **** **** <%= cardInfo?.cardNumber?.slice(-4) || '4242' %>">
-            </div>
-          </div>          
-          
-          <div class="row form-section">
-            <div class="col-md-6">
-              <label class="form-label fw-bold">Expiry Date</label>
-              <input type="text" class="form-control" name="expirationDate" placeholder="MM/YY"
-                     value="<%= cardInfo?.expirationDate || '' %>" pattern="\d{2}/\d{2}" required>
-            </div>
-            <div class="col-md-6 position-relative">
-              <label class="form-label fw-bold">CVC</label>
-              <div class="position-relative">
-                <input type="password" class="form-control pe-5" id="cvcInput" name="cvv" 
-                       placeholder="CVC"
-                       value="<%= cardInfo?.cvv || '' %>" maxlength="4" pattern="[0-9]{3,4}" required>
-                <button type="button" class="btn toggle-visibility-icon" onclick="toggleVisibility('cvcInput', this)">
-                  <i class="bi bi-eye-fill"></i>
-                </button>
+         <div class="form-section">
+              <label class="form-label fw-bold">Card Number</label>
+               <div id="card-number-element" class="form-control"></div>
+             </div>
+            
+            <div class="row g-3 form-section">
+              <div class="col-md-6">
+               <label class="form-label fw-bold">Expiry Date</label>
+                <div id="card-expiry-element" class="form-control"></div>
               </div>
-            </div>
-          </div>
+              <div class="col-md-6">
+             <label class="form-label fw-bold">CVC</label>
+                 <div id="card-cvc-element" class="form-control"></div>
+             </div>
+             </div>
           <div class="form-section">
             <label class="form-label fw-bold">Name on Card</label>
             <input type="text" class="form-control" id="cardholder-name" placeholder="Name on Card" value="<%= cardInfo?.cardHolderName || '' %>">
@@ -185,7 +173,7 @@
           <p class="mb-1">Purchased Coin: <strong id="coinAmount">$20</strong></p>
           <p class="mb-3">Total Price: <strong id="totalPrice">$200</strong></p>
           <p id="bonusInfo" class="text-success fw-semibold mb-3"></p>          
-          <button class="checkout-btn mb-3">Pay Now</button>
+          <button id="pay-now" class="checkout-btn mb-3">Pay Now</button>
 
           <ul class="list-group mt-3" id="selectedPackagesList"></ul>
 
@@ -193,57 +181,135 @@
       </div>
     </div>
   </div>
+
   <script>
-    const coinInput = document.getElementById('coinInput');
-    const coinAmountDisplay = document.getElementById('coinAmount');
-    const totalPriceDisplay = document.getElementById('totalPrice');
-    const bonusInfo = document.getElementById('bonusInfo');
+    document.addEventListener('DOMContentLoaded', () => {
+      // —— ELEMENT SELECTORS ——
+      const coinInput = document.getElementById('coinInput');
+      const coinAmountDisplay = document.getElementById('coinAmount');
+      const totalPriceDisplay = document.getElementById('totalPrice');
+      const bonusInfo = document.getElementById('bonusInfo');
+      const payBtn = document.querySelector('.checkout-btn');
+      const nameInput = document.getElementById('cardholder-name');
     
-    // Update summary logic
-    function updateSummary() {
-      const amount = parseInt(coinInput.value) || 0;
-      let bonus = 0;
+      // —— COIN SUMMARY LOGIC ——
+      function updateSummary() {
+        const raw = parseInt(coinInput.value, 10) || 0;
+        let bonus = 0;
+        if (raw >= 100 && raw < 250) bonus = 10;
+        else if (raw >= 250 && raw < 1000) bonus = 50;
+        else if (raw >= 1000) bonus = 100;
     
-      if (amount >= 100 && amount < 250) bonus = 10;
-      else if (amount >= 250 && amount < 1000) bonus = 50;
-      else if (amount >= 1000) bonus = 100;
-    
-      const total = amount + bonus;
-      coinAmountDisplay.textContent = `${total} Coins`;
-      totalPriceDisplay.textContent = `$${amount.toFixed(2)}`;
-      bonusInfo.textContent = bonus ? `🎁 Extra coin: ${bonus}` : '';
-    }
-    
-    // Manual entry
-    coinInput.addEventListener('input', () => {
-      updateSummary();
-    });
-    
-    // Package selection
-    document.querySelectorAll('.special-deal-item').forEach(item => {
-      const base = parseInt(item.dataset.base);
-      item.querySelector('.add-package').addEventListener('click', () => {
-        coinInput.value = base;
-        updateSummary();
-      });
-    });
-    
-    // Toggle CVC
-    function toggleVisibility(inputId, btn) {
-      const input = document.getElementById(inputId);
-      const icon = btn.querySelector("i");
-      if (!input || !icon) return;
-      if (input.type === "password") {
-        input.type = "text";
-        icon.classList.remove("bi-eye-fill");
-        icon.classList.add("bi-eye-slash-fill");
-      } else {
-        input.type = "password";
-        icon.classList.remove("bi-eye-slash-fill");
-        icon.classList.add("bi-eye-fill");
+        const totalCoins = raw + bonus;
+        coinAmountDisplay.textContent = `${totalCoins} Coins`;
+        totalPriceDisplay.textContent = `$${raw.toFixed(2)}`;
+        bonusInfo.textContent = bonus ? `🎁 Extra coin: ${bonus}` : '';
       }
-    }
+    
+      coinInput.addEventListener('input', updateSummary);
+    
+      document.querySelectorAll('.special-deal-item').forEach(item => {
+        const btn = item.querySelector('.add-package');
+        btn.addEventListener('click', () => {
+          coinInput.value = item.dataset.base;
+          updateSummary();
+        });
+      });
+    
+      // —— STRIPE ELEMENTS SETUP ——
+      const stripe = Stripe('pk_test_51RF2PRFJwUJkAaIQvype4JOTw2HaUHLBdkLiZb5FUDNPKucWhetwjl69sLtM80gBUhFNPxjLms9TBdGKWLJfsuZJ00hOmtFPa2');
+      const elements = stripe.elements();
+      const style = {
+        base: {
+          fontSize: '16px',
+          color: '#32325d',
+          '::placeholder': { color: '#aaa' }
+        }
+      };
+    
+      const cardNumber = elements.create('cardNumber', { style });
+      cardNumber.mount('#card-number-element');
+    
+      const cardExpiry = elements.create('cardExpiry', { style });
+      cardExpiry.mount('#card-expiry-element');
+    
+      const cardCvc = elements.create('cardCvc', { style });
+      cardCvc.mount('#card-cvc-element');
+    
+      // —— BUTTON STATE HANDLER ——
+      function setLoading(isLoading) {
+        payBtn.disabled = isLoading;
+        payBtn.textContent = isLoading ? 'Processing…' : 'Pay Now';
+      }
+    
+      // —— PAY NOW CLICK HANDLER ——
+      payBtn.addEventListener('click', async e => {
+        e.preventDefault();
+    
+        // validate amount
+        const raw = parseInt(coinInput.value, 10) || 0;
+        const amount = Math.round(raw * 100);
+        if (amount <= 0) {
+          return alert('Please enter a valid coin amount.');
+        }
+    
+        setLoading(true);
+    
+        try {
+          // 1) create a PaymentIntent on your server
+          const resp = await fetch('/payment/create-payment-intent', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ amount })
+        });
+          const { clientSecret, error: piError } = await resp.json();
+          if (piError) throw new Error(piError);
+    
+          // 2) confirm the card payment with Stripe.js
+          const { error: stripeError } = await stripe.confirmCardPayment(clientSecret, {
+            payment_method: {
+              card: cardNumber,
+              billing_details: { name: nameInput.value }
+            }
+          });
+          if (stripeError) throw stripeError;
+    
+          // 3) on success, redirect to confirmation
+          const raw   = parseInt(coinInput.value, 10) || 0;
+          let bonus   = 0;
+          if (raw >= 100 && raw < 250) bonus = 10;
+          else if (raw >= 250 && raw < 1000) bonus = 50;
+          else if (raw >= 1000) bonus = 100;
+
+          const orderNumber = new Date().toISOString().slice(0,10).replace(/-/g,'')
+                              + '-' + Math.floor(1000+Math.random()*9000);
+
+          window.location.href = `/payment/confirmation?` +
+            `purchased=${raw}&bonus=${bonus}` +
+            `&orderNumber=${orderNumber}`;
+        } catch (err) {
+          console.error(err);
+          alert(err.message || 'Payment failed. Please try again.');
+          setLoading(false);
+        }
+      });
+    
+      // —— CVC VISIBILITY TOGGLE ——
+      window.toggleVisibility = (inputId, btn) => {
+        const input = document.getElementById(inputId);
+        const icon = btn.querySelector('i');
+        if (input.type === 'password') {
+          input.type = 'text';
+          icon.classList.replace('bi-eye-fill', 'bi-eye-slash-fill');
+        } else {
+          input.type = 'password';
+          icon.classList.replace('bi-eye-slash-fill', 'bi-eye-fill');
+        }
+      };
+    });
     </script>
+    
+
     
   
     

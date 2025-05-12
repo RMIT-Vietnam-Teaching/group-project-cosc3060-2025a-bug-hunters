@@ -46,6 +46,22 @@
 
     .cart-img { width: 60px; height: 60px; background-color: #ccc; border-radius: 8px; margin-right: 16px; }
     .cart-item { box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.12); border-radius: 12px; margin-bottom: 1rem; padding: 1rem; background-color: white; }
+    
+    /* New styles for coin status */
+    .coin-status {
+      margin-top: 10px;
+      padding: 8px;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+    .coin-sufficient {
+      background-color: #d4edda;
+      color: #155724;
+    }
+    .coin-insufficient {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
   </style>
 </head>
 <body>
@@ -92,7 +108,14 @@
 
           <div class="coin-input-box">
             <label class="form-label fw-bold">Coin you have</label>
-            <input type="text" id="user-coin" class="form-control mb-3" readonly value="<%= user?.coin || 0 %>" style="background-color: #f9f9f9; cursor: not-allowed;">
+             <input type="text" id="user-coin" class="form-control mb-3" readonly 
+                value="<%= user.coin %>" 
+                style="background-color: #f9f9f9; cursor: not-allowed;">
+            
+            <div id="coin-status" class="coin-status">
+              <!-- This will be populated via JS -->
+            </div>
+            
             <a href="/payment/addcoin?id=<%= user._id %>" class="add-btn">Add more coin</a>
           </div>
         </form>
@@ -103,8 +126,11 @@
         <div class="order-summary">
           <h5 class="fw-bold mb-3">Order Summary</h5>
           <hr>
+          <% 
+            const totalCost = cartItems.reduce((sum, item) => sum + (parseFloat(item.price) || 0), 0).toFixed(2);
+          %>
           <p class="mb-1">Total (<%= cartItems.length %> Courses):
-            <strong>$<%= cartItems.reduce((sum, item) => sum + (parseFloat(item.price) || 0), 0).toFixed(2) %></strong>
+            <strong id="total-amount">$<%= totalCost %></strong>
           </p>
           <button type="button" class="checkout-btn">Pay Now</button>
         </div>
@@ -112,268 +138,286 @@
     </div>
 
     <!-- Order Detail -->
-    <div class="row">
-      <div class="col-lg-8">
-        <h5 class="fw-bold mb-3 mt-5">Order detail</h5>
-        <% cartItems.forEach(item => { %>
-          <div class="cart-item d-flex align-items-center">
-            <img src="<%= item.imageUrl || '/images/course-placeholder.jpg' %>" class="cart-img">
-            <div>
-              <div class="fw-bold"><%= item.title %></div>
-              <div>By <%= item.instructor %> · <%= item.duration %></div>
-              <div><strong>$<%= item.price %></strong></div>
-            </div>
-          </div>
-        <% }) %>
+   
+<!-- Change 1: Add data-course-id attribute to cart items for proper identification -->
+<div class="row">
+  <div class="col-lg-8">
+    <h5 class="fw-bold mb-3 mt-5">Order detail</h5>
+    <% cartItems.forEach(item => { %>
+      <div class="cart-item d-flex align-items-center" data-course-id="<%= item._id %>">
+        <img src="<%= item.imageUrl || '/images/course-placeholder.jpg' %>" class="cart-img">
+        <div>
+          <div class="fw-bold"><%= item.title %></div>
+          <div>By <%= item.instructor %> · <%= item.duration %></div>
+          <div><strong>$<%= item.price %></strong></div>
+        </div>
       </div>
-    </div>
+    <% }) %>
   </div>
-
-       <!--  fake course list -->
-<!-- 
-       <div class="cart-item d-flex align-items-center">
-         <div class="cart-img"></div>
-         <div>
-           <div class="fw-bold">Introduction to Banana Programming 🍌</div>
-           <div>By Cody Fisher · 12.5 hours of peeling knowledge</div>
-           <div><strong>$49.00</strong></div>
-         </div>
-       </div>
-       <div class="cart-item d-flex align-items-center">
-         <div class="cart-img"></div>
-         <div>
-           <div class="fw-bold">Advanced Cat Typing Techniques 😺⌨️</div>
-           <div>By Whiskers McMeow · 3.5 hours of paw wisdom</div>
-           <div><strong>$29.00</strong></div>
-         </div>
-       </div>
-     </div> -->
-
-    
-
- 
+</div>
 
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-  const payBtn = document.querySelector(".checkout-btn");
-  const cardBox = document.querySelector('.card-input-box');
-  const coinBox = document.querySelector('.coin-input-box');
-  const cardErrorsDiv = document.getElementById('card-errors');
-
-  // Function to display errors
-  function showError(message) {
-    cardErrorsDiv.innerHTML = `<div class="alert alert-danger">${message}</div>`;
-    console.error(message);
-  }
-
-  // Verify Stripe key is present
-  const stripeKey = "pk_test_51RF2PRFJwUJkAaIQvype4JOTw2HaUHLBdkLiZb5FUDNPKucWhetwjl69sLtM80gBUhFNPxjLms9TBdGKWLJfsuZJ00hOmtFPa2";
-  if (!stripeKey || stripeKey.trim() === '') {
-    showError("Stripe key not configured properly.");
-    return;
-  }
-
-  try {
-    const stripe = Stripe(stripeKey);
-    const elements = stripe.elements();
-
-    // Style the Elements
-    const style = {
-      base: {
-        color: '#32325d',
-        fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
-        fontSmoothing: 'antialiased',
-        fontSize: '16px',
-        '::placeholder': {
-          color: '#aab7c4'
-        }
-      },
-      invalid: {
-        color: '#fa755a',
-        iconColor: '#fa755a'
-      }
-    };
-
-    // Create the card Elements
-    const cardNumber = elements.create('cardNumber', {style: style});
-    const cardExpiry = elements.create('cardExpiry', {style: style});
-    const cardCvc = elements.create('cardCvc', {style: style});
-
-    // Add event listeners for real-time validation
-    cardNumber.addEventListener('change', function(event) {
-      if (event.error) {
-        showError(event.error.message);
+  document.addEventListener("DOMContentLoaded", function () {
+    const payBtn = document.querySelector(".checkout-btn");
+    const cardBox = document.querySelector('.card-input-box');
+    const coinBox = document.querySelector('.coin-input-box');
+    const cardErrorsDiv = document.getElementById('card-errors');
+    const coinStatusDiv = document.getElementById('coin-status');
+    
+    // Get user coins and total cost
+    const userCoins = parseFloat(document.getElementById('user-coin').value) || 0;
+    const totalAmountEl = document.getElementById('total-amount');
+    const totalCostText = totalAmountEl.textContent.replace('$', '');
+    const totalCost = parseFloat(totalCostText) || 78.00; // Fallback to $78 if parsing fails
+    
+    // Function to update coin status display
+    function updateCoinStatus() {
+      if (userCoins >= totalCost) {
+        coinStatusDiv.className = 'coin-status coin-sufficient';
+        coinStatusDiv.textContent = `You have enough coins for this purchase (${userCoins} coins).`;
       } else {
-        cardErrorsDiv.textContent = '';
-      }
-    });
-
-    let stripeMounted = false;
-
-    function togglePaymentSection() {
-      const showCard = document.getElementById('viaCard').checked;
-      cardBox.style.display = showCard ? 'block' : 'none';
-      coinBox.style.display = !showCard ? 'block' : 'none';
-
-      if (showCard && !stripeMounted) {
-        try {
-          cardNumber.mount("#card-number-element");
-          cardExpiry.mount("#card-expiry-element");
-          cardCvc.mount("#card-cvc-element");
-          stripeMounted = true;
-          console.log("Stripe elements mounted successfully");
-        } catch (err) {
-          console.error("Error mounting Stripe elements:", err);
-          showError("Failed to initialize the payment form. Please refresh the page.");
-        }
+        const needed = totalCost - userCoins;
+        coinStatusDiv.className = 'coin-status coin-insufficient';
+        coinStatusDiv.textContent = `You need ${needed.toFixed(2)} more coins to complete this purchase.`;
       }
     }
-
-    document.getElementById('viaCard').addEventListener('change', togglePaymentSection);
-    document.getElementById('viaCoin').addEventListener('change', togglePaymentSection);
-    togglePaymentSection(); // Initialize on page load
-
-    payBtn.addEventListener("click", async function (e) {
-      e.preventDefault();
-      payBtn.disabled = true;
-      payBtn.textContent = "Processing...";
-      cardErrorsDiv.textContent = '';
-
-      try {
-        const isCard = document.getElementById("viaCard").checked;
-        const isCoin = document.getElementById("viaCoin").checked;
-
-        if (isCard) {
-          // Card payment flow
-          const cardholderName = document.getElementById('cardholder-name').value.trim();
-          if (!cardholderName) {
-            showError("Please enter the cardholder's name");
-            payBtn.disabled = false;
-            payBtn.textContent = "Pay Now";
-            return;
+    
+    // Call on page load
+    updateCoinStatus();
+  
+    // Function to display errors
+    function showError(message) {
+      cardErrorsDiv.innerHTML = `<div class="alert alert-danger">${message}</div>`;
+      console.error(message);
+    }
+  
+    // Verify Stripe key is present
+    const stripeKey = "pk_test_51RF2PRFJwUJkAaIQvype4JOTw2HaUHLBdkLiZb5FUDNPKucWhetwjl69sLtM80gBUhFNPxjLms9TBdGKWLJfsuZJ00hOmtFPa2";
+    if (!stripeKey || stripeKey.trim() === '') {
+      showError("Stripe key not configured properly.");
+      return;
+    }
+  
+    try {
+      const stripe = Stripe(stripeKey);
+      const elements = stripe.elements();
+  
+      // Style the Elements
+      const style = {
+        base: {
+          color: '#32325d',
+          fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+          fontSmoothing: 'antialiased',
+          fontSize: '16px',
+          '::placeholder': {
+            color: '#aab7c4'
           }
-
+        },
+        invalid: {
+          color: '#fa755a',
+          iconColor: '#fa755a'
+        }
+      };
+  
+      // Create the card Elements
+      const cardNumber = elements.create('cardNumber', {style: style});
+      const cardExpiry = elements.create('cardExpiry', {style: style});
+      const cardCvc = elements.create('cardCvc', {style: style});
+  
+      // Add event listeners for real-time validation
+      cardNumber.addEventListener('change', function(event) {
+        if (event.error) {
+          showError(event.error.message);
+        } else {
+          cardErrorsDiv.textContent = '';
+        }
+      });
+  
+      let stripeMounted = false;
+  
+      function togglePaymentSection() {
+        const showCard = document.getElementById('viaCard').checked;
+        cardBox.style.display = showCard ? 'block' : 'none';
+        coinBox.style.display = !showCard ? 'block' : 'none';
+  
+        if (showCard && !stripeMounted) {
           try {
-            // FIXED: Hard-code the total amount for simplicity and reliability
-            const totalAmount = 78.00; // $49 + $29 = $78
-            const amountInCents = Math.round(totalAmount * 100); // Convert to cents
-            
-            console.log("Sending payment intent request with amount:", amountInCents);
-            
-            const response = await fetch('/payment/create-payment-intent', {
-              method: 'POST',
-              headers: { 
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({ 
-                amount: amountInCents 
-              })
-            });
-            
-            const responseText = await response.text();
-            console.log("Raw response:", responseText);
-            
-            // Try to parse the response
-            let data;
+            cardNumber.mount("#card-number-element");
+            cardExpiry.mount("#card-expiry-element");
+            cardCvc.mount("#card-cvc-element");
+            stripeMounted = true;
+            console.log("Stripe elements mounted successfully");
+          } catch (err) {
+            console.error("Error mounting Stripe elements:", err);
+            showError("Failed to initialize the payment form. Please refresh the page.");
+          }
+        }
+      }
+  
+      document.getElementById('viaCard').addEventListener('change', togglePaymentSection);
+      document.getElementById('viaCoin').addEventListener('change', togglePaymentSection);
+      togglePaymentSection(); // Initialize on page load
+  
+      payBtn.addEventListener("click", async function (e) {
+        e.preventDefault();
+        payBtn.disabled = true;
+        payBtn.textContent = "Processing...";
+        cardErrorsDiv.textContent = '';
+  
+        try {
+          const isCard = document.getElementById("viaCard").checked;
+          const isCoin = document.getElementById("viaCoin").checked;
+  
+          if (isCard) {
+            // Card payment flow
+            const cardholderName = document.getElementById('cardholder-name').value.trim();
+            if (!cardholderName) {
+              showError("Please enter the cardholder's name");
+              payBtn.disabled = false;
+              payBtn.textContent = "Pay Now";
+              return;
+            }
+  
             try {
-              data = JSON.parse(responseText);
-            } catch (parseError) {
-              console.error("Failed to parse response:", parseError);
-              throw new Error("Invalid response from server");
+              // Get the total amount from the page instead of hardcoding
+              const amountInCents = Math.round(totalCost * 100); // Convert to cents
+              
+              console.log("Sending payment intent request with amount:", amountInCents);
+              
+              const response = await fetch('/payment/create-payment-intent', {
+                method: 'POST',
+                headers: { 
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ 
+                  amount: amountInCents 
+                })
+              });
+              
+              const responseText = await response.text();
+              console.log("Raw response:", responseText);
+              
+              // Try to parse the response
+              let data;
+              try {
+                data = JSON.parse(responseText);
+              } catch (parseError) {
+                console.error("Failed to parse response:", parseError);
+                throw new Error("Invalid response from server");
+              }
+              
+              if (!response.ok) {
+                throw new Error(data.error || `Server error: ${response.status}`);
+              }
+              
+              if (!data.clientSecret) {
+                throw new Error("Invalid response: No client secret provided");
+              }
+              
+              console.log("Confirming payment with secret:", data.clientSecret.substr(0, 10) + "...");
+              
+              const result = await stripe.confirmCardPayment(data.clientSecret, {
+                payment_method: {
+                  card: cardNumber,
+                  billing_details: {
+                    name: cardholderName
+                  }
+                }
+              });
+              
+              console.log("Payment result:", result);
+  
+              if (result.error) {
+                throw new Error(result.error.message);
+              } else {
+                console.log('Payment succeeded:', result.paymentIntent.id);
+                // Redirect to payment confirmation page after successful card payment
+                window.location.href = "/payment/confirmation";
+              }
+            } catch (err) {
+              console.error("Payment error:", err);
+              showError(err.message || "Payment failed. Please try again.");
+              payBtn.disabled = false;
+              payBtn.textContent = "Pay Now";
             }
+          } else if (isCoin) {
+            // Get user's current coin balance
+            const userCoin = parseFloat(document.getElementById('user-coin').value) || 0;
             
-            if (!response.ok) {
-              throw new Error(data.error || `Server error: ${response.status}`);
+            // Check if user has enough coins
+            if (userCoin < totalCost) {
+              showError(`You don't have enough coins for this purchase. You need ${(totalCost - userCoin).toFixed(2)} more coins.`);
+              payBtn.disabled = false;
+              payBtn.textContent = "Pay Now";
+              return;
             }
-            
-            if (!data.clientSecret) {
-              throw new Error("Invalid response: No client secret provided");
-            }
-            
-            console.log("Confirming payment with secret:", data.clientSecret.substr(0, 10) + "...");
-            
-            const result = await stripe.confirmCardPayment(data.clientSecret, {
-              payment_method: {
-                card: cardNumber,
-                billing_details: {
-                  name: cardholderName
+  
+            try {
+              // Extract course IDs from the cart items more accurately
+              const courseItems = document.querySelectorAll('.cart-item');
+              const courseIds = [];
+              
+              // Try to get course IDs from elements
+              courseItems.forEach((item, index) => {
+                // Use data attribute if available, otherwise use a fallback ID
+                const courseId = item.getAttribute('data-course-id') || item.id || `course${index+1}`;
+                courseIds.push(courseId);
+              });
+              
+              console.log("Sending coin payment with course IDs:", courseIds);
+              
+              const userId = "<%= user._id %>";
+              console.log("User ID for coin payment:", userId);
+              
+              const response = await fetch('/payment/use-coin', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  userId: userId,
+                  courseIds: courseIds.length > 0 ? courseIds : ["course1"], // Ensure we have at least one ID
+                  totalCost: totalCost
+                })
+              });
+  
+              if (!response.ok) {
+                const errorText = await response.text();
+                let errorData;
+                try {
+                  errorData = JSON.parse(errorText);
+                  throw new Error(errorData.error || `Server error: ${response.status}`);
+                } catch (parseError) {
+                  throw new Error(`Payment failed with status ${response.status}`);
                 }
               }
-            });
-            
-            console.log("Payment result:", result);
-
-            if (result.error) {
-              throw new Error(result.error.message);
-            } else {
-              console.log('Payment succeeded:', result.paymentIntent.id);
-              window.location.href = "/payment/confirmation";
-            }
-          } catch (err) {
-            console.error("Payment error:", err);
-            showError(err.message || "Payment failed. Please try again.");
-          }
-        } else if (isCoin) {
-          // Coin payment flow
-          const userCoin = parseInt(document.getElementById('user-coin').value) || 0;
-          const total = 78.00; // $49 + $29 = $78
-          
-          if (userCoin < total) {
-            showError("You don't have enough coins for this purchase.");
-            payBtn.disabled = false;
-            payBtn.textContent = "Pay Now";
-            return;
-          }
-
-          try {
-            const response = await fetch('/payment/use-coin', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                userId: "<%= user._id %>",
-                courseIds: ["course1", "course2"], // Hard-code IDs or get them from the DOM
-                totalCost: total
-              })
-            });
-
-            if (!response.ok) {
-              const errorData = await response.json();
-              throw new Error(errorData.error || `Server error: ${response.status}`);
-            }
-
-            const result = await response.json();
-            if (result.success) {
-              window.location.href = "/payment/confirmation";
-            } else {
-              throw new Error(result.error || "Payment failed");
-            }
-          } catch (err) {
-            console.error("Coin payment error:", err);
-            showError(err.message || "Coin payment failed. Please try again.");
-          }
-        }
-      } catch (err) {
-        console.error("Payment processing error:", err);
-        showError(err.message || "An unexpected error occurred. Please try again.");
-      } finally {
-        payBtn.disabled = false;
-        payBtn.textContent = "Pay Now";
-      }
-    });
-  } catch (e) {
-    console.error("Stripe initialization error:", e);
-    showError("Payment system could not be initialized. Please refresh the page or try again later.");
-  }
-});
-    async function addCourseToCart(courseId, userId) {
-      const response = await fetch('/cart/add', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ courseId, userId })
-      });
-      const data = await response.json();
-    }
-</script>
   
+              const result = await response.json();
+              
+              if (result.success) {
+                console.log('Coin payment succeeded');
+                // Redirect to confirmation page
+                window.location.href = "/payment/confirmation";
+              } else {
+                throw new Error(result.error || "Payment failed");
+              }
+            } catch (err) {
+              console.error("Coin payment error:", err);
+              showError(err.message || "Coin payment failed. Please try again.");
+              payBtn.disabled = false;
+              payBtn.textContent = "Pay Now";
+            }
+          }
+        } catch (err) {
+          console.error("Payment processing error:", err);
+          showError(err.message || "An unexpected error occurred. Please try again.");
+          payBtn.disabled = false;
+          payBtn.textContent = "Pay Now";
+        }
+      });
+    } catch (e) {
+      console.error("Stripe initialization error:", e);
+      showError("Payment system could not be initialized. Please refresh the page or try again later.");
+    }
+  });
+</script>
 </body>
 </html>

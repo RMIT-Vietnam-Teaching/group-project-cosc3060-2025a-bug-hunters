@@ -156,14 +156,29 @@
       <p><strong>Name:</strong> <%= user.firstName %> <%= user.lastName %></p>
       <p><strong>Email:</strong> <%= user.email %></p>
       <hr/>
-      <p><strong>Order Number:</strong> <%= orderNumber %></p>
-      <p><strong>Purchased Courses:</strong></p>
-      <ul>
-        <% cartItems.forEach(course => { %>
-          <li>✔ <%= course.title %> - $<%= (parseFloat(course.price)||0).toFixed(2) %></li>
-        <% }) %>
-      </ul>
-      <p><strong>Total:</strong> <span style="font-weight: 700;">$<%= totalCost.toFixed(2) %></span></p>
+<p><strong>Order Number:</strong> <%= orderNumber %></p>
+
+<% if (typeof purchased !== 'undefined') { %>
+  <!-- COIN PURCHASE -->
+  <p><strong>Purchased Coins:</strong> <%= purchased %></p>
+  <% if (bonus>0) { %>
+    <p><strong>Bonus Coins:</strong> +<%= bonus %></p>
+  <% } %>
+  <p><strong>Total Added:</strong> <%= purchased+bonus %> coins</p>
+  <p><strong>New Balance:</strong> <%= user.coin %> coins</p>
+
+<% } else { %>
+  <!-- COURSE PURCHASE -->
+  <p><strong>Purchased Courses:</strong></p>
+  <ul>
+    <% cartItems.forEach(c=>{ %>
+      <li>✔ <%= c.title %> – $<%= parseFloat(c.price).toFixed(2) %></li>
+    <% }) %>
+  </ul>
+  <p><strong>Total:</strong> $<%= totalCost.toFixed(2) %></p>
+<% } %>
+
+
     </div>
 
     <a href="/" class="btn-home">Go to Homepage</a>
