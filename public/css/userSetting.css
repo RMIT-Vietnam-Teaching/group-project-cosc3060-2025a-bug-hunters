@@ -11,7 +11,8 @@ nav .nav-link {
     margin: 5px 10px;
 }
 
-nav .nav-link:hover {
+#sidebarDropdown .nav-link:hover,
+#leftMobileSidebar .nav-link:hover {
     background-color: #ffeadb;
     color: #e07b4f;
     font-weight: bold;
@@ -26,6 +27,7 @@ nav .nav-link.active {
     box-shadow: 0 4px 12px rgba(224, 123, 79, 0.5);
     border-radius: 8px;
 }
+
 #sidebarDropdown {
     margin-left: 0 !important;
     padding-left: 0 !important;
@@ -100,4 +102,3 @@ body.dark .btn-outline-danger:hover {
         padding-right: 15px;
     }
 }
-

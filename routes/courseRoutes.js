@@ -1,42 +1,20 @@
 const express = require("express");
 const router = express.Router();
-const multer = require("multer");
-const path = require("path");
 const fs = require("fs");
 const Course = require("../models/Course");
 const User = require("../models/User");
-const categories = require("../utils/categories");
 
-// Set up multer for file uploads
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        const uploadsDir = "public/uploads/courses";
-        // Create directory if it doesn't exist
-        if (!fs.existsSync(uploadsDir)) {
-            fs.mkdirSync(uploadsDir, { recursive: true });
-        }
-        cb(null, uploadsDir);
-    },
-    filename: function (req, file, cb) {
-        const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-        const ext = path.extname(file.originalname);
-        cb(null, "course-" + uniqueSuffix + ext);
-    },
-});
-
-// File filter to only allow images
-const fileFilter = (req, file, cb) => {
-    if (file.mimetype.startsWith("image/")) {
-        cb(null, true);
-    } else {
-        cb(new Error("Not an image! Please upload only images."), false);
-    }
-};
-
+const multer = require("multer");
+const { courseStorage } = require("../utils/cloudinary");
 const upload = multer({
-    storage: storage,
-    fileFilter: fileFilter,
-    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+    storage: courseStorage,
+    limits: { fileSize: 99 * 1024 * 1024, files: 1 },
+    fileFilter: (req, file, cb) => {
+        if (!file.mimetype.startsWith("image/")) {
+            return cb(new Error("Only images are allowed!"), false);
+        }
+        cb(null, true);
+    },
 });
 
 // Get all courses with optional category filter
@@ -71,11 +49,36 @@ router.get("/create", async (req, res) => {
         const instructors = await User.find({ role: "instructor" });
         const loggedInUserId = req.signedCookies?.userId;
         const loggedInUser = await User.findById(loggedInUserId);
+        const categories = [
+            "Web Development",
+            "Mobile Development",
+            "Data Science",
+            "Machine Learning",
+            "Cloud Computing",
+            "Cyber Security",
+            "Game Development",
+            "AI & Deep Learning",
+            "Blockchain",
+            "DevOps",
+            "Software Engineering",
+            "Digital Marketing",
+            "UI/UX Design",
+            "Project Management",
+            "Business Analysis",
+            "Networking",
+            "Database Management",
+            "IT Support",
+            "Quality Assurance",
+            "Data Analysis",
+            "Data Engineering",
+            "Others",
+        ];
 
         res.render("createCourse", {
             categories,
             instructors,
             loggedInUser,
+            formData: {},
         });
     } catch (err) {
         console.error("Error loading create course form:", err);
@@ -83,77 +86,128 @@ router.get("/create", async (req, res) => {
     }
 });
 
-// Handle course creation form submission
 router.post("/create", upload.single("courseImage"), async (req, res) => {
+    const categories = [
+        "Web Development",
+        "Mobile Development",
+        "Data Science",
+        "Machine Learning",
+        "Cloud Computing",
+        "Cyber Security",
+        "Game Development",
+        "AI & Deep Learning",
+        "Blockchain",
+        "DevOps",
+        "Software Engineering",
+        "Digital Marketing",
+        "UI/UX Design",
+        "Project Management",
+        "Business Analysis",
+        "Networking",
+        "Database Management",
+        "IT Support",
+        "Quality Assurance",
+        "Data Analysis",
+        "Data Engineering",
+        "Others",
+    ];
+
+    const instructors = await User.find({ role: "instructor" });
+    const loggedInUserId = req.signedCookies?.userId;
+    const loggedInUser = await User.findById(loggedInUserId);
+    const formData = req.body;
+
     try {
         const {
             title,
             description,
-            instructor,
-            durationHours,
-            durationMinutes,
             category,
+            price,
+            learningOutcomes,
+            sections = {},
         } = req.body;
 
-        // If no image was uploaded, return error
-        if (!req.file) {
-            return res.status(400).render("createCourse", {
-                categories,
-                error: "Please upload a course image",
-                formData: req.body,
-                instructors: await User.find({ role: "instructor" }),
+        if (!req.file) throw new Error("Please upload a course image");
+
+        // Parse learning outcomes
+        const parsedOutcomes =
+            typeof learningOutcomes === "string"
+                ? learningOutcomes
+                      .split("\n")
+                      .map((line) => line.trim())
+                      .filter(Boolean)
+                : [];
+
+        let totalSeconds = 0;
+        const sectionIds = [];
+
+        for (const [secIndex, sectionData] of Object.entries(sections)) {
+            const sectionTitle = sectionData.title;
+            const lessonsInput = sectionData.lessons || {};
+            const lessonIds = [];
+
+            for (const [lesIndex, lessonData] of Object.entries(lessonsInput)) {
+                const { title: lessonTitle, duration, type } = lessonData;
+
+                // Calculate time in seconds
+                const parts = duration.split(":").map(Number).reverse();
+                const seconds =
+                    (parts[0] || 0) +
+                    (parts[1] || 0) * 60 +
+                    (parts[2] || 0) * 3600;
+                totalSeconds += seconds;
+
+                const lesson = new Lesson({
+                    title: lessonTitle,
+                    duration, // keep as "MM:SS" or "HH:MM:SS"
+                    content: "", // optional field for future content (video/pdf/text)
+                });
+                await lesson.save();
+                lessonIds.push(lesson._id);
+            }
+
+            const section = new Section({
+                title: sectionTitle,
+                lessons: lessonIds,
             });
+            await section.save();
+            sectionIds.push(section._id);
         }
 
-        // Format duration string
-        const hours = parseInt(durationHours) || 0;
-        const minutes = parseInt(durationMinutes) || 0;
+        // Convert totalSeconds to "Hh Mm" format
+        const totalHours = Math.floor(totalSeconds / 3600);
+        const totalMinutes = Math.floor((totalSeconds % 3600) / 60);
+        const durationFormatted = `${
+            totalHours > 0 ? totalHours + "h " : ""
+        }${totalMinutes}m`;
 
-        let duration = "";
-        if (hours > 0) {
-            duration += `${hours}h `;
-        }
-        if (minutes > 0 || hours === 0) {
-            duration += `${minutes}m`;
-        }
-
-        // Trim any trailing space
-        duration = duration.trim();
-
-        // Get the path to the uploaded image (relative to public folder for use in HTML)
-        const imageUrl = `/uploads/courses/${req.file.filename}`;
-
-        // Create new course
         const newCourse = new Course({
-            title,
+            name: title,
             description,
-            instructor: instructor || "Current User", // In production, use actual user ID
-            duration,
+            author: loggedInUser._id,
             category,
-            imageUrl,
-            rating: 0, // New courses start with no rating
+            price,
+            image: req.file.path, // Cloudinary path
+            learningOutcomes: parsedOutcomes,
+            duration: durationFormatted.trim(),
+            sections: sectionIds,
         });
 
         await newCourse.save();
-        console.log("Course created successfully:", newCourse);
+        console.log("Course created:", newCourse._id);
 
-        // Redirect to courses page after successful creation
         res.redirect("/courses");
     } catch (err) {
-        console.error("Error creating course:", err);
-
-        // If there was an error and a file was uploaded, delete it
-        if (req.file) {
-            fs.unlink(req.file.path, (unlinkErr) => {
-                if (unlinkErr) console.error("Error deleting file:", unlinkErr);
-            });
+        console.error("Course creation failed:", err);
+        if (req.file?.path) {
+            // Optional: delete failed Cloudinary image if needed
         }
-
         res.status(500).render("createCourse", {
             categories,
+            instructors,
+            loggedInUser,
             error: "Failed to create course: " + err.message,
             formData: req.body,
-            instructors: await User.find({ role: "instructor" }),
         });
     }
 });

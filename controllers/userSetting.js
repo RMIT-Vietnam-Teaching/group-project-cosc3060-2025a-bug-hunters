@@ -3,20 +3,14 @@ const bcrypt = require("bcrypt");
 
 exports.renderUserPreference = async (req, res) => {
     try {
-        const routeUserId = req.params.userId;
-
         const loggedInUserId = req.signedCookies?.userId;
         const routeUser = await User.findById(loggedInUserId);
-
-        // console.log("Route User ID:", loggedInUserId);
 
         if (!routeUser) {
             return res.status(404).send("User not found");
         }
 
         const success = req.query.success;
-
-        console.log(routeUser);
 
         res.render("userSettingProfilePreference", {
             user: routeUser,
