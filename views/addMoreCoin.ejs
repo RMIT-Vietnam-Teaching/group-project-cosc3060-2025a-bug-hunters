@@ -311,7 +311,8 @@
 
           window.location.href = `/payment/confirmation?` +
             `purchased=${raw}&bonus=${bonus}` +
-            `&orderNumber=${orderNumber}`;
+            `&orderNumber=${orderNumber}` +
+            `&coinTopUp=true`;
         } catch (err) {
           console.error(err);
           alert(err.message || 'Payment failed. Please try again.');

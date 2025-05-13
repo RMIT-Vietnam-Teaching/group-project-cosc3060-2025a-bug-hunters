@@ -47,32 +47,24 @@ exports.renderConfirmationPage = async (req, res) => {
     const userId = req.signedCookies?.userId;
     const user = await User.findById(userId).lean();
 
-    if (!user || !userId ) return res.redirect('/auth/login');
-
     const orderNumber = req.query.orderNumber || "—";
+    const isCoinTopUp = req.query.coinTopUp === 'true';
 
+    // Load cart for display (DO NOT clear if coin top-up)
     const userCart = await Cart.findOne({ userId });
     const cartIds  = userCart?.items.map(id => id.toString()) || [];
     const cartItems = await Course.find({ _id: { $in: cartIds } }).lean();
     const totalCost = cartItems.reduce((sum, c) => sum + (parseFloat(c.price)||0), 0);
-    const isCoinTopUp = req.query.purchased && cartItems.length === 0;
 
+    //  Only mark purchased and clear cart if not coin top-up
     if (!isCoinTopUp) {
       await User.findByIdAndUpdate(userId, {
         $addToSet: { purchasedCourses: { $each: cartIds } }
       });
-    
-      const courseIds = cartItems.map(c => c._id?.toString());
-    
-      await cartController.clearCart(userId, {
-        onlyIfCoursePurchased: true,
-        courseIds
-      });
-    
+
+      await Cart.findOneAndUpdate({ userId }, { items: [] });
       req.session.cart = [];
     }
-    
-
 
     return res.render('paymentConfirmation', {
       user,
@@ -80,7 +72,8 @@ exports.renderConfirmationPage = async (req, res) => {
       cartItems,
       totalCost,
       purchased: req.query.purchased,
-      bonus:     req.query.bonus
+      bonus: req.query.bonus,
+      coinTopUp: isCoinTopUp
     });
 
   } catch (err) {
