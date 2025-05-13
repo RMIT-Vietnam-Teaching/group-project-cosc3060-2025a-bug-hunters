@@ -1,5 +1,5 @@
 :root {
-    --primary-color: #e47718;
+    --primary-color: #ff7b07;
     --secondary-color: #333;
     --text-color: #666;
     --light-color: #f8f9fa;
@@ -29,7 +29,14 @@
   [class*="col-"] {
     padding: 0 15px;
   }
-  
+  .author-image-2{
+    width: 400px;
+    height: 553px
+  }
+  .author-image-3{
+    width: 500px;
+    height: 552px;
+  }
   .img-fluid {
     max-width: 100%;
     height: auto;
@@ -144,6 +151,7 @@
   .member-image {
     position: relative;
     overflow: hidden;
+    height: 500px;
   }
   
   .member-image img {
