@@ -13,6 +13,7 @@ const {
     sessionMiddleware,
     setUserFromCookie,
 } = require("./middlewares/setUser");
+const cartCountMiddleware = require('./middlewares/cart');
 
 const { port } = require("./configs/keys");
 const passport = require("passport");
@@ -32,6 +33,7 @@ app.use(cookieParser(process.env.COOKIE_SECRET));
 // Middleware to set user from cookie
 app.use(sessionMiddleware);
 app.use(setUserFromCookie);
+app.use(cartCountMiddleware);
 
 // Initialize Passport
 app.use(passport.initialize());

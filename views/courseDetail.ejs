@@ -663,153 +663,83 @@
   <script src="/js/footer.js"></script>
   
   <!-- Course enrollment and cart script -->
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const enrollButton = document.querySelector('.enroll-btn');
-    const cartButton = document.querySelector('.cart-btn');
-    
-    // Find the navbar cart icon for animation target
-    const navbarCartIcon = document.querySelector('.navbar .bi-cart') || 
-                           document.querySelector('.navbar .bi-cart-fill') ||
-                           document.querySelector('.navbar [class*="cart"]');
-    
-    if (enrollButton) {
-      enrollButton.addEventListener('click', function() {
-        // You would handle the enrollment here
-        alert('Enrollment functionality coming soon!');
-      });
-    }
-    
-    if (cartButton) {
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const cartButton = document.querySelector('.cart-btn');
+      const navbarCartIcon = document.querySelector('.navbar .bi-cart3') ||
+                             document.querySelector('.navbar .bi-cart') ||
+                             document.querySelector('.navbar [class*="cart"]');
+  
+      if (!cartButton) return;
+  
       cartButton.addEventListener('click', function() {
         const courseId = cartButton.dataset.id;
-        
-        // Create flying cart icon
+  
+        // fire off the add‐to‐cart
+        fetch(`/cart/add/${courseId}`, { method: 'POST', headers: { 'Accept': 'application/json' } })
+          .then(r => r.json())
+          .then(data => {
+            if (!data.success) throw new Error();
+            animateFlyingCart();
+            updateCartCounter(data.cartCount);
+          })
+          .catch(err => {
+            console.error('Error adding to cart:', err);
+            alert('Failed to add to cart.');
+          });
+      });
+  
+      function animateFlyingCart() {
         const flyingCart = document.createElement('div');
         flyingCart.className = 'flying-cart';
         flyingCart.innerHTML = '<i class="bi bi-cart-plus"></i>';
         document.body.appendChild(flyingCart);
-        
-        // Set initial position (where the button is)
-        const buttonRect = cartButton.getBoundingClientRect();
-        flyingCart.style.top = `${buttonRect.top + buttonRect.height/2 - 10}px`;
-        flyingCart.style.left = `${buttonRect.left + buttonRect.width/2 - 10}px`;
-        
-        // Make it visible
-        setTimeout(() => {
-          flyingCart.style.opacity = '1';
-        }, 10);
-        
-        // Set target position (where the navbar cart icon is)
-        let targetX, targetY;
-        
+  
+        const btnRect = cartButton.getBoundingClientRect();
+        flyingCart.style.top  = `${btnRect.top + btnRect.height/2}px`;
+        flyingCart.style.left = `${btnRect.left + btnRect.width/2}px`;
+        setTimeout(()=> flyingCart.style.opacity = '1', 10);
+  
+        let targetX = window.innerWidth - 50, targetY = 20;
         if (navbarCartIcon) {
-          const targetRect = navbarCartIcon.getBoundingClientRect();
-          targetX = targetRect.left + targetRect.width/2 - 10;
-          targetY = targetRect.top + targetRect.height/2 - 10;
-        } else {
-          // If no cart icon found, fly to top right corner
-          targetX = window.innerWidth - 50;
-          targetY = 20;
+          const navRect = navbarCartIcon.getBoundingClientRect();
+          targetX = navRect.left + navRect.width/2;
+          targetY = navRect.top + navRect.height/2;
         }
-        
-        // Start animation
-        setTimeout(() => {
+  
+        setTimeout(()=>{
           flyingCart.style.transform = 'scale(0.5)';
-          flyingCart.style.top = `${targetY}px`;
+          flyingCart.style.top  = `${targetY}px`;
           flyingCart.style.left = `${targetX}px`;
           flyingCart.style.opacity = '0';
         }, 50);
-        
-        // Add button animation
-        cartButton.classList.add('btn-animation');
-        setTimeout(() => {
-          cartButton.classList.remove('btn-animation');
-        }, 1200);
-        
-        // Clean up
-        setTimeout(() => {
-          document.body.removeChild(flyingCart);
-          
-          // Update cart counter
-          updateCartCounter();
-        }, 800);
-        
-        // Send request to add to cart
-        fetch(`/cart/add/${courseId}`, {
-          method: 'POST'
-        })
-        .then(res => res.json())
-        .then(data => {
-          if (!data.success) {
-            console.error('Failed to add course to cart');
-          }
-        })
-        .catch(err => {
-          console.error('Error adding course to cart:', err);
-        });
-      });
-    }
-    
-    // Function to update cart counter
-    function updateCartCounter() {
-      const cartCounter = document.querySelector('.cart-counter');
-      if (cartCounter) {
-        // Get current count and increment
-        let count = parseInt(cartCounter.textContent || '0');
-        cartCounter.textContent = count + 1;
-        
-        // Make sure it's visible
-        cartCounter.style.display = 'flex';
-        
-        // Remove existing animation class if present
-        cartCounter.classList.remove('pulse-animation');
-        
-        // Force reflow to restart animation
-        void cartCounter.offsetWidth;
-        
-        // Add animation class
-        cartCounter.classList.add('pulse-animation');
-        
-        // Remove class when animation is done
-        setTimeout(() => {
-          cartCounter.classList.remove('pulse-animation');
-        }, 600);
-      } else {
-        // If the cart counter doesn't exist yet, we need to create it
-        const navCartIcon = document.querySelector('.navbar .bi-cart') || 
-                            document.querySelector('.navbar .bi-cart-fill') ||
-                            document.querySelector('.navbar [class*="cart"]');
-        
-        if (navCartIcon) {
-          // Find the parent element to properly position the counter
-          const iconContainer = navCartIcon.parentElement;
-          if (iconContainer) {
-            // Make sure the container has position relative for absolute positioning
-            if (window.getComputedStyle(iconContainer).position === 'static') {
-              iconContainer.style.position = 'relative';
-            }
-            
-            // Create the counter element
-            const counter = document.createElement('span');
-            counter.className = 'cart-counter';
-            counter.textContent = '1';
-            iconContainer.appendChild(counter);
-            
-            // Add animation
-            setTimeout(() => {
-              counter.classList.add('pulse-animation');
-              
-              // Remove class when animation is done
-              setTimeout(() => {
-                counter.classList.remove('pulse-animation');
-              }, 600);
-            }, 10);
-          }
-        }
+  
+        setTimeout(()=> document.body.removeChild(flyingCart), 800);
       }
-    }
-  });
-</script>
+  
+      function updateCartCounter(count) {
+        // find or create badge
+        let badge = navbarCartIcon && navbarCartIcon.parentElement.querySelector('.cart-counter');
+        const container = navbarCartIcon ? navbarCartIcon.parentElement : null;
+        if (!badge && container) {
+          // ensure parent is positioned
+          if (getComputedStyle(container).position === 'static') {
+            container.style.position = 'relative';
+          }
+          badge = document.createElement('span');
+          badge.className = 'cart-counter';
+          container.appendChild(badge);
+        }
+        if (!badge) return;
+        // set to exact count
+        badge.textContent = count;
+        // animate pulse
+        badge.classList.remove('pulse-animation');
+        void badge.offsetWidth;
+        badge.classList.add('pulse-animation');
+      }
+    });
+  </script>
+  
 </body>
 </html>
