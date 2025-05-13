@@ -75,6 +75,22 @@ body.dark #sidebarDropdown img {
       display: none;
     }
   }
+  /* fit & frame the sidebar avatar */
+  #sidebarDropdown .sidebar-avatar {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  object-fit: cover;                    /* center & crop */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
+  background: none;                    
+  padding: 0;                          
+  border: none;                  
+}
+
+#sidebarDropdown .d-flex.align-items-center {
+  gap: 10px;  
+}
+
 </style>
     
     <%- include('../navbar') %>
@@ -86,7 +102,7 @@ body.dark #sidebarDropdown img {
         <nav id="sidebarDropdown" class="col-md-2 col-12">
           <div class="p-3">
             <div class="d-flex align-items-center mb-4 ps-2">
-              <img src="<%= user.avatar || 'https://via.placeholder.com/90' %>" alt="Profile" style="width: 70px; height: 70px; border-radius: 50%; margin-right: 10px;">
+              <img src="<%= user.avatar || 'https://via.placeholder.com/90' %> %>" alt="Profile" class="sidebar-avatar me-3">
               <h5 class="mb-0"><%= user.firstName %></h5>
             </div>
             <ul class="nav flex-column">
