@@ -1,39 +1,47 @@
 <style>
-  /* Base styles for the sidebar */
-  nav.sidebar-nav,
+  /* Sidebar base */
   nav#sidebarDropdown {
-    background-color: #fdf8f3; 
+    background-color: #fdf8f3;
     color: #333;
     border-right: 1px solid #eee;
     height: 100%;
     overflow-y: auto;
-    padding: 20px 0;
-    padding-left: 11px;
+    padding: 20px 0 20px 11px;
   }
-  
-  body.dark #sidebarDropdown .nav-link.active {
-  background-color: #f3c6a0 !important; 
-  color: #1f1f1f !important; 
-  font-weight: bold;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  padding: 10px 20px;
-}
-#sidebarDropdown .nav-link {
-  transition: all 0.3s ease;
-}
+  #sidebarDropdown .nav-link {
+    transition: all 0.3s ease;
+  }
   body.dark #sidebarDropdown {
-  /* background-color: #1f1f1f !important; */
-  color: #ccc !important;
-  border-right: 1px solid #444 !important;
-  background-color: #e07b4f !important;
-}
-body.dark #sidebarDropdown img {
-  filter: brightness(0.9) contrast(1.2);
-}
+    background-color: #e07b4f !important;
+    color: #ccc !important;
+    border-right: 1px solid #444 !important;
+  }
+  body.dark #sidebarDropdown .nav-link.active {
+    background-color: #f3c6a0 !important;
+    color: #1f1f1f !important;
+    font-weight: bold;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    padding: 10px 20px;
+  }
 
-  /* Mobile sidebar specific styles */
+  /* Avatar styling */
+  #sidebarDropdown .sidebar-avatar {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    object-fit: cover;        /* center & crop */
+    object-position: center;   /* ensure vertical centering */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    flex-shrink: 0;            /* don’t let flex shrink it */
+  }
+  #sidebarDropdown .d-flex.align-items-center {
+    gap: 10px;
+  }
+
+  /* Mobile tweaks */
   @media (max-width: 767px) {
+    /* sidebar slide‐in */
     #sidebarDropdown {
       position: fixed;
       top: 56px;
@@ -43,97 +51,86 @@ body.dark #sidebarDropdown img {
       z-index: 2000;
       transition: left 0.3s ease-in-out;
     }
-    #sidebarDropdown.open {
-      left: 0;
+    #sidebarDropdown.open { left: 0; }
+
+    /* shrink avatar on phones */
+    #sidebarDropdown .sidebar-avatar {
+      width: 50px !important;
+      height: 50px !important;
+    }
+
+    /* force image & name on one line */
+    #sidebarDropdown .d-flex.align-items-center {
+      flex-wrap: nowrap;
+      padding-left: 0 !important;
+    }
+    #sidebarDropdown .d-flex.align-items-center h5 {
+      font-size: 0.9rem;
+      margin: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 120px;
     }
   }
 
-  /* Hamburger button styles */
+  /* Hamburger icon for mobile */
   .mobile-menu-button {
-    background: none;
-    border: none;
-    padding: 0;
-    margin-right: 10px;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 5px;
-    width: 30px;
-    height: 30px;
-    z-index: 2100; 
+    background: none; border: none; padding: 0; margin-right: 10px;
+    display: flex; flex-direction: column; gap: 5px; width: 30px; height: 30px;
+    cursor: pointer; z-index: 2100;
   }
   .mobile-menu-button span {
-    display: block;
-    width: 24px;
-    height: 3px;
-    background-color: white;
-    border-radius: 2px;
+    display: block; width: 24px; height: 3px; border-radius: 2px;
+    background-color: black;
   }
+  body.dark .mobile-menu-button span { background-color: white; }
   @media (min-width: 768px) {
-    .mobile-menu-button {
-      display: none;
-    }
+    .mobile-menu-button { display: none; }
   }
-  /* fit & frame the sidebar avatar */
-  #sidebarDropdown .sidebar-avatar {
-  width: 70px;
-  height: 70px;
-  border-radius: 50%;
-  object-fit: cover;                    /* center & crop */
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
-  background: none;                    
-  padding: 0;                          
-  border: none;                  
-}
-
-#sidebarDropdown .d-flex.align-items-center {
-  gap: 10px;  
-}
-
 </style>
-    
-    <%- include('../navbar') %>
-  
-    <div class="container-fluid">
-      <div class="row vh-100">
-  
-        <!-- sidebar -->
-        <nav id="sidebarDropdown" class="col-md-2 col-12">
-          <div class="p-3">
-            <div class="d-flex align-items-center mb-4 ps-2">
-              <img src="<%= user.avatar || 'https://via.placeholder.com/90' %> %>" alt="Profile" class="sidebar-avatar me-3">
-              <h5 class="mb-0"><%= user.firstName %></h5>
-            </div>
-            <ul class="nav flex-column">
-              <li class="nav-item mb-3">
-                <a class="nav-link <%= activePage === 'profileSetting' ? 'active' : '' %>" href="/userSettings/profilePreference/<%= user._id %>">Profile Preferences</a>
-              </li>
-              <li class="nav-item mb-3">
-                <a class="nav-link <%= activePage === 'display' ? 'active' : '' %>" href="/userSettings/display/<%= user._id %>">Display</a>
-              </li>
-              <li class="nav-item mb-3">
-                <a class="nav-link <%= activePage === 'security' ? 'active' : '' %>" href="/userSettings/security/<%= user._id %>">Account Security</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link <%= activePage === 'balance' ? 'active' : '' %>" href="/userSettings/balance/<%= user._id %>">Account Balance</a>
-              </li>
-            </ul>
-          </div>
-        </nav>
-        
-  
-    <script src="/js/setTheme.js"></script>
 
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        const menuButton = document.getElementById('sidebarToggle');
-        const sidebar = document.getElementById('sidebarDropdown');
-    
-        if (menuButton && sidebar) {
-          menuButton.addEventListener('click', function() {
-            sidebar.classList.toggle('open');
-          });
-        }
-      });
-    </script>
+<%- include('../navbar') %>
+
+<div class="container-fluid">
+  <div class="row vh-100">
+    <!-- sidebar -->
+    <nav id="sidebarDropdown" class="col-md-2 col-12">
+      <div class="p-3">
+        <div class="d-flex align-items-center mb-4 ps-2">
+          <!-- sidebar-avatar is our centered, cover-cropped circle -->
+          <img
+            src="<%= user.avatar || 'https://via.placeholder.com/90' %>"
+            alt="Profile"
+            class="sidebar-avatar"
+          />
+          <h5 class="mb-0"><%= user.firstName %></h5>
+        </div>
+        <ul class="nav flex-column">
+          <li class="nav-item mb-3">
+            <a class="nav-link <%= activePage==='profileSetting'?'active':''%>"
+               href="/userSettings/profilePreference/<%=user._id%>">
+              Profile Preferences
+            </a>
+          </li>
+          <li class="nav-item mb-3">
+            <a class="nav-link <%= activePage==='display'?'active':''%>"
+               href="/userSettings/display/<%=user._id%>">
+              Display
+            </a>
+          </li>
+          <li class="nav-item mb-3">
+            <a class="nav-link <%= activePage==='security'?'active':''%>"
+               href="/userSettings/security/<%=user._id%>">
+              Account Security
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link <%= activePage==='balance'?'active':''%>"
+               href="/userSettings/balance/<%=user._id%>">
+              Account Balance
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>

@@ -219,24 +219,28 @@
                         "
                     >
                         <!-- User Info -->
-                        <a href="/userProfile/<%= user._id %>" class="d-block text-decoration-none text-dark">
+                        <a
+                            href="/userProfile/<%= user._id %>"
+                            class="d-block text-decoration-none text-dark profile-user-link"
+                        >
                             <li
-                              class="px-3 py-3 d-flex align-items-center gap-2"
-                              style="border-bottom: 1px solid #dee2e6"
+                            class="px-3 py-3 d-flex align-items-center gap-2"
+                            style="border-bottom: 1px solid #dee2e6;"
                             >
-                              <img
+                            <img
                                 src="<%= user.avatar %>"
                                 alt="Avatar"
-                                style="width:48px;height:48px;border-radius:50%;object-fit:cover;"
-                              />
-                              <div class="d-flex flex-column">
+                                style="width:48px; height:48px; border-radius:50%; object-fit:cover;"
+                            />
+                            <div class="d-flex flex-column">
                                 <span class="fw-bold">
-                                  <%= user.firstName %> <%= user.lastName %>
+                                <%= user.firstName %> <%= user.lastName %>
                                 </span>
                                 <small class="text-muted"><%= user.email %></small>
-                              </div>
+                            </div>
                             </li>
-                          </a>
+                        </a>
+                        
                           
 
                         <% if (user.role === 'Student') { %>
@@ -311,6 +315,14 @@
         </div>
     </div>
 </nav>
-
+<style>
+    /* Hover‐state for the “User Info” row in your dropdown */
+    .profile-user-link li {
+      transition: background-color 0.2s ease;
+    }
+    .profile-user-link:hover li {
+      background-color: #eceded; 
+    }
+  </style>
 <!-- //to update cart couunt in real-time -->
 <script src="/js/cart.js"></script>
