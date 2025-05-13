@@ -18,7 +18,22 @@
     <div class="p-4 mt-5 mx-auto" style="background-color: #f6f6e9; border-radius: 100px; max-width: 1000px;">
   <div class="row align-items-center">
     <div class="col-md-4 text-center">
-      <img  src="<%= profileUser.avatar || 'https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3467.jpg' %>"  alt="Profile Picture" class="rounded-circle" width="180" height="180" style="background-color: #efedea;">
+      <img
+  src="<%= profileUser.avatar || 'https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3467.jpg' %>"
+  alt="Profile Picture"
+  class="rounded-circle"
+  style="
+    width: 180px;
+    height: 180px;
+    object-fit: cover;
+    object-position: center;
+    background-color: #efedea;
+    border-radius: 50%;
+    border: 3px solid #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+"
+/>
+
       <h3 class="mt-3 fw-semibold"><%= profileUser.firstName %> <%= profileUser.lastName %></h3>
       <!-- <h3 class="mt-3 fw-semibold user-name"></h3> -->
     </div>

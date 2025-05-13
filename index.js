@@ -68,7 +68,7 @@ connectDB();
 // Import Routes
 const homeRoutes = require("./routes/homeRoutes");
 const authRoutes = require("./routes/authRoutes");
-const userSettingsRoutes = require("./routes/userSetting");
+const userSettingsRoutes = require("./routes/userSettingRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const forumRoutes = require("./routes/forumRoutes");
 const userProfileRoutes = require("./routes/userProfileRoutes");
@@ -95,25 +95,13 @@ app.use("/userProfile", userProfileRoutes);
 app.use("/courses", courseRoutes);
 app.use("/institution", institutionRoutes);
 app.use("/forum", forumRoutes);
-app.use("/userSettings", userSettingsRoutes);
-app.use("/userProfile", userProfileRoutes);
-app.use("/courses", courseRoutes);
 app.use("/search", searchRoutes);
 app.use("/about-us", aboutUsRoutes);
 app.use("/user", userRoutes);
 app.use("/api", subscriptionRoutes);
-
-// app.use("/institution", institution);
-// app.use("/payment", coinPaymentRoutes);
-app.use("/navbar", (req, res) => {
-    res.render("partials/navbar");
-});
-
 // app.use("/institution", institution);
 // app.use("/payment", coinPaymentRoutes);
 
-app.use("/user", userRoutes);
-app.use("/api", subscriptionRoutes);
 
 // Start Server
 app.listen(port, () => {

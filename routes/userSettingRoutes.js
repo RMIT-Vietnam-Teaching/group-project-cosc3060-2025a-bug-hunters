@@ -5,10 +5,6 @@ const multer = require("multer");
 const upload = multer({ storage });
 const { requireOwnUserAccess } = require("../middlewares/auth");
 
-// const{
-//   updateUserProfile,
-// } = require("../controllers/userSettings/profile");
-
 const {
     renderUserPreference,
     renderAccountSecurity,
@@ -39,6 +35,5 @@ router.post("/security/update/:userId", updateUserSecurity);
 
 router.get("/balance/:userId", requireOwnUserAccess, renderAccountBalance);
 router.post("/balance/update/:userId", updateUserBalance);
-
 
 module.exports = router;
