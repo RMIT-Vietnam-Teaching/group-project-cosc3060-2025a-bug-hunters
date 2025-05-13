@@ -3,6 +3,7 @@ const User   = require('../models/User');
 const Course = require('../models/Course');
 const Cart   = require('../models/Cart');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const cartController = require('../controllers/cartController'); 
 
 
 exports.renderCheckoutPage = async (req, res) => {  
@@ -44,10 +45,9 @@ exports.renderCheckoutPage = async (req, res) => {
 exports.renderConfirmationPage = async (req, res) => {
   try {
     const userId = req.signedCookies?.userId;
-    if (!userId) return res.redirect('/auth/login');
-
     const user = await User.findById(userId).lean();
-    if (!user) return res.redirect('/auth/login');
+
+    if (!user || !userId ) return res.redirect('/auth/login');
 
     const orderNumber = req.query.orderNumber || "—";
 
@@ -55,15 +55,23 @@ exports.renderConfirmationPage = async (req, res) => {
     const cartIds  = userCart?.items.map(id => id.toString()) || [];
     const cartItems = await Course.find({ _id: { $in: cartIds } }).lean();
     const totalCost = cartItems.reduce((sum, c) => sum + (parseFloat(c.price)||0), 0);
+    const isCoinTopUp = req.query.purchased && cartItems.length === 0;
 
-    const isCoinTopUp = req.query.topup === '1';
-      if (!isCoinTopUp) {
-        await User.findByIdAndUpdate(userId, {
-          $addToSet: { purchasedCourses: { $each: cartIds } }
-        });
-        await Cart.findOneAndUpdate({ userId }, { items: [] });
-        req.session.cart = [];
-      }
+    if (!isCoinTopUp) {
+      await User.findByIdAndUpdate(userId, {
+        $addToSet: { purchasedCourses: { $each: cartIds } }
+      });
+    
+      const courseIds = cartItems.map(c => c._id?.toString());
+    
+      await cartController.clearCart(userId, {
+        onlyIfCoursePurchased: true,
+        courseIds
+      });
+    
+      req.session.cart = [];
+    }
+    
 
 
     return res.render('paymentConfirmation', {
@@ -195,8 +203,6 @@ exports.useCoin = async (req, res) => {
 
     console.log(`User coins after deduction: ${user.coin}`);
 
-    // Optional: Add purchased courses to user's course library
-    // This would depend on your schema, but might look like:
     if (!user.purchasedCourses) user.purchasedCourses = [];
     user.purchasedCourses = [...new Set([...user.purchasedCourses, ...courseIds])];
     await user.save();

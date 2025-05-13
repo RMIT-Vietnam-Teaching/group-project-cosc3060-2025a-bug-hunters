@@ -120,7 +120,13 @@ exports.mergeCart = async (userId, sessionCart) => {
 };
 
 // Clear cart items after successful purchase
-exports.clearCart = async (userId) => {
+exports.clearCart = async (userId, options = {}) => {
+  const { onlyIfCoursePurchased = false, courseIds = [] } = options;
+
+  if (onlyIfCoursePurchased && (!courseIds || courseIds.length === 0)) {
+    return false;
+  }
+
   try {
     if (userId) {
       await Cart.findOneAndUpdate(

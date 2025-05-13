@@ -107,7 +107,7 @@
           <div class="row form-section align-items-end">
             <div class="col-md-6">
               <label class="form-label fw-bold">Insert Coin You Want to Add</label>
-              <input type="number" class="form-control" placeholder="Enter amount" id="coinInput">
+              <input type="number" class="form-control" placeholder="Enter amount" id="coinInput" min="0">
             </div>
             <div class="col-md-6 text-end">
               <label class="form-label fw-bold">
@@ -187,7 +187,7 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      // —— ELEMENT SELECTORS ——
+      // element selectors
       const coinInput = document.getElementById('coinInput');
       const coinAmountDisplay = document.getElementById('coinAmount');
       const totalPriceDisplay = document.getElementById('totalPrice');
@@ -195,7 +195,7 @@
       const payBtn = document.querySelector('.checkout-btn');
       const nameInput = document.getElementById('cardholder-name');
     
-      // —— COIN SUMMARY LOGIC ——
+      // coin summary logic
       function updateSummary() {
         const raw = parseInt(coinInput.value, 10) || 0;
         let bonus = 0;
@@ -219,7 +219,7 @@
         });
       });
     
-      // —— STRIPE ELEMENTS SETUP ——
+      // stripe
       const stripe = Stripe('pk_test_51RF2PRFJwUJkAaIQvype4JOTw2HaUHLBdkLiZb5FUDNPKucWhetwjl69sLtM80gBUhFNPxjLms9TBdGKWLJfsuZJ00hOmtFPa2');
       const elements = stripe.elements();
       const style = {
@@ -239,7 +239,7 @@
       const cardCvc = elements.create('cardCvc', { style });
       cardCvc.mount('#card-cvc-element');
     
-      // —— BUTTON STATE HANDLER ——
+      // button handler
       function setLoading(isLoading) {
         payBtn.disabled = isLoading;
         payBtn.textContent = isLoading ? 'Processing…' : 'Pay Now';
@@ -259,7 +259,7 @@
         setLoading(true);
     
         try {
-          // 1) create a PaymentIntent on your server
+          // create a PaymentIntent on your server
           const resp = await fetch('/payment/create-payment-intent', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -267,8 +267,6 @@
         });
           const { clientSecret, error: piError } = await resp.json();
           if (piError) throw new Error(piError);
-    
-          // 2) confirm the card payment with Stripe.js
           const { error: stripeError } = await stripe.confirmCardPayment(clientSecret, {
             payment_method: {
               card: cardNumber,
@@ -277,7 +275,7 @@
           });
           if (stripeError) throw stripeError;
     
-          // 3) on success, redirect to confirmation
+          // on success, redirect to confirmation
           const raw   = parseInt(coinInput.value, 10) || 0;
           let bonus   = 0;
           if (raw >= 100 && raw < 250) bonus = 10;
@@ -286,15 +284,19 @@
           
           const totalCoins = raw + bonus;
 
-         await fetch('/user/update-coin', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            userId: "<%= user._id %>",
-            coins: totalCoins
-          })
-
+          const updateResp = await fetch('/payment/update-coin', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              userId: "<%= user._id %>",
+              coins: totalCoins
+            })
           });
+
+          const updateResult = await updateResp.json();
+          if (!updateResult.success) {
+            throw new Error(updateResult.error || 'Coin update failed');
+          };
           // Update the currentCoin element on the page
           const currentCoinEl = document.getElementById("currentCoin");
           if (currentCoinEl) {
@@ -317,7 +319,7 @@
         }
       });
     
-      // —— CVC VISIBILITY TOGGLE ——
+      // —— CVC TOGGLE ——
       window.toggleVisibility = (inputId, btn) => {
         const input = document.getElementById(inputId);
         const icon = btn.querySelector('i');
