@@ -1,42 +1,39 @@
 const User = require("../models/User");
+const Course = require("../models/Course");
 
-exports.renderUserProfileByParam = async (req, res) => {
-  const loggedInUserId = req.signedCookies?.userId;   
-  const routeUserId = req.params.id;              
-  const loggedInUser = await User.findById(loggedInUserId);
-  console.log("🔐 Logged-in user:", loggedInUserId);
-  console.log("👤 Viewing profile of:", routeUserId);
+exports.renderUserProfile = async (req, res) => {
+    try {
+        const { userRouteId } = req.params;
+        const profileUser = await User.findById(userRouteId).lean();
+        if (!profileUser) return res.status(404).send("User not found.");
 
-  try {
-    const user = await User.findById(routeUserId);
-    if (!user) {
-      return res.status(404).send("User not found.");
+        const loggedInUserId = req.signedCookies?.userId;
+        const loggedInUser = loggedInUserId
+            ? await User.findById(loggedInUserId).lean()
+            : null;
+        const isOwner =
+            loggedInUserId && loggedInUserId === profileUser._id.toString();
+
+        // Fetch courses the user has purchased
+        const studiedCourses = Array.isArray(profileUser.purchasedCourses)
+            ? await Course.find({
+                  _id: { $in: profileUser.purchasedCourses },
+              }).lean()
+            : [];
+
+        const createdCourses = await Course.find({
+            author: profileUser._id,
+        }).lean();
+
+        res.render("userProfile", {
+            user: loggedInUser,
+            profileUser,
+            isOwner,
+            studiedCourses,
+            createdCourses,
+        });
+    } catch (err) {
+        console.error("Error loading user profile:", err);
+        res.status(500).send("Server error.");
     }
-
-    const isOwner = loggedInUserId === routeUserId;
-    res.render("userProfile", { user, isOwner, loggedInUser });
-  } catch (err) {
-    console.error("Error loading user profile:", err);
-    res.status(500).send("Server error.");
-  }
-};
-
-exports.renderUserProfileByQuery = async (req, res) => {
-  const routeUserId = req.query.id; 
-  const loggedInUserId = req.signedCookies?.userId; 
-  const loggedInUser = await User.findById(loggedInUserId);
-  if (!routeUserId) {
-    return res.status(400).send("No user ID provided.");
-  }
-
-  try {
-    const user = await User.findById(routeUserId);
-    if (!user) {
-      return res.status(404).send("User not found.");
-    }
-    res.render("userProfile", { user, loggedInUserId, loggedInUser });
-  } catch (err) {
-    console.error("Error loading user profile:", err);
-    res.status(500).send("Server error.");
-  }
 };

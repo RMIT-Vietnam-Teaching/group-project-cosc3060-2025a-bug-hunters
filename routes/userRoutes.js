@@ -29,7 +29,7 @@ router.get("/profile", async (req, res) => {
         email: "test@example.com",
     };
 
-    res.render("userProfile", { user: mockUser, loggedInUser });
+    res.render("userProfile", { user: mockUser });
 });
 
 module.exports = router;

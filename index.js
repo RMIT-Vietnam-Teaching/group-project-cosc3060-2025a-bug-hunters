@@ -2,8 +2,9 @@ const express = require("express");
 const chalk = require("chalk");
 const cors = require("cors");
 const dotenv = require("dotenv");
-const app = express();
 const session = require("express-session");
+
+const app = express();
 const cookieParser = require("cookie-parser");
 const User = require("./models/User");
 const path = require("path");
@@ -74,20 +75,25 @@ const userProfileRoutes = require("./routes/userProfileRoutes");
 const institutionRoutes = require("./routes/institutionRoutes");
 const searchRoutes = require("./routes/searchRoutes");
 const aboutUsRoutes = require("./routes/aboutUsRoutes");
-const institution = require("./routes/institutionRoutes");
-
-
-
-
-// const coinPaymentRoutes = require("./routes/coinPayment");
+const cartRoutes = require("./routes/cartRoutes");
+const paymentRoutes = require("./routes/paymentRoutes");
 const courseRoutes = require("./routes/courseRoutes");
 const userRoutes = require("./routes/userRoutes");
 const subscriptionRoutes = require("./routes/subscriptionRoutes");
+
+// const coinPaymentRoutes = require("./routes/coinPayment");
 
 // Use Routes
 app.use("/", homeRoutes);
 app.use("/auth", authRoutes);
 app.use("/admin", adminRoutes);
+app.use("/cart", cartRoutes);
+app.use("/payment", paymentRoutes);
+// app.use("/user", userRoutes);
+app.use("/userSettings", userSettingsRoutes);
+app.use("/userProfile", userProfileRoutes);
+app.use("/courses", courseRoutes);
+app.use("/institution", institutionRoutes);
 app.use("/forum", forumRoutes);
 app.use("/userSettings", userSettingsRoutes);
 app.use("/userProfile", userProfileRoutes);
@@ -97,15 +103,17 @@ app.use("/about-us", aboutUsRoutes);
 app.use("/user", userRoutes);
 app.use("/api", subscriptionRoutes);
 
-
 // app.use("/institution", institution);
 // app.use("/payment", coinPaymentRoutes);
-app.use('/navbar', (req,res) => {
-    res.render('partials/navbar');
+app.use("/navbar", (req, res) => {
+    res.render("partials/navbar");
 });
 
 // app.use("/institution", institution);
 // app.use("/payment", coinPaymentRoutes);
+
+app.use("/user", userRoutes);
+app.use("/api", subscriptionRoutes);
 
 // Start Server
 app.listen(port, () => {

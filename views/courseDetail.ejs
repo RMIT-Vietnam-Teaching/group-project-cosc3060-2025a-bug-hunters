@@ -16,6 +16,69 @@
   <link rel="stylesheet" href="/css/darkMode.css">
   
   <style>
+    /* Flying cart icon animation */
+    .flying-cart {
+      position: fixed;
+      font-size: 1.5rem;
+      color: #ee6c4d;
+      pointer-events: none;
+      z-index: 1000;
+      transition: all 0.8s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+      opacity: 0;
+    }
+
+    /* Button animation */
+    .btn-animation {
+      animation: btnPulse 1.2s ease-in-out;
+    }
+
+    @keyframes btnPulse {
+      0% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.05);
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    /* Cart counter styling and animation */
+    .cart-counter {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background-color: #ee6c4d;
+      color: white;
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      font-size: 12px;
+      font-weight: bold;
+      transition: all 0.3s ease;
+    }
+    
+    /* Dedicated pulse animation for cart counter */
+    .pulse-animation {
+      animation: counterPulse 0.6s ease-in-out;
+    }
+    
+    @keyframes counterPulse {
+      0% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.5);
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
+
     .course-header {
       background-color: #f8f9fa;
       padding: 60px 0;
@@ -90,7 +153,7 @@
       font-size: 1.1rem;
       border-radius: 30px;
       width: 100%;
-      margin-bottom: 20px;
+      margin-bottom: 15px;
       transition: all 0.3s;
     }
     
@@ -98,6 +161,43 @@
       background-color: #e95d3c;
       transform: translateY(-3px);
       box-shadow: 0 6px 15px rgba(238, 108, 77, 0.3);
+    }
+    
+    .cart-btn {
+      background-color: white;
+      border: 2px solid #ee6c4d;
+      color: #ee6c4d;
+      padding: 12px 30px;
+      font-weight: 600;
+      font-size: 1.1rem;
+      border-radius: 30px;
+      width: 100%;
+      margin-bottom: 20px;
+      transition: all 0.3s;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+      overflow: hidden;
+      height: 52px; 
+      padding: 12px 30px; /* same padding as enroll*/
+      box-sizing: border-box; 
+    }
+    
+    .cart-btn:hover {
+      background-color: #fff8f6;
+      transform: translateY(-3px);
+      box-shadow: 0 6px 15px rgba(238, 108, 77, 0.15);
+      color: #e95d3c;
+    }
+    
+    .cart-btn .cart-icon {
+      font-size: 1.2rem;
+    }
+    
+    .btn-container {
+      position: relative;
     }
     
     .course-includes {
@@ -170,6 +270,58 @@
       line-height: 1.7;
     }
     
+    /* Toast notification */
+    .toast-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1100;
+    }
+    
+    .custom-toast {
+      background-color: #fff;
+      border-left: 4px solid #28a745;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      border-radius: 4px;
+      padding: 15px 25px 15px 15px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      max-width: 350px;
+      animation: slideIn 0.3s ease-out forwards;
+    }
+    
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+    
+    .toast-icon {
+      color: #28a745;
+      font-size: 1.5rem;
+    }
+    
+    .toast-message {
+      font-weight: 500;
+      color: #333;
+    }
+    
+    .toast-close {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      color: #999;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    
     /* Dark mode overrides */
     body.dark-mode .course-header {
       background-color: #1a1a1a;
@@ -185,6 +337,25 @@
     
     body.dark-mode .course-title,
     body.dark-mode .course-price {
+      color: #e0e0e0;
+    }
+    
+    body.dark-mode .cart-btn {
+      background-color: #1e1e1e;
+      border-color: #ee6c4d;
+      color: #ee6c4d;
+    }
+    
+    body.dark-mode .cart-btn:hover {
+      background-color: #2a2a2a;
+    }
+    
+    body.dark-mode .custom-toast {
+      background-color: #1e1e1e;
+      color: #e0e0e0;
+    }
+    
+    body.dark-mode .toast-message {
       color: #e0e0e0;
     }
     
@@ -204,6 +375,9 @@
 <body>
   <!-- Include Navigation -->
   <%- include('partials/navbar') %>
+  
+  <!-- Toast Container for Notifications -->
+  <div class="toast-container"></div>
   
   <!-- Course Header -->
   <section class="course-header">
@@ -242,7 +416,13 @@
               <div class="course-price">$49.99</div>
             <% } %>
             
-            <button class="btn enroll-btn">Enroll Now</button>
+            <div class="btn-container">
+              <button class="btn enroll-btn">Enroll Now</button>
+              <button class="btn cart-btn" data-id="<%= course._id %>">
+                <i class="bi bi-cart-plus cart-icon"></i>
+                Add to Cart
+              </button>              
+            </div>
             
             <div class="course-includes">
               <h5>This course includes:</h5>
@@ -482,42 +662,154 @@
   <!-- Subscription form handler -->
   <script src="/js/footer.js"></script>
   
-  <!-- Course enrollment script -->
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const enrollButton = document.querySelector('.enroll-btn');
-      
-      if (enrollButton) {
-        enrollButton.addEventListener('click', function() {
-          // You would handle the enrollment here
-          // For now, we'll just show an alert
-          alert('Enrollment functionality coming soon!');
+  <!-- Course enrollment and cart script -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const enrollButton = document.querySelector('.enroll-btn');
+    const cartButton = document.querySelector('.cart-btn');
+    
+    // Find the navbar cart icon for animation target
+    const navbarCartIcon = document.querySelector('.navbar .bi-cart') || 
+                           document.querySelector('.navbar .bi-cart-fill') ||
+                           document.querySelector('.navbar [class*="cart"]');
+    
+    if (enrollButton) {
+      enrollButton.addEventListener('click', function() {
+        // You would handle the enrollment here
+        alert('Enrollment functionality coming soon!');
+      });
+    }
+    
+    if (cartButton) {
+      cartButton.addEventListener('click', function() {
+        const courseId = cartButton.dataset.id;
+        
+        // Create flying cart icon
+        const flyingCart = document.createElement('div');
+        flyingCart.className = 'flying-cart';
+        flyingCart.innerHTML = '<i class="bi bi-cart-plus"></i>';
+        document.body.appendChild(flyingCart);
+        
+        // Set initial position (where the button is)
+        const buttonRect = cartButton.getBoundingClientRect();
+        flyingCart.style.top = `${buttonRect.top + buttonRect.height/2 - 10}px`;
+        flyingCart.style.left = `${buttonRect.left + buttonRect.width/2 - 10}px`;
+        
+        // Make it visible
+        setTimeout(() => {
+          flyingCart.style.opacity = '1';
+        }, 10);
+        
+        // Set target position (where the navbar cart icon is)
+        let targetX, targetY;
+        
+        if (navbarCartIcon) {
+          const targetRect = navbarCartIcon.getBoundingClientRect();
+          targetX = targetRect.left + targetRect.width/2 - 10;
+          targetY = targetRect.top + targetRect.height/2 - 10;
+        } else {
+          // If no cart icon found, fly to top right corner
+          targetX = window.innerWidth - 50;
+          targetY = 20;
+        }
+        
+        // Start animation
+        setTimeout(() => {
+          flyingCart.style.transform = 'scale(0.5)';
+          flyingCart.style.top = `${targetY}px`;
+          flyingCart.style.left = `${targetX}px`;
+          flyingCart.style.opacity = '0';
+        }, 50);
+        
+        // Add button animation
+        cartButton.classList.add('btn-animation');
+        setTimeout(() => {
+          cartButton.classList.remove('btn-animation');
+        }, 1200);
+        
+        // Clean up
+        setTimeout(() => {
+          document.body.removeChild(flyingCart);
           
-          // In a real implementation, you would send a request to enroll the user
-          // fetch('/api/enroll', {
-          //   method: 'POST',
-          //   headers: {
-          //     'Content-Type': 'application/json',
-          //   },
-          //   body: JSON.stringify({ 
-          //     courseId: '<%= course._id %>' 
-          //   }),
-          // })
-          // .then(response => response.json())
-          // .then(data => {
-          //   if (data.success) {
-          //     window.location.href = '/user/my-courses';
-          //   } else {
-          //     alert(data.message || 'Failed to enroll. Please try again.');
-          //   }
-          // })
-          // .catch(error => {
-          //   console.error('Error:', error);
-          //   alert('An error occurred. Please try again later.');
-          // });
+          // Update cart counter
+          updateCartCounter();
+        }, 800);
+        
+        // Send request to add to cart
+        fetch(`/cart/add/${courseId}`, {
+          method: 'POST'
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (!data.success) {
+            console.error('Failed to add course to cart');
+          }
+        })
+        .catch(err => {
+          console.error('Error adding course to cart:', err);
         });
+      });
+    }
+    
+    // Function to update cart counter
+    function updateCartCounter() {
+      const cartCounter = document.querySelector('.cart-counter');
+      if (cartCounter) {
+        // Get current count and increment
+        let count = parseInt(cartCounter.textContent || '0');
+        cartCounter.textContent = count + 1;
+        
+        // Make sure it's visible
+        cartCounter.style.display = 'flex';
+        
+        // Remove existing animation class if present
+        cartCounter.classList.remove('pulse-animation');
+        
+        // Force reflow to restart animation
+        void cartCounter.offsetWidth;
+        
+        // Add animation class
+        cartCounter.classList.add('pulse-animation');
+        
+        // Remove class when animation is done
+        setTimeout(() => {
+          cartCounter.classList.remove('pulse-animation');
+        }, 600);
+      } else {
+        // If the cart counter doesn't exist yet, we need to create it
+        const navCartIcon = document.querySelector('.navbar .bi-cart') || 
+                            document.querySelector('.navbar .bi-cart-fill') ||
+                            document.querySelector('.navbar [class*="cart"]');
+        
+        if (navCartIcon) {
+          // Find the parent element to properly position the counter
+          const iconContainer = navCartIcon.parentElement;
+          if (iconContainer) {
+            // Make sure the container has position relative for absolute positioning
+            if (window.getComputedStyle(iconContainer).position === 'static') {
+              iconContainer.style.position = 'relative';
+            }
+            
+            // Create the counter element
+            const counter = document.createElement('span');
+            counter.className = 'cart-counter';
+            counter.textContent = '1';
+            iconContainer.appendChild(counter);
+            
+            // Add animation
+            setTimeout(() => {
+              counter.classList.add('pulse-animation');
+              
+              // Remove class when animation is done
+              setTimeout(() => {
+                counter.classList.remove('pulse-animation');
+              }, 600);
+            }, 10);
+          }
+        }
       }
-    });
-  </script>
+    }
+  });
+</script>
 </body>
 </html>

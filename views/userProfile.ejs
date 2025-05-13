@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title>User Profile Overview</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
   <link rel="stylesheet" href="/css/userProfile.css">
 </head>
 
@@ -12,13 +13,13 @@
   <%- include('partials/navbar') %>
 
 <div class="container-fluid">
-  <div class="row vh-100">
+    <div class="row py-2"></div>
 
-    <div class="p-3 mt-5 mb-5 mx-auto" style="background-color: #f6f6e9; border-radius: 100px; max-width: 1000px;">
+    <div class="p-4 mt-5 mx-auto" style="background-color: #f6f6e9; border-radius: 100px; max-width: 1000px;">
   <div class="row align-items-center">
     <div class="col-md-4 text-center">
-      <img  src="<%= user.avatar || 'https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3467.jpg' %>"  alt="Profile Picture" class="rounded-circle" width="180" height="180" style="background-color: #efedea;">
-      <h3 class="mt-3 fw-semibold"><%= user.firstName %> <%= user.lastName %></h3>
+      <img  src="<%= profileUser.avatar || 'https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3467.jpg' %>"  alt="Profile Picture" class="rounded-circle" width="180" height="180" style="background-color: #efedea;">
+      <h3 class="mt-3 fw-semibold"><%= profileUser.firstName %> <%= profileUser.lastName %></h3>
       <!-- <h3 class="mt-3 fw-semibold user-name"></h3> -->
     </div>
 
@@ -26,9 +27,9 @@
       <div class="bg-white p-4 rounded-4 shadow-sm" style="box-shadow: 2px 4px 6px rgba(0,0,0,0.1);">
         <div class="row">
           <div class="col-12">
-            <p><strong>Role</strong><br><%= user?.role?.user || 'Student' %></p>
-            <p><strong>Headline</strong><br><%= user.headline %></p>
-            <p><strong>About me</strong><br><%= user.description %></p>
+            <p><strong>Role</strong><br><%= profileUser?.role?.profileUser || 'Student' %></p>
+            <p><strong>Headline</strong><br><%= profileUser.headline %></p>
+            <p><strong>About me</strong><br><%= profileUser.description %></p>
           </div>
         </div>
       </div>
@@ -47,7 +48,6 @@
         </button>
       <% } %>
       <button id="shareBtn" class="btn btn-light shadow rounded-pill px-4 py-2 d-flex align-items-center gap-2 rounded-pill">
-        <img src="/images/shareIcon.png" alt="Share" width="20" height="20">
         <i class="bi bi-share"></i> Share
       </button>
     </div>
@@ -61,37 +61,24 @@
 
     <!-- Courses -->
     <div class="ms-3">
-      <h4 class="mb-4 ms-5">Course Studied So Far/ Created Course</h4>
-      <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-5">
-
-      <% const courses = [
-        { title: "Introduction to Cybersecurity", instructor: "Dr. Alina Prest", image: "cybersecurity.jpg" },
-        { title: "Data Dive: Exploring Big Data", instructor: "Dr. Mark Bright", image: "defaultCourse.png" },
-        { title: "AI Foundations: The Essentials", instructor: "Dr. Kim Park", image: "defaultCourse.png" },
-        { title: "Graphic Design 101 - Introductory", instructor: "Mikayla Jones", image: "defaultCourse.png", italic: true },
-        { title: "UI/UX For Beginners", instructor: "Josh Hamil", image: "defaultCourse.png" },
-        { title: "Basic Psychology - Course 3", instructor: "Dr. Alan Teck", image: "defaultCourse.png", italic: true }
-      ]; %>
-
-        <% courses.forEach(course => { %>
-          <div class="col">
-            <div class="card h-100 shadow rounded-3 border-0 d-flex flex-column" style="max-width: 330px; margin-inline: auto;">
-              <div style="height: 180px; overflow: hidden;">
-                <img src="/images/<%= course.image %>" class="card-img-top h-100 w-100 object-fit-cover" alt="<%= course.title %>" style="border-bottom: 4px solid #2b6cb0;">
-              </div>
-              <div class="card-body d-flex flex-column text-center">
-                <h6 class="card-title fw-bold fst-italic mb-1"><%= course.title %></h6>
-                <p class="card-subtitle text-muted mb-2">by <%= course.instructor %></p>
-                <p class="card-text">Kickstart your career in cybersecurity – start with the essentials!</p>
-                <div class="mt-auto">
-                  <a href="#" class="btn btn-outline-dark rounded-pill fw-semibold mt-2">Click to see details</a>
-                </div>
-              </div>
+     
+    <h4 class="mt-5 mb-4">Course Studied So Far/ Created Course</h4>
+    <div class="row g-4">
+      <% studiedCourses.forEach(course => { %>
+        <div class="col-md-4">
+          <div class="card h-100">
+            <img src="<%= course.imageUrl || '/images/defaultCourse.png' %>" class="card-img-top" alt="<%= course.title %>">
+            <div class="card-body">
+              <h5 class="card-title"><%= course.title %></h5>
+              <p class="card-text">by <%= course.instructor %></p>
+              <a href="/courses/<%= course._id %>" class="btn btn-outline-primary">View Details</a>
             </div>
           </div>
-      <% }); %>
+        </div>
+      <% }) %>
     </div>
   </div>
+
 
   <script>
     window.addEventListener("DOMContentLoaded", () => {

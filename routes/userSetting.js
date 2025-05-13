@@ -40,10 +40,5 @@ router.post("/security/update/:userId", updateUserSecurity);
 router.get("/balance/:userId", requireOwnUserAccess, renderAccountBalance);
 router.post("/balance/update/:userId", updateUserBalance);
 
-// // go to messages page
-// router.get('/messages/:userId', async (req, res) => {
-//   const user = await User.findById(req.params.userId);
-//   res.render('message', { user });
-// });
 
 module.exports = router;
