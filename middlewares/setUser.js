@@ -35,7 +35,6 @@ function requireOwnUserAccess(req, res, next) {
     if (!loggedInUserId || loggedInUserId !== routeUserId) {
         return res.status(403).send("Unauthorized access.");
     }
-
     next();
 }
 

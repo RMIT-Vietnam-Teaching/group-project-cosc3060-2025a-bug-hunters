@@ -42,6 +42,8 @@ const upload = multer({
 // Get all courses with optional category filter
 router.get("/", async (req, res) => {
     const selectedCategory = req.query.category;
+    const loggedInUserId = req.signedCookies?.userId;
+    const loggedInUser = await User.findById(loggedInUserId);
     let filter = {};
 
     if (selectedCategory) {
@@ -50,7 +52,12 @@ router.get("/", async (req, res) => {
 
     try {
         const courses = await Course.find(filter);
-        res.render("allCourses", { courses, categories, selectedCategory });
+        res.render("allCourses", {
+            courses,
+            categories,
+            selectedCategory,
+            loggedInUser,
+        });
     } catch (err) {
         console.error("Error loading courses:", err);
         res.status(500).send("Failed to load courses");
@@ -62,10 +69,13 @@ router.get("/create", async (req, res) => {
     try {
         // Fetch instructors (users with instructor role)
         const instructors = await User.find({ role: "instructor" });
+        const loggedInUserId = req.signedCookies?.userId;
+        const loggedInUser = await User.findById(loggedInUserId);
 
         res.render("createCourse", {
             categories,
             instructors,
+            loggedInUser,
         });
     } catch (err) {
         console.error("Error loading create course form:", err);
@@ -151,10 +161,12 @@ router.post("/create", upload.single("courseImage"), async (req, res) => {
 router.get("/:id", async (req, res) => {
     try {
         const course = await Course.findById(req.params.id);
+        const loggedInUserId = req.signedCookies?.userId;
+        const loggedInUser = await User.findById(loggedInUserId);
         if (!course) {
             return res.status(404).send("Course not found");
         }
-        res.render("courseDetail", { course });
+        res.render("courseDetail", { course, loggedInUser });
     } catch (err) {
         console.error("Error loading course:", err);
         res.status(500).send("Failed to load course");

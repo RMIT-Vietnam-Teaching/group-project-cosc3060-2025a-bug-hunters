@@ -74,6 +74,12 @@ const userProfileRoutes = require("./routes/userProfileRoutes");
 const institutionRoutes = require("./routes/institutionRoutes");
 const searchRoutes = require("./routes/searchRoutes");
 const aboutUsRoutes = require("./routes/aboutUsRoutes");
+const institution = require("./routes/institutionRoutes");
+
+
+
+
+// const coinPaymentRoutes = require("./routes/coinPayment");
 const courseRoutes = require("./routes/courseRoutes");
 const userRoutes = require("./routes/userRoutes");
 const subscriptionRoutes = require("./routes/subscriptionRoutes");
@@ -90,6 +96,13 @@ app.use("/search", searchRoutes);
 app.use("/about-us", aboutUsRoutes);
 app.use("/user", userRoutes);
 app.use("/api", subscriptionRoutes);
+
+
+// app.use("/institution", institution);
+// app.use("/payment", coinPaymentRoutes);
+app.use('/navbar', (req,res) => {
+    res.render('partials/navbar');
+});
 
 // app.use("/institution", institution);
 // app.use("/payment", coinPaymentRoutes);
