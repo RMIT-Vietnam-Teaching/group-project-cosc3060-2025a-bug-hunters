@@ -79,12 +79,15 @@ const userSchema = new mongoose.Schema({
         type: Number,
         default: 0,
     },
+
     theme: {
         type: String,
         enum: ["light", "dark"],
         default: "light",
     },
+
     SearchingHistory: [String],
+
     cardPaymentInfo: {
         cardNumber: {
             type: String,
@@ -99,7 +102,15 @@ const userSchema = new mongoose.Schema({
             type: String,
         },
     },
+
     following: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+        },
+    ],
+
+    followers: [
         {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",

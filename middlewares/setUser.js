@@ -32,13 +32,10 @@ function requireOwnUserAccess(req, res, next) {
     const loggedInUserId = req.signedCookies.userId;
     const routeUserId = req.params.userId;
 
-  console.log("Logged-in user ID from cookie:", loggedInUserId);
-  console.log("Route param user ID:", routeUserId);
-
-  if (!loggedInUserId || loggedInUserId !== routeUserId) {
-    return res.status(403).send("error in setUser");
-  }
-  next();
+    if (!loggedInUserId || loggedInUserId !== routeUserId) {
+        return res.status(403).send("error in setUser");
+    }
+    next();
 }
 
 module.exports = {
