@@ -206,6 +206,9 @@ router.get("/:id", async (req, res) => {
             return res.status(404).send("Course not found");
         }
 
+        console.log("Course found:", course);
+        
+
         res.render("courseDetail", {
             course,
             loggedInUser,
