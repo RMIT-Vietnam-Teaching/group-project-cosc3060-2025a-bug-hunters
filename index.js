@@ -110,7 +110,6 @@ app.use("/institution", institutionRoutes);
 app.use("/forum", forumRoutes);
 app.use("/search", searchRoutes);
 app.use("/about-us", aboutUsRoutes);
-app.use("/user", userRoutes);
 app.use("/api", subscriptionRoutes);
 app.use("/", chatRoutes);
 app.use("/contact", contactRoutes);
