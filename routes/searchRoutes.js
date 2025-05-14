@@ -5,55 +5,67 @@ const Course = require("../models/Course");
 
 // Handle search requests
 router.get("/", async (req, res) => {
-    const searchQuery = req.query.query || "";
+  const searchQuery = req.query.query || "";
+  const userId = req.signedCookies?.userId;
 
-    if (!searchQuery) {
-        return res.render("searchResults", {
-            courses: [],
-            // posts: [], // We'll uncomment this later
-            searchQuery: "",
-        });
-    }
+  // Debug
+  console.log("Search query:", searchQuery);
 
-    try {
-        // Create a case-insensitive regex for the search term
-        const searchRegex = new RegExp(searchQuery, "i");
+  if (!searchQuery) {
+    return res.render("searchResults", {
+      courses: [],
+      // posts: [], // We'll uncomment this later
+      searchQuery: "",
+      user: req.user, // Add user for navbar
+    });
+  }
 
-        // Search for courses that match the query
-        const courses = await Course.find({
-            $or: [
-                { title: searchRegex },
-                { description: searchRegex },
-                { category: searchRegex },
-            ],
-        });
+  try {
+    // Create a case-insensitive regex for the search term
+    const searchRegex = new RegExp(searchQuery, "i");
 
-        // For now skip searching for posts
-        // When the Post model is ready, uncomment this part
-        /*
-    const posts = await Post.find({
+    // Search for courses that match the query using schema field names
+    // and populate the author field
+    const courses = await Course.find({
       $or: [
-        { title: searchRegex },
-        { content: searchRegex },
-        { tags: searchRegex }
-      ]
-    }).populate('author', 'firstName lastName avatar');
-    */
+        { name: searchRegex }, // Changed from title to name
+        { description: searchRegex },
+        { category: searchRegex },
+      ],
+    })
+      .populate("author", "firstName lastName") // Add this to populate author data
+      .lean(); // Add lean() for better performance
 
-        res.render("searchResults", {
-            courses,
-            // posts, // We'll uncomment this later
-            searchQuery,
-        });
-    } catch (err) {
-        console.error("Error in search:", err);
-        res.status(500).render("searchResults", {
-            courses: [],
-            // posts: [], // We'll uncomment this later
-            searchQuery,
-            error: "An error occurred while searching",
-        });
-    }
+    console.log(`Found ${courses.length} matching courses`);
+
+    // For now skip searching for posts
+    // When the Post model is ready, uncomment this part
+    /*
+        const posts = await Post.find({
+          $or: [
+            { title: searchRegex },
+            { content: searchRegex },
+            { tags: searchRegex }
+          ]
+        }).populate('author', 'firstName lastName avatar');
+        */
+
+    res.render("searchResults", {
+      courses,
+      // posts, // We'll uncomment this later
+      searchQuery,
+      user: req.user, // Add user for navbar
+    });
+  } catch (err) {
+    console.error("Error in search:", err);
+    res.status(500).render("searchResults", {
+      courses: [],
+      // posts: [], // We'll uncomment this later
+      searchQuery,
+      error: "An error occurred while searching",
+      user: req.user, // Add user for navbar
+    });
+  }
 });
 
 module.exports = router;
