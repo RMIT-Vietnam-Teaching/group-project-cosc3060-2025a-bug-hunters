@@ -3,7 +3,7 @@ const express = require("express");
 const router = express.Router();
 
 const User = require("../models/User");
-const Course = require("../models/course");
+const Course = require("../models/Course");
 
 const { preventAuthAccess } = require("../middlewares/auth");
 

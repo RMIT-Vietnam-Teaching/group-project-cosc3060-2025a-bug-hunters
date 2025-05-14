@@ -1,5 +1,5 @@
 const User = require("../models/User");
-const Course = require("../models/course");
+const Course = require("../models/Course");
 const Post = require("../models/Post");
 const Like = require("../models/Like");
 const Comment = require("../models/Comment");

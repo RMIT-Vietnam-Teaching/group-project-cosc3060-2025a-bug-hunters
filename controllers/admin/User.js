@@ -1,6 +1,6 @@
 // controllers/adminUser.js
 const User = require("../../models/User");
-const Course = require("../../models/course");
+const Course = require("../../models/Course");
 const bcrypt = require("bcrypt");
 
 exports.renderAdminUser = async (req, res) => {
