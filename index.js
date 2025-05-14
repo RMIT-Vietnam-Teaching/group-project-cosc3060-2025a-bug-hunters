@@ -121,13 +121,13 @@ app.use("/sitemap", sitemapRoutes);
 // app.use("/institution", institution);
 
 // Start Server
-app.listen(port, () => {
-  console.log(chalk.green(`Server is running on http://localhost:${port}`));
-  // ADD THIS LINE - Log that contact routes are registered
-  console.log(
-    chalk.cyan("Contact routes registered and available at /contact")
-  );
-});
+// app.listen(port, () => {
+//   console.log(chalk.green(`Server is running on http://localhost:${port}`));
+//   // ADD THIS LINE - Log that contact routes are registered
+//   console.log(
+//     chalk.cyan("Contact routes registered and available at /contact")
+//   );
+// });
 
 const server = http.createServer(app);
 const io = socketUtils.init(server);
