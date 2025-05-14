@@ -113,9 +113,9 @@
 
           <div class="coin-input-box">
             <label class="form-label fw-bold">Coin you have</label>
-             <input type="text" id="user-coin" class="form-control mb-3" readonly 
-                value="<%= user.coin %>" 
-                style="background-color: #f9f9f9; cursor: not-allowed;">
+            <input type="text" id="user-coin" class="form-control mb-3" readonly 
+            value="<%= Math.round(user.coin || 0) %>"
+            style="background-color: #f9f9f9; cursor: not-allowed;">     
             
             <div id="coin-status" class="coin-status">
             </div>
@@ -266,9 +266,9 @@ document.addEventListener("DOMContentLoaded", function () {
       coinStatusDiv.className = "coin-status coin-sufficient";
       coinStatusDiv.textContent = `You have enough coins (${userCoins}) to cover $${totalCost.toFixed(2)}.`;
     } else {
-      const needed = totalCost - userCoins;
+      const needed = (totalCost - userCoins).toFixed(2);
       coinStatusDiv.className = "coin-status coin-insufficient";
-      coinStatusDiv.textContent = `You need ${needed.toFixed(2)} more coins to cover this purchase.`;
+      coinStatusDiv.textContent = `You need $${needed} more coins to cover this purchase.`;;
     }
   }
   updateCoinStatus();
