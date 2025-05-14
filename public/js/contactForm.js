@@ -1,19 +1,27 @@
-// Contact Form JavaScript
+// Updated contactForm.js that works with both the contact page and footer modal
 document.addEventListener("DOMContentLoaded", function () {
-  const contactForm = document.getElementById("contactForm");
-  const contactStatus = document.getElementById("contactStatus");
-  const submitButton = contactForm
-    ? contactForm.querySelector(".contact-submit-btn")
-    : null;
-  const submitSpinner = submitButton
-    ? submitButton.querySelector(".spinner-border")
-    : null;
-  const submitText = submitButton
-    ? submitButton.querySelector(".btn-text")
-    : null;
+  // Get both contact forms (standalone page and modal)
+  const contactForms = document.querySelectorAll("#contactForm");
 
-  if (contactForm) {
-    // Form validation
+  // Process each form found
+  contactForms.forEach((contactForm) => {
+    const formParent =
+      contactForm.closest(".modal-content") ||
+      contactForm.closest(".contact-form-container");
+
+    // Find the status element that's relevant to this form
+    const contactStatus = formParent.querySelector("#contactStatus");
+
+    // Find button elements for this specific form
+    const submitButton = contactForm.querySelector(".contact-submit-btn");
+    const submitSpinner = submitButton
+      ? submitButton.querySelector(".spinner-border")
+      : null;
+    const submitText = submitButton
+      ? submitButton.querySelector(".btn-text")
+      : null;
+
+    // Form validation and submission
     contactForm.addEventListener("submit", function (event) {
       event.preventDefault();
 
@@ -25,18 +33,33 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Collect form data
       const formData = {
-        name: document.getElementById("name").value.trim(),
-        email: document.getElementById("email").value.trim(),
-        subject: document.getElementById("subject").value,
-        message: document.getElementById("message").value.trim(),
+        name: contactForm.querySelector("#name").value.trim(),
+        email: contactForm.querySelector("#email").value.trim(),
+        subject: contactForm.querySelector("#subject").value,
+        message: contactForm.querySelector("#message").value.trim(),
       };
 
       // Send the form data
-      sendContactForm(formData);
+      sendContactForm(
+        formData,
+        contactForm,
+        submitButton,
+        submitSpinner,
+        submitText,
+        contactStatus
+      );
     });
-  }
+  });
 
-  function sendContactForm(formData) {
+  // Function to send the form data
+  function sendContactForm(
+    formData,
+    form,
+    submitButton,
+    submitSpinner,
+    submitText,
+    contactStatus
+  ) {
     // Show loading state
     if (submitButton && submitSpinner && submitText) {
       submitButton.disabled = true;
@@ -47,84 +70,100 @@ document.addEventListener("DOMContentLoaded", function () {
     // Clear any previous status
     if (contactStatus) {
       contactStatus.textContent = "";
-      contactStatus.className = "";
+      contactStatus.className = "text-center mt-4";
+      contactStatus.style.display = "none";
     }
 
-    // For demonstration purposes, we'll just simulate the API call
-    // In a real implementation, you would use fetch to send data to your server
+    console.log("Sending form data:", formData);
 
-    // Simulate API delay
-    setTimeout(function () {
-      // Simulate successful submission (90% success rate for testing)
-      const isSuccess = Math.random() < 0.9;
+    // Send the form data to the server
+    fetch("/contact", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    })
+      .then((response) => {
+        console.log("Server response status:", response.status);
+        return response.json();
+      })
+      .then((data) => {
+        console.log("Server response data:", data);
+        if (data.success) {
+          showContactStatus(
+            contactStatus,
+            data.message ||
+              "Thank you! Your message has been sent successfully. We will get back to you soon.",
+            "success"
+          );
+          form.reset();
+          form.classList.remove("was-validated");
 
-      if (isSuccess) {
+          // If it's the modal form, close it after 2 seconds
+          if (form.closest(".modal")) {
+            setTimeout(() => {
+              const modalInstance = bootstrap.Modal.getInstance(
+                form.closest(".modal")
+              );
+              if (modalInstance) {
+                modalInstance.hide();
+              }
+            }, 2000);
+          }
+        } else {
+          showContactStatus(
+            contactStatus,
+            data.message || "Something went wrong. Please try again.",
+            "error"
+          );
+        }
+      })
+      .catch((error) => {
+        console.error("Fetch error:", error);
         showContactStatus(
-          "Thank you! Your message has been sent successfully. We will get back to you soon.",
-          "success"
-        );
-        contactForm.reset();
-        contactForm.classList.remove("was-validated");
-      } else {
-        showContactStatus(
-          "Sorry, there was a problem sending your message. Please try again later.",
+          contactStatus,
+          "Could not connect to the server. Please try again later.",
           "error"
         );
-      }
-
-      // Reset button state
-      if (submitButton && submitSpinner && submitText) {
-        submitButton.disabled = false;
-        submitSpinner.classList.add("d-none");
-        submitText.textContent = "Send Message";
-      }
-
-      // Log the form data for demonstration
-      console.log("Contact form submission:", formData);
-    }, 1500); // Simulate 1.5s of processing time
-
-    // In a real implementation, you would use fetch API like this:
-    /*
-    fetch('/api/contact', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(formData)
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.success) {
-        showContactStatus('Thank you! Your message has been sent successfully. We will get back to you soon.', 'success');
-        contactForm.reset();
-        contactForm.classList.remove('was-validated');
-      } else {
-        showContactStatus(data.message || 'Something went wrong. Please try again.', 'error');
-      }
-    })
-    .catch(error => {
-      showContactStatus('Could not connect to the server. Please try again later.', 'error');
-      console.error('Error:', error);
-    })
-    .finally(() => {
-      // Reset button state
-      if (submitButton && submitSpinner && submitText) {
-        submitButton.disabled = false;
-        submitSpinner.classList.add('d-none');
-        submitText.textContent = 'Send Message';
-      }
-    });
-    */
+      })
+      .finally(() => {
+        // Reset button state
+        if (submitButton && submitSpinner && submitText) {
+          submitButton.disabled = false;
+          submitSpinner.classList.add("d-none");
+          submitText.textContent = "Send Message";
+        }
+      });
   }
 
-  function showContactStatus(message, type) {
-    if (!contactStatus) return;
+  // Function to show contact status
+  function showContactStatus(statusElement, message, type) {
+    if (!statusElement) return;
 
-    contactStatus.textContent = message;
-    contactStatus.className = "";
-    contactStatus.classList.add(type);
+    statusElement.textContent = message;
+    statusElement.className = "text-center mt-4";
+    statusElement.classList.add(type);
+    statusElement.style.display = "block";
 
-    // Scroll to status message
-    contactStatus.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    // Style based on status type
+    if (type === "success") {
+      statusElement.style.color = "#155724";
+      statusElement.style.backgroundColor = "#d4edda";
+      statusElement.style.border = "1px solid #c3e6cb";
+    } else if (type === "error") {
+      statusElement.style.color = "#721c24";
+      statusElement.style.backgroundColor = "#f8d7da";
+      statusElement.style.border = "1px solid #f5c6cb";
+    }
+
+    statusElement.style.padding = "15px";
+    statusElement.style.borderRadius = "8px";
+    statusElement.style.marginTop = "20px";
+
+    // Scroll to status message if not in a modal
+    if (!statusElement.closest(".modal")) {
+      statusElement.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
   }
 });
