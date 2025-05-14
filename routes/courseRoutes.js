@@ -4,6 +4,8 @@ const fs = require("fs");
 const Course = require("../models/Course");
 const User = require("../models/User");
 const { categories } = require("../constants/categories");
+const { sampleCourses } = require("./homeRoutes"); // Import sample courses
+
 
 const multer = require("multer");
 const { courseStorage } = require("../utils/cloudinary");
@@ -164,14 +166,51 @@ router.post("/create", upload.single("courseImage"), async (req, res) => {
     }
 });
 
+// Modify the course detail route
 router.get("/:id", async (req, res) => {
     try {
-        const course = await Course.findById(req.params.id);
         const loggedInUserId = req.signedCookies?.userId;
         const loggedInUser = await User.findById(loggedInUserId);
+        
+        // Check if it's a sample course ID
+        if (req.params.id.startsWith("sample-course-")) {
+            const sampleCourse = sampleCourses.find(course => course._id === req.params.id);
+            
+            if (sampleCourse) {
+                // Convert sample course to match the Course schema format expected by the courseDetail template
+                const adaptedCourse = {
+                    _id: sampleCourse._id,
+                    name: sampleCourse.title,
+                    description: sampleCourse.description,
+                    author: sampleCourse.instructor,
+                    image: sampleCourse.imageUrl,
+                    category: sampleCourse.category,
+                    duration: sampleCourse.duration,
+                    rating: sampleCourse.rating || 0,
+                    price: sampleCourse.price || 49.99,
+                    dateCreated: sampleCourse.createdAt || new Date(),
+                    status: "Not Started",
+                    studentsEnrolled: [],
+                    reviews: [],
+                    learningOutcomes: [
+                        "This is a sample course",
+                        "Actual learning outcomes would be listed here", 
+                        "For real courses created in the platform"
+                    ],
+                    sections: []
+                };
+                
+                return res.render("courseDetail", { course: adaptedCourse, loggedInUser });
+            }
+        }
+        
+        // If not a sample course, try to find in the database
+        const course = await Course.findById(req.params.id);
+        
         if (!course) {
             return res.status(404).send("Course not found");
         }
+        
         res.render("courseDetail", { course, loggedInUser });
     } catch (err) {
         console.error("Error loading course:", err);
