@@ -42,92 +42,6 @@
             --light-gray: #1e293b;
         }
 
-        header {
-            background-color: var(--light);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            transition: all 0.3s ease;
-        }
-
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .Webname {
-            margin: 0;
-            font-size: 1.5rem;
-            font-weight: 700;
-        }
-
-        .Webname a {
-            text-decoration: none;
-            color: var(--dark);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.3s ease;
-        }
-
-        .navigation {
-            display: flex;
-            gap: 1.5rem;
-            align-items: center;
-        }
-
-        .navigation a {
-            text-decoration: none;
-            color: var(--dark);
-            font-weight: 500;
-            transition: all 0.2s ease;
-            position: relative;
-        }
-
-        .navigation a:hover {
-            color: var(--primary);
-        }
-
-        .navigation a::after {
-            content: '';
-            position: absolute;
-            width: 0;
-            height: 2px;
-            bottom: -4px;
-            left: 0;
-            background-color: var(--primary);
-            transition: width 0.3s ease;
-        }
-
-        .navigation a:hover::after {
-            width: 100%;
-        }
-
-        .btnLogin {
-            background-color: var(--primary);
-            color: white !important;
-            padding: 0.5rem 1.2rem;
-            border-radius: 6px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-
-        .btnLogin:hover {
-            background-color: var(--primary-dark);
-        }
-
-        .menu-icon, .close-icon {
-            display: none;
-            font-size: 1.8rem;
-            cursor: pointer;
-        }
-
         .sitemap-container {
             max-width: 1200px;
             margin: 2rem auto;
@@ -169,7 +83,6 @@
             transition: all 0.3s ease;
             border-top: 4px solid var(--primary);
         }
-
 
         .sitemap-section:hover {
             transform: translateY(-5px);
@@ -216,55 +129,7 @@
             opacity: 0.7;
         }
 
-        .side-bar {
-            position: fixed;
-            top: 0;
-            right: -100%;
-            width: 250px;
-            height: 100vh;
-            background-color: var(--light);
-            padding: 2rem 1rem;
-            transition: all 0.4s ease;
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .side-bar.active {
-            right: 0;
-        }
-
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
         @media (max-width: 768px) {
-            .navigation {
-                display: none;
-            }
-
-            .menu-icon {
-                display: block;
-            }
-
-            .close-icon {
-                display: block;
-                align-self: flex-end;
-                margin-bottom: 1rem;
-            }
-
-            .side-bar a {
-                padding: 0.8rem 0;
-                display: block;
-                text-decoration: none;
-                color: var(--dark);
-                font-weight: 500;
-            }
-
             .sitemap-grid {
                 grid-template-columns: 1fr;
             }
@@ -275,13 +140,9 @@
         }
     </style>
 </head>
-
 <body>
-        
-
-
-<%- include('partials/navbar') %>  
-
+      <!-- navbar -->
+  <%- include('partials/navbar') %>
 
     <div class="sitemap-container">
         <div class="sitemap-header">
@@ -292,15 +153,15 @@
             <div class="sitemap-section">
                 <h2><ion-icon name="home-outline"></ion-icon> Main Navigation</h2>
                 <ul>
-                    <li><a href="/"><ion-icon name="chevron-forward-outline"></ion-icon>Home</a></li>
-                    <li><a href="/sitemap"><ion-icon name="chevron-forward-outline"></ion-icon>Sitemap (You are here)</a></li>
+                    <li><a href="/"><ion-icon name="home-outline"></ion-icon> Home</a></li>
+                    <li><a href="/sitemap"><ion-icon name="map-outline"></ion-icon> Sitemap (You are here)</a></li>
                 </ul>
             </div>
 
             <div class="sitemap-section">
                 <h2><ion-icon name="person-outline"></ion-icon> My Account</h2>
                 <ul>
-                    <li><a href="/userProfile/<%= user._id %>"><ion-icon name="chevron-forward-outline"></ion-icon>Profile</a></li>
+                    <li><a href="/userProfile/<%= user._id %>"><ion-icon name="person-outline"></ion-icon> Profile</a></li>
                     <li><a href="/userSettings/profilePreference/<%= user._id %>"><ion-icon name="create-outline"></ion-icon>Edit Profile</a></li>
                     <li><a href="/userSettings/security/<%= user._id %>"><ion-icon name="key-outline"></ion-icon>Change Password</a></li>
                     <li><a href="/userSettings/balance/<%= user._id %>"><ion-icon name="wallet-outline"></ion-icon>Balance & Payments</a></li>
@@ -308,10 +169,10 @@
             </div>
 
             <div class="sitemap-section">
-                <h2><ion-icon name="chatbubbles-outline"></ion-icon> Forum</h2>
+                <h2><ion-icon name="chatbubbles-outline"></ion-icon> Communication</h2>
                 <ul>
-                    <li><a href="/forum"><ion-icon name="chevron-forward-outline"></ion-icon>Forum Home</a></li>
-                    <li><a href="#"><ion-icon name="add-circle-outline"></ion-icon>Create New Post</a></li>
+                    <li><a href="/forum"><ion-icon name="chatbubbles-outline"></ion-icon>Forum Home</a></li>
+                    <li><a href="/messages"><ion-icon name="mail-outline"></ion-icon>Messages</a></li>
                     <li><a href="#"><ion-icon name="document-text-outline"></ion-icon>My Posts</a></li>
                 </ul>
             </div>
@@ -325,23 +186,50 @@
             </div>
 
             <div class="sitemap-section">
-                <h2><ion-icon name="cart-outline"></ion-icon> Orders</h2>
+                <h2><ion-icon name="cart-outline"></ion-icon> Shopping</h2>
                 <ul>
-                    <li><a href="/cart"><ion-icon name="receipt-outline"></ion-icon>Order Summary</a></li>
+                    <li><a href="/cart"><ion-icon name="receipt-outline"></ion-icon>Cart</a></li>
+                    <li><a href="/checkout"><ion-icon name="card-outline"></ion-icon>Checkout</a></li>
+                </ul>
+            </div>
+
+            <div class="sitemap-section">
+                <h2><ion-icon name="information-circle-outline"></ion-icon> About Us</h2>
+                <ul>
+                    <li><a href="/about"><ion-icon name="people-outline"></ion-icon>About Us</a></li>
+                    <li><a href="/our-story"><ion-icon name="book-outline"></ion-icon>Our Story</a></li>
+                    <li><a href="/contact"><ion-icon name="call-outline"></ion-icon>Contact</a></li>
+                    <li><a href="/subscription"><ion-icon name="repeat-outline"></ion-icon>Subscription</a></li>
                 </ul>
             </div>
 
             <div class="sitemap-section">
                 <h2><ion-icon name="log-out-outline"></ion-icon> Account Actions</h2>
                 <ul>
-                    <li><a href="/auth/logout"><ion-icon name="exit-outline"></ion-icon>Logout</a></li>
-                </ul>
+                    <li>
+                      <a href="/auth/register">
+                        <ion-icon name="person-add-outline"></ion-icon>
+                        Register
+                      </a>
+                    </li>
+                    <li>
+                      <a href="/auth/login">
+                        <ion-icon name="log-in-outline"></ion-icon>
+                        Login
+                      </a>
+                    </li>
+                    <li>
+                      <a href="/auth/logout">
+                        <ion-icon name="log-out-outline"></ion-icon>
+                        Logout
+                      </a>
+                    </li>
+                  </ul>
+                  
             </div>
         </div>
     </div>
 
-    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
     <script>
 
         // Mobile sidebar
@@ -351,6 +239,8 @@
         function hideSidebar() {
             document.querySelector('.side-bar').classList.remove('active');
         }
-    </script>
+        </script>
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 </body>
 </html>
