@@ -1,7 +1,11 @@
 const express = require("express");
 const router = express.Router();
+<<<<<<< HEAD
 const Course = require("../models/Course");
 const User = require("../models/User");
+=======
+const Course = require("../models/course");
+>>>>>>> testing-branch
 
 // My Courses page route - NO AUTHENTICATION CHECK FOR DEVELOPMENT
 router.get("/my-courses", async (req, res) => {
