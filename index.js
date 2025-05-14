@@ -11,8 +11,8 @@ const path = require("path");
 
 const connectDB = require("./utils/db");
 const {
-    sessionMiddleware,
-    setUserFromCookie,
+  sessionMiddleware,
+  setUserFromCookie,
 } = require("./middlewares/setUser");
 const cartCountMiddleware = require("./middlewares/cart");
 
@@ -83,9 +83,9 @@ const courseRoutes = require("./routes/courseRoutes");
 const userRoutes = require("./routes/userRoutes");
 const subscriptionRoutes = require("./routes/subscriptionRoutes");
 const chatRoutes = require("./routes/chatRoutes");
+const contactRoutes = require("./routes/contactRoutes");
 // const userRoutes = require("./routes/user_test_purpose");
 const uploadRoutes = require("./routes/uploadRoutes");
-
 // const coinPaymentRoutes = require("./routes/coinPayment");
 const sitemapRoutes = require("./routes/sitemapRoutes");
 
@@ -109,6 +109,8 @@ app.use("/about-us", aboutUsRoutes);
 app.use("/user", userRoutes);
 app.use("/api", subscriptionRoutes);
 app.use("/", chatRoutes);
+app.use("/contact", contactRoutes);
+
 // app.use("/payment", coinPaymentRoutes);
 app.use("/sitemap", sitemapRoutes);
 
@@ -116,7 +118,11 @@ app.use("/sitemap", sitemapRoutes);
 
 // Start Server
 app.listen(port, () => {
-    console.log(chalk.green(`Server is running on http://localhost:${port}`));
+  console.log(chalk.green(`Server is running on http://localhost:${port}`));
+  // ADD THIS LINE - Log that contact routes are registered
+  console.log(
+    chalk.cyan("Contact routes registered and available at /contact")
+  );
 });
 
 module.exports = app;

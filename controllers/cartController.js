@@ -69,32 +69,36 @@ exports.renderCartPage = async (req, res) => {
 
 
 
+
 exports.addToCart = async (req, res) => {
   try {
-    const courseId = req.params.courseId;
-    const userId   = req.signedCookies?.userId;
+    const { courseId } = req.params;
+    const userId = req.signedCookies?.userId;
 
     if (userId) {
-      let userCart = await Cart.findOne({ userId });
-      if (!userCart) {
-        userCart = new Cart({ userId, items: [courseId] });
-      } else if (!userCart.items.includes(courseId)) {
-        userCart.items.push(courseId);
-      }
-      await userCart.save();
-      return res.json({ success: true, cartCount: userCart.items.length });
-    } else {
-      req.session.cart = req.session.cart || [];
-      if (!req.session.cart.includes(courseId)) {
-        req.session.cart.push(courseId);
-      }
-      return res.json({ success: true, cartCount: req.session.cart.length });
+      // This will upsert a cart if none exists, and only add courseId if it isn’t already in the array
+      await Cart.updateOne(
+        { userId },
+        { $addToSet: { items: courseId } },
+        { upsert: true }
+      );
+      const cart = await Cart.findOne({ userId });
+      return res.json({ success: true, cartCount: cart.items.length });
     }
+
+    // Session‐based cart for guests
+    req.session.cart = req.session.cart || [];
+    if (!req.session.cart.includes(courseId)) {
+      req.session.cart.push(courseId);
+    }
+    return res.json({ success: true, cartCount: req.session.cart.length });
+
   } catch (err) {
-    console.error('Error adding to cart:', err);
-    res.status(500).json({ success: false });
+    console.error("Error adding to cart:", err);
+    return res.status(500).json({ success: false });
   }
 };
+
 
 
 exports.removeFromCart = async (req, res) => {
@@ -110,7 +114,8 @@ exports.removeFromCart = async (req, res) => {
     } else {
       // Session-based cart
       req.session.cart = (req.session.cart || []).filter(id => id !== courseId);
-      // immediately write session back
+      // immediately write session
+      //  back
       req.session.save(err => {
         if (err) console.error('session save error:', err);
       });

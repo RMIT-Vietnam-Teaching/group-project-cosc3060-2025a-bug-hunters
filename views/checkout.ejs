@@ -130,13 +130,11 @@
         <div class="order-summary">
           <h5 class="fw-bold mb-3">Order Summary</h5>
           <hr>
-          <% 
-            const totalCost = cartItems.reduce((sum, item) => sum + (parseFloat(item.price) || 0), 0).toFixed(2);
-          %>
-          <p class="mb-1">Total (<%= cartItems.length %> Courses):
+          <p class="mb-1">
+            Total (<span id="course-count"><%= cartItems.length %></span> Courses):
             <strong id="total-amount">$<%= totalCost %></strong>
-          </p>
-          <button type="button" class="checkout-btn">Pay Now</button>
+          </p>          
+          <button type="button" class="checkout-btn">Checkout</button>
         </div>
       </div>
     </div>
@@ -167,9 +165,17 @@
             <% if (item.duration) { %> · <%= item.duration %><% } %>
           </div>
     
-          <div class="fw-semibold mb-1" style="font-size: 0.95rem;">$<%= item.price %></div>
+          <div class="fw-semibold mb-1 item-price" style="font-size:0.95rem;">
+            $<%= item.price %>
+          </div>
           <div style="font-size: 0.85rem;">⭐ <%= item.rating || 0 %></div>
         </div>
+        <button 
+          class="remove-btn btn btn-sm btn-outline-danger ms-auto" 
+          data-id="<%= item._id %>"
+        >
+          <i class="bi bi-trash"></i>
+        </button>
       </div>
     <% }) %>    
          
@@ -177,6 +183,63 @@
 </div>
 <script src="https://js.stripe.com/v3/"></script>
 <script>
+  // summary-recalc function
+  function updateCartSummary() {
+    const prices = Array
+      .from(document.querySelectorAll('.item-price'))
+      .map(el => parseFloat(el.textContent.replace(/[^0-9.]/g, '')) || 0);
+
+    const total = prices.reduce((a,b) => a + b, 0).toFixed(2);
+    const count = prices.length;
+
+    document.getElementById('course-count').textContent   = count;
+    document.getElementById('total-amount').textContent   = '$' + total;
+
+    console.log('▶ summary updated:', { count, total });
+  }
+
+  // delegated remove-handler
+  document.body.addEventListener('click', async e => {
+    const btn = e.target.closest('.remove-btn');
+    if (!btn) return;
+
+    e.preventDefault();
+    const courseId = btn.dataset.id;
+    console.log('🗑  removing course:', courseId);
+
+    try {
+      const res  = await fetch(`/cart/remove/${courseId}`, {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' }
+      });
+      const data = await res.json();
+      if (!data.success) throw new Error('remove failed');
+
+      // 1) pull the card off the DOM
+      const row = btn.closest('.cart-item');
+      if (row) row.remove();
+
+      // 2) update your navbar badge
+      const badge = document.getElementById('cart-count');
+      if (badge) badge.textContent = data.cartCount;
+
+      // 3) recalc & repaint the summary
+      updateCartSummary();
+    } catch (err) {
+      console.error(err);
+      alert(err.message || 'Couldn’t remove course');
+    }
+  });
+
+  // (optional) initialize summary on page load:
+  document.addEventListener('DOMContentLoaded', updateCartSummary);
+</script>
+
+  
+  
+<script>
+ 
+
 document.addEventListener("DOMContentLoaded", function () {
   // —— ELEMENT SELECTORS ——
   const payBtn        = document.querySelector(".checkout-btn");
