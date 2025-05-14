@@ -22,7 +22,7 @@
         <input
             type="text"
             class="form-control"
-            value="$ <%= user.coin || '0' %>"
+            value="$ <%= Math.round(user.coin || 0) %>"
             readonly
             disabled
         />

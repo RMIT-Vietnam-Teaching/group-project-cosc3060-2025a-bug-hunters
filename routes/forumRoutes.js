@@ -1,8 +1,5 @@
 const router = require("express").Router();
-
-const dayjs = require("dayjs");
-const relativeTime = require("dayjs/plugin/relativeTime");
-dayjs.extend(relativeTime);
+const { preventAuthAccess } = require("../middlewares/auth");
 
 const multer = require("multer");
 const { forumStorage } = require("../utils/cloudinary");

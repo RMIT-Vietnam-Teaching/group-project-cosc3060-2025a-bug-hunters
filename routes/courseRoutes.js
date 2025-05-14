@@ -6,6 +6,8 @@ const User = require("../models/User");
 const Section = require("../models/Section");
 const Lesson = require("../models/Lesson");
 const { categories } = require("../constants/categories");
+const Cart = require("../models/Cart");
+const { preventAuthAccess } = require("../middlewares/auth");
 
 const multer = require("multer");
 const { courseStorage } = require("../utils/cloudinary");
@@ -25,7 +27,13 @@ router.get("/", async (req, res) => {
     try {
         const selectedCategory = req.query.category;
         const loggedInUserId = req.signedCookies?.userId;
-        const loggedInUser = await User.findById(loggedInUserId);
+        const loggedInUser = await User.findById(loggedInUserId).lean();
+        if (loggedInUser?.purchasedCourses) {
+            loggedInUser.purchasedCourses = loggedInUser.purchasedCourses.map(
+                (id) => id.toString()
+            );
+        }
+
         let filter = {};
 
         if (selectedCategory) {
@@ -189,28 +197,27 @@ router.post("/create", upload.single("courseImage"), async (req, res) => {
     }
 });
 
+// Modify the course detail route
 router.get("/:id", async (req, res) => {
     try {
-        const loggedInUserId = req.signedCookies?.userId;
-        const loggedInUser = await User.findById(loggedInUserId);
-
         const course = await Course.findById(req.params.id)
-            .populate("author", "firstName lastName email avatar") // show author info
-            .populate({
-                path: "sections",
-                populate: {
-                    path: "lessons",
-                    model: "Lesson",
-                },
-            });
+            .populate("author", "firstName lastName avatar")
+            .populate("studentsEnrolled", "_id") // load that field
+            .lean();
+        if (!course) return res.status(404).send("Course not found");
 
-        if (!course) {
-            return res.status(404).send("Course not found");
-        }
+        const userId = req.signedCookies?.userId;
+        const enrolledIds = (course.studentsEnrolled || []).map((u) =>
+            u._id.toString()
+        );
+        const isEnrolled = userId && enrolledIds.includes(userId);
+
+        // const user = userId ? await User.findById(userId).lean() : null;
 
         res.render("courseDetail", {
             course,
-            loggedInUser,
+            isEnrolled,
+            // user,
         });
     } catch (err) {
         console.error("Error loading course:", err);
