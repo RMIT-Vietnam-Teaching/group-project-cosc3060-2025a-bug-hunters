@@ -81,7 +81,7 @@ exports.registerUser = async (req, res) => {
         }
 
         //Check if email already exists
-        const existingUser = await User.findOne({ userEmail });
+        const existingUser = await User.findOne({ email: userEmail });
         if (existingUser) {
             return res.render("register", {
                 error: "Email already registered.",
@@ -141,12 +141,18 @@ exports.loginUser = async (req, res) => {
             });
         }
 
-        const user = await User.findOne({ email: userEmail }); // Use 'email' field
+        const user = await User.findOne({ email: userEmail });
         if (!user) return res.render("login", { error: "User not found." });
 
         const isMatch = await bcrypt.compare(userPassword, user.password);
         if (!isMatch)
             return res.render("login", { error: "Invalid password." });
+
+        if (user.status === "inactive") {
+            return res.render("login", {
+                error: "Your account is inactive. Please contact support.",
+            });
+        }
 
         res.cookie("userId", user._id.toString(), {
             httpOnly: true,

@@ -1,6 +1,8 @@
+const User = require("../models/User");
 exports.preventAuthAccess = (req, res, next) => {
     const userId = req.signedCookies.userId;
     const userRole = req.signedCookies.userRole;
+    
 
     if (userId) {
         const path = req.originalUrl;
@@ -20,8 +22,8 @@ exports.requireOwnUserAccess = (req, res, next) => {
     const loggedInUserId = req.signedCookies.userId;
     const routeUserId = req.params.userId;
 
-    console.log("🔐 Logged-in user ID from cookie:", loggedInUserId);
-    console.log("🧭 Route param user ID:", routeUserId);
+    console.log("🔍 loggedInUserId from cookie:", loggedInUserId);
+    console.log("🔍 routeUserId from URL:", routeUserId);
 
     if (!loggedInUserId || loggedInUserId !== routeUserId) {
         return res.status(403).send("Unauthorized access.");
@@ -29,3 +31,26 @@ exports.requireOwnUserAccess = (req, res, next) => {
 
     next();
 };
+
+exports.requireLogin = async (req, res, next) => {
+    const userId = req.signedCookies.userId;
+
+    if (!userId) {
+        return res.redirect("/auth/login");
+    }
+
+    try {
+        const user = await User.findById(userId);
+        if (!user) {
+            res.clearCookie("userId");
+            return res.redirect("/auth/login");
+        }
+
+        req.user = user; // <-- Assign the logged-in user for use in routes
+        next();
+    } catch (err) {
+        console.error("requireLogin error:", err);
+        res.redirect("/auth/login");
+    }
+};
+

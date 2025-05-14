@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const { renderUserProfileByParam, renderUserProfileByQuery } = require("../controllers/userProfile");
+const { renderUserProfile } = require("../controllers/userProfile");
+const { requireOwnUserAccess } = require("../middlewares/auth");
 
-router.get("/", renderUserProfileByQuery);
-router.get("/:userId", renderUserProfileByParam); 
+router.get("/:userRouteId", renderUserProfile);
 
 module.exports = router;

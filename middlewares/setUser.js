@@ -33,9 +33,8 @@ function requireOwnUserAccess(req, res, next) {
     const routeUserId = req.params.userId;
 
     if (!loggedInUserId || loggedInUserId !== routeUserId) {
-        return res.status(403).send("Unauthorized access.");
+        return res.status(403).send("error in setUser");
     }
-
     next();
 }
 

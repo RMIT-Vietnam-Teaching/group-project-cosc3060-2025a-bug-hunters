@@ -10,8 +10,6 @@ document
 
         const userEmail = getVal("userEmail");
 
-        console.log(userEmail);
-
         // Check if the email field is empty
         if (!userEmail) {
             valid = false;

@@ -1,4 +1,5 @@
 const router = require("express").Router();
+const { preventAuthAccess } = require("../middlewares/auth");
 
 const multer = require("multer");
 const { forumStorage } = require("../utils/cloudinary");
@@ -24,7 +25,7 @@ const {
 } = require("../controllers/forum");
 
 // Render forum Page
-router.get("/", renderForumPage);
+router.get("/", preventAuthAccess, renderForumPage);
 
 // Create post
 router.post("/post", upload.array("media", 1), createPost);
@@ -33,7 +34,7 @@ router.post("/post", upload.array("media", 1), createPost);
 router.post("/like/:postId", likeAndUnlikePost);
 
 // Render single post
-router.get("/:postId", renderSinglePost);
+router.get("/:postId",preventAuthAccess, renderSinglePost);
 
 // Post comment
 router.post("/:postId/comment", commentOnPost);

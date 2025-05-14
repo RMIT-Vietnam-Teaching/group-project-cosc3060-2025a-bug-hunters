@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
+const sectionSchema = require("./Section");
+const lessonSchema = require("./Lesson");
 
 const courseSchema = new Schema({
     name: {
@@ -56,21 +58,55 @@ const courseSchema = new Schema({
             ref: "Review",
         },
     ],
+
     category: {
         type: String,
+        enum: [
+            "Web Development",
+            "Mobile Development",
+            "Data Science",
+            "Machine Learning",
+            "Cloud Computing",
+            "Cyber Security",
+            "Game Development",
+            "AI & Deep Learning",
+            "Blockchain",
+            "DevOps",
+            "Software Engineering",
+            "Digital Marketing",
+            "UI/UX Design",
+            "Project Management",
+            "Business Analysis",
+            "Networking",
+            "Database Management",
+            "IT Support",
+            "Quality Assurance",
+            "Data Analysis",
+            "Data Engineering",
+            "Others",
+        ],
+        required: true,
     },
     description: {
         type: String,
         required: true,
         trim: true,
     },
-    lessons: [
+
+    // Course Content
+    sections: [
         {
             type: Schema.Types.ObjectId,
-            ref: "Lesson",
+            ref: "Section", // match your model export name
         },
     ],
-    
+
+    duration: {
+        type: String,
+        required: true,
+    },
+
+    learningOutcomes: [{ type: String }], // What you will learn
 });
 
 module.exports = mongoose.model("Course", courseSchema);
