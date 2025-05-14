@@ -80,16 +80,22 @@ const paymentRoutes = require("./routes/paymentRoutes");
 const courseRoutes = require("./routes/courseRoutes");
 const userRoutes = require("./routes/userRoutes");
 const subscriptionRoutes = require("./routes/subscriptionRoutes");
+const chatRoutes = require("./routes/chatRoutes");
+// const userRoutes = require("./routes/user_test_purpose");
+const uploadRoutes = require("./routes/uploadRoutes");
 
 // const coinPaymentRoutes = require("./routes/coinPayment");
 
 // Use Routes
+
+// Use the upload route
 app.use("/", homeRoutes);
-app.use("/auth", authRoutes);
 app.use("/admin", adminRoutes);
+app.use("/auth", authRoutes);
+app.use("/user", userRoutes);
+app.use("/uploads", uploadRoutes);
 app.use("/cart", cartRoutes);
 app.use("/payment", paymentRoutes);
-// app.use("/user", userRoutes);
 app.use("/userSettings", userSettingsRoutes);
 app.use("/userProfile", userProfileRoutes);
 app.use("/courses", courseRoutes);
@@ -99,9 +105,9 @@ app.use("/search", searchRoutes);
 app.use("/about-us", aboutUsRoutes);
 app.use("/user", userRoutes);
 app.use("/api", subscriptionRoutes);
-// app.use("/institution", institution);
-// app.use("/payment", coinPaymentRoutes);
+app.use("/payment", coinPaymentRoutes);
 
+// app.use("/institution", institution);
 
 // Start Server
 app.listen(port, () => {
