@@ -100,6 +100,12 @@
       margin-bottom: 20px;
       font-weight: 600;
     }
+    .cart-img {
+      width: 100px;
+      height: 80px;
+      border-radius: 8px;
+      background-color: #f2f2f2;
+    }
   </style>
 </head>
 <body>
@@ -117,22 +123,39 @@
         <% if (cartItems.length > 0) { %>
           <!-- Course Items -->
           <% cartItems.forEach(course => { %>
-            <div
-            class="p-3 bg-white cart-item d-flex justify-content-between align-items-center"
-            data-course-id="<%= course._id %>"
-          >
-            <div class="d-flex align-items-center">
-              <div class="cart-img"></div>
-              <div>
-                <div class="course-title"><%= course.title %></div>
-                <div class="course-desc"><%= course.description %></div>
-                <div class="course-price">$<%= course.price %></div>
+            <div class="p-3 bg-white cart-item d-flex justify-content-between align-items-center mb-3" data-course-id="<%= course._id %>">
+              <div class="d-flex align-items-center">
+                <!-- Wider image -->
+                <div 
+                  class="cart-img" 
+                  style="width: 140px; height: 90px; background-image: url('<%= course.image %>'); background-size: cover; background-position: center; border-radius: 8px;">
+                </div>
+          
+                <div class="ms-3">
+                  <div class="fw-bold fs-5"><%= course.name %></div>
+          
+                  <div class="text-muted mb-1">
+                    Created by 
+                    <% if (course.author && course.author.firstName && course.author.lastName) { %>
+                      <%= course.author.firstName %> <%= course.author.lastName %>
+                    <% } else { %>
+                      Unknown Instructor
+                    <% } %>
+                    <% if (course.duration) { %> · <%= course.duration %><% } %>
+                  </div>
+          
+                  <div class="fw-semibold mb-1">$<%= course.price %></div>
+                  <div>⭐ <%= course.rating || 0 %></div>
+                </div>
               </div>
+          
+              <form method="POST" action="/cart/remove/<%= course._id %>">
+                <button type="submit" class="remove-btn btn btn-outline-danger">Remove</button>
+              </form>
             </div>
-            <button class="remove-btn">Remove</button>
-          </div>
-
           <% }) %>
+          
+          
         <% } else { %>
           <!-- Empty Cart Message -->
           <div class="empty-cart">

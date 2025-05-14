@@ -20,8 +20,16 @@ exports.renderCheckoutPage = async (req, res) => {
             cartIds = req.session.cart || [];
         }
 
-        // fetch those courses
-        const cartItems = await Course.find({ _id: { $in: cartIds } }).lean();
+        const cartItems = await Course.find({ _id: { $in: cartIds } })
+            .populate("author", "firstName lastName email avatar")
+            .populate({
+                path: "sections",
+                populate: {
+                    path: "lessons",
+                    model: "Lesson"
+                }
+            });
+
 
         // compute total
         const totalCost = cartItems.reduce(
@@ -53,7 +61,16 @@ exports.renderConfirmationPage = async (req, res) => {
         // Load cart for display (DO NOT clear if coin top-up)
         const userCart = await Cart.findOne({ userId });
         const cartIds = userCart?.items.map((id) => id.toString()) || [];
-        const cartItems = await Course.find({ _id: { $in: cartIds } }).lean();
+        const cartItems = await Course.find({ _id: { $in: cartIds } })
+            .populate("author", "firstName lastName email avatar")
+            .populate({
+                path: "sections",
+                populate: {
+                    path: "lessons",
+                    model: "Lesson"
+                }
+            });
+
         const totalCost = cartItems.reduce(
             (sum, c) => sum + (parseFloat(c.price) || 0),
             0

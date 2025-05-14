@@ -63,6 +63,10 @@
       background-color: #f8d7da;
       color: #721c24;
     }
+    .course-meta span {
+  margin-bottom: 2px;
+}
+
   </style>
 </head>
 <body>
@@ -143,15 +147,32 @@
   <div class="col-lg-8">
     <h5 class="fw-bold mb-3 mt-5">Order detail</h5>
     <% cartItems.forEach(item => { %>
-      <div class="cart-item d-flex align-items-center" data-course-id="<%= item._id %>">
-        <img src="<%= item.imageUrl || '/images/course-placeholder.jpg' %>" class="cart-img">
-        <div>
-          <div class="fw-bold"><%= item.title %></div>
-          <div>By <%= item.instructor %> · <%= item.duration %></div>
-          <div><strong>$<%= item.price %></strong></div>
+      <div class="cart-item d-flex align-items-center mb-2" data-course-id="<%= item._id %>" style="font-size: 0.9rem;">
+        <img 
+          src="<%= item.image || '/images/course-placeholder.jpg' %>" 
+          class="cart-img" 
+          style="width: 100px; height: 70px; object-fit: cover; border-radius: 6px;"
+        >
+    
+        <div class="ms-2">
+          <div class="fw-semibold" style="font-size: 1rem;"><%= item.name %></div>
+    
+          <div class="text-muted mb-1" style="font-size: 0.85rem;">
+            Created by 
+            <% if (item.author && item.author.firstName && item.author.lastName) { %>
+              <%= item.author.firstName %> <%= item.author.lastName %>
+            <% } else { %>
+              Unknown Instructor
+            <% } %>
+            <% if (item.duration) { %> · <%= item.duration %><% } %>
+          </div>
+    
+          <div class="fw-semibold mb-1" style="font-size: 0.95rem;">$<%= item.price %></div>
+          <div style="font-size: 0.85rem;">⭐ <%= item.rating || 0 %></div>
         </div>
       </div>
-    <% }) %>
+    <% }) %>    
+         
   </div>
 </div>
 <script src="https://js.stripe.com/v3/"></script>
