@@ -343,20 +343,25 @@
             <div class="course-price <%= course.price === 0 ? 'free' : '' %>">
               <%= course.price === 0 ? 'Free' : '$' + course.price %>
             </div>
-  
-            <% if (loggedInUser && loggedInUser.role === 'Student') { %>
-              <div class="btn-container">
-                <button class="btn cart-btn" data-id="<%= course._id %>">
-                  <i class="bi bi-cart-plus cart-icon"></i>
-                  Add to Cart
+          
+            <% if (user && user.role === 'Student') { %>
+              <% if (isEnrolled) { %>
+                <button class="btn cart-btn btn-success disabled">
+                  <i class="bi bi-check2-circle"></i> Enrolled
                 </button>
-              </div>
-            <% } else if (loggedInUser && loggedInUser.role === 'Instructor') { %>
-              <div class="alert alert-warning text-center fw-semibold mt-3" role="alert">
+              <% } else { %>
+                <button class="btn cart-btn" data-id="<%= course._id %>">
+                  <i class="bi bi-cart-plus"></i> Add to Cart
+                </button>
+              <% } %>
+            <% } else if (user && user.role === 'Instructor') { %>
+              <div class="alert alert-warning">
                 Only students can purchase courses.
               </div>
             <% } %>
-            
+          </div>
+          
+        
           </div>
         </div>
       </div>
