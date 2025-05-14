@@ -169,9 +169,10 @@
     <!--Include Nav Bar-->
     <%- include('partials/navbar') %>
 
+    
     <div class="container my-5">
       <h1 class="enrolled-header">YOUR ENROLLED COURSES</h1>
-
+    
       <!-- Search Box -->
       <div class="search-box mb-4">
         <i class="bi bi-search search-icon"></i>
@@ -182,7 +183,7 @@
           placeholder="Search your courses"
         />
       </div>
-
+    
       <!-- Filter Buttons -->
       <div class="filters-container">
         <div class="dropdown me-2">
@@ -197,31 +198,31 @@
           </button>
           <ul class="dropdown-menu" aria-labelledby="sortDropdown">
             <li>
-              <a class="dropdown-item active" href="#" data-sort="recent"
-                >Recently Enrolled</a
-              >
+              <a class="dropdown-item active" href="#" data-sort="recent">
+                Recently Enrolled
+              </a>
             </li>
             <li>
-              <a class="dropdown-item" href="#" data-sort="oldest"
-                >Oldest First</a
-              >
+              <a class="dropdown-item" href="#" data-sort="oldest">
+                Oldest First
+              </a>
             </li>
             <li>
               <a class="dropdown-item" href="#" data-sort="name">Course Name</a>
             </li>
             <li>
-              <a class="dropdown-item" href="#" data-sort="progress-high"
-                >Highest Progress</a
-              >
+              <a class="dropdown-item" href="#" data-sort="progress-high">
+                Highest Progress
+              </a>
             </li>
             <li>
-              <a class="dropdown-item" href="#" data-sort="progress-low"
-                >Lowest Progress</a
-              >
+              <a class="dropdown-item" href="#" data-sort="progress-low">
+                Lowest Progress
+              </a>
             </li>
           </ul>
         </div>
-
+    
         <button class="btn filter-btn active" data-filter="all">
           All Courses
         </button>
@@ -235,81 +236,70 @@
           Not Started
         </button>
       </div>
-
+    
       <!-- Enrolled Courses List -->
       <div class="enrolled-courses" id="enrolledCoursesList">
-        <% if (enrolledCourses && enrolledCourses.length > 0) { %> <%
-        enrolledCourses.forEach(course => { %>
-        <!-- Course Card -->
-        <div
-          class="course-card"
-          data-name="<%= course.title.toLowerCase() %>"
-          data-category="<%= course.category ? course.category.toLowerCase() : '' %>"
-          data-progress="<%= course.progress %>"
-          data-progress-status="<%= course.progress === 100 ? 'completed' : course.progress > 0 ? 'in-progress' : 'not-started' %>"
-        >
-          <div class="row g-0">
-            <div class="col-md-3">
-              <img
-                src="<%= course.imageUrl || 'images/course-placeholder.jpg' %>"
-                class="course-image"
-                alt="<%= course.title %>"
-              />
-            </div>
-            <div class="col-md-7">
-              <div class="course-content">
-                <h5 class="course-title"><%= course.title %></h5>
-                <p class="course-instructor">
-                  Created by: <%= course.instructor %>
-                </p>
-                <p class="course-description">
-                  <%= course.description.substring(0, 100) %><%=
-                  course.description.length > 100 ? '...' : '' %>
-                </p>
-                <div class="course-details">
-                  <div class="mb-2">
-                    <i class="bi bi-clock me-2"></i><%= course.duration || '350 hours' %>
-                  </div>
-                </div>
-
-                  <div>
-                    <i class="bi bi-star-fill me-2"></i><%= course.rating ||
-                    '4.7' %> (<%= course.reviews || '10,000' %>)
-                  </div>
-                </div>
-              </div>
-            </div>
+        <% if (enrolledCourses && enrolledCourses.length > 0) { %>
+          <% enrolledCourses.forEach(course => { %>
+            <!-- Course Card -->
             <div
-              class="col-md-2 d-flex flex-column justify-content-center align-items-center"
+              class="course-card"
+              data-name="<%= course.title ? course.title.toLowerCase() : '' %>"
+              data-category="<%= course.category ? course.category.toLowerCase() : '' %>"
+              data-progress="<%= course.progress %>"
+              data-progress-status="<%= course.progress === 100 ? 'completed' : course.progress > 0 ? 'in-progress' : 'not-started' %>"
             >
-              <div
-                class="progress-indicator <%= course.progress < 20 ? 'progress-low' : course.progress < 70 ? 'progress-medium' : 'progress-high' %>"
-              >
-                <%= course.progress %>%
+              <div class="row g-0">
+                <div class="col-md-3">
+                  <img
+                    src="<%= course.image || 'images/course-placeholder.jpg' %>"
+                    class="course-image"
+                    alt="<%= course.title || 'Course' %>"
+                  />
+                </div>
+                <div class="col-md-7">
+                  <div class="course-content">
+                    <h5 class="course-title"><%= course.name || 'Untitled Course' %></h5>
+                    <p class="course-instructor">
+                      Created by: <%= course.author ? `${course.author.firstName} ${course.author.lastName}` : 'Unknown Author' %>
+                    </p>
+                    <p class="course-description">
+                      <%= course.description ? course.description.substring(0, 100) : '' %><%=
+                        course.description && course.description.length > 100 ? '...' : '' %>
+                    </p>
+                    <div class="course-details">
+                      <div class="mb-2">
+                        <i class="bi bi-clock me-2"></i><%= course.duration || '350 hours' %>
+                      </div>
+                    </div>
+    
+           
+                  </div>
+                </div>
+                <div class="col-md-2 d-flex flex-column justify-content-center align-items-center">
+                  <a
+                    href="/courses/<%= course._id %>/learn"
+                    class="btn learn-now-btn mt-3"
+                    >Learn Now</a
+                  >
+                </div>
               </div>
-              <a
-                href="/courses/<%= course._id %>/learn"
-                class="btn learn-now-btn mt-3"
-                >Learn Now</a
-              >
             </div>
+          <% }); %>
+        <% } else { %>
+          <!-- No enrolled courses message -->
+          <div class="text-center py-5" id="noCourses">
+            <i class="bi bi-journal-bookmark display-1 text-muted"></i>
+            <h3 class="mt-4">You haven't enrolled in any courses yet</h3>
+            <p class="text-muted">
+              Explore our catalog and find courses that match your interests
+            </p>
+            <a href="/courses" class="btn btn-lg learn-now-btn mt-3">Browse Courses</a>
           </div>
-        </div>
-        <% }); %> <% } else { %>
-        <!-- No enrolled courses message -->
-        <div class="text-center py-5" id="noCourses">
-          <i class="bi bi-journal-bookmark display-1 text-muted"></i>
-          <h3 class="mt-4">You haven't enrolled in any courses yet</h3>
-          <p class="text-muted">
-            Explore our catalog and find courses that match your interests
-          </p>
-          <a href="/courses" class="btn btn-lg learn-now-btn mt-3"
-            >Browse Courses</a
-          >
-        </div>
         <% } %>
       </div>
     </div>
+    
 
 
 
