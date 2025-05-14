@@ -173,9 +173,9 @@
               <!-- User Info -->
               <li class="px-3 py-3 border-bottom">
                 <a
-                  href="/userProfile/<%= user._id %>"
-                  class="text-decoration-none gap-2 text-dark d-flex align-items-center profile-hover"
-                >
+                href="/userProfile/<%= user._id %>"
+                class="text-decoration-none gap-2 text-dark d-flex align-items-center profile-hover"
+              >
                   <img
                     src="<%= user.avatar %>"
                     alt="Avatar"
@@ -194,6 +194,7 @@
                   </div>
                 </a>
               </li>
+
 
               <% if (user.role === 'Student') { %>
               <li class="py-2">
@@ -289,14 +290,27 @@
     color: #e07b4f;
     transform: translateY(-1px);
   }
+  .profile-hover {
+  display: block;                /* make the <a> fill the whole <li> */
+  padding: 0.5rem;               /* give it a little breathing room */
+  border-radius: 6px;            /* soften the corners */
+  transition: background 0.2s ease, transform 0.2s ease;
+}
 
-  .profile-user-link li {
-    transition: background-color 0.2s ease;
-  }
+.profile-hover:hover {
+  background: rgba(0, 0, 0, 0.05);
+  transform: translateX(4px);
+  text-decoration: none;         /* keep the link underlines off */
+}
 
-  .profile-user-link:hover li {
-    background-color: #eceded;
-  }
+.profile-hover img {
+  transition: transform 0.2s ease;
+}
+
+.profile-hover:hover img {
+  transform: scale(1.05);
+}
+
 </style>
 
 <script src="/js/cart.js"></script>
