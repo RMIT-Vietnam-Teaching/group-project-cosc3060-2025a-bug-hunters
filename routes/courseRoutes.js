@@ -3,6 +3,8 @@ const router = express.Router();
 const fs = require("fs");
 const Course = require("../models/Course");
 const User = require("../models/User");
+const Section = require("../models/Section");
+const Lesson = require("../models/Lesson");
 const { categories } = require("../constants/categories");
 
 const multer = require("multer");
@@ -77,7 +79,7 @@ router.post("/create", upload.single("courseImage"), async (req, res) => {
             price,
             learningOutcomes,
             sections = {},
-        } = req.body;
+        } = formData;
 
         if (!req.file) throw new Error("Please upload a course image");
 
@@ -94,12 +96,21 @@ router.post("/create", upload.single("courseImage"), async (req, res) => {
         const sectionIds = [];
 
         for (const [secIndex, sectionData] of Object.entries(sections)) {
-            const sectionTitle = sectionData.title;
+            const sectionTitle = sectionData.title?.trim();
+            if (!sectionTitle)
+                throw new Error(`Section ${secIndex} is missing a title.`);
+
             const lessonsInput = sectionData.lessons || {};
             const lessonIds = [];
 
             for (const [lesIndex, lessonData] of Object.entries(lessonsInput)) {
                 const { title: lessonTitle, duration, type } = lessonData;
+
+                if (!lessonTitle || !duration || !type) {
+                    throw new Error(
+                        `Lesson ${lesIndex} in section ${secIndex} is incomplete.`
+                    );
+                }
 
                 // Calculate time in seconds
                 const parts = duration.split(":").map(Number).reverse();
@@ -110,10 +121,12 @@ router.post("/create", upload.single("courseImage"), async (req, res) => {
                 totalSeconds += seconds;
 
                 const lesson = new Lesson({
-                    title: lessonTitle,
-                    duration, // keep as "MM:SS" or "HH:MM:SS"
-                    content: "", // optional field for future content (video/pdf/text)
+                    title: lessonTitle.trim(),
+                    duration,
+                    type,
+                    content: "", // optional field
                 });
+
                 await lesson.save();
                 lessonIds.push(lesson._id);
             }
@@ -122,6 +135,7 @@ router.post("/create", upload.single("courseImage"), async (req, res) => {
                 title: sectionTitle,
                 lessons: lessonIds,
             });
+
             await section.save();
             sectionIds.push(section._id);
         }
@@ -134,26 +148,35 @@ router.post("/create", upload.single("courseImage"), async (req, res) => {
         }${totalMinutes}m`;
 
         const newCourse = new Course({
-            name: title,
-            description,
+            name: title.trim(),
+            description: description.trim(),
             author: loggedInUser._id,
             category,
             price,
-            image: req.file.path, // Cloudinary path
+            image: req.file.path,
             learningOutcomes: parsedOutcomes,
             duration: durationFormatted.trim(),
             sections: sectionIds,
         });
 
         await newCourse.save();
-        console.log("Course created:", newCourse._id);
-
+        console.log("✅ Course created:", newCourse._id);
         res.redirect("/courses");
     } catch (err) {
-        console.error("Course creation failed:", err);
-        if (req.file?.path) {
-            // Optional: delete failed Cloudinary image if needed
+        console.error("❌ Course creation failed:", err);
+
+        // Optional Cloudinary cleanup
+        if (req.file?.filename) {
+            try {
+                await cloudinary.uploader.destroy(req.file.filename);
+            } catch (deleteErr) {
+                console.error(
+                    "⚠️ Failed to delete Cloudinary image:",
+                    deleteErr.message
+                );
+            }
         }
+
         res.status(500).render("createCourse", {
             categories,
             instructors,
@@ -166,13 +189,27 @@ router.post("/create", upload.single("courseImage"), async (req, res) => {
 
 router.get("/:id", async (req, res) => {
     try {
-        const course = await Course.findById(req.params.id);
         const loggedInUserId = req.signedCookies?.userId;
         const loggedInUser = await User.findById(loggedInUserId);
+
+        const course = await Course.findById(req.params.id)
+            .populate("author", "firstName lastName email avatar") // show author info
+            .populate({
+                path: "sections",
+                populate: {
+                    path: "lessons",
+                    model: "Lesson",
+                },
+            });
+
         if (!course) {
             return res.status(404).send("Course not found");
         }
-        res.render("courseDetail", { course, loggedInUser });
+
+        res.render("courseDetail", {
+            course,
+            loggedInUser,
+        });
     } catch (err) {
         console.error("Error loading course:", err);
         res.status(500).send("Failed to load course");
