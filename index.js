@@ -87,6 +87,7 @@ const chatRoutes = require("./routes/chatRoutes");
 const uploadRoutes = require("./routes/uploadRoutes");
 
 // const coinPaymentRoutes = require("./routes/coinPayment");
+const sitemapRoutes = require("./routes/sitemapRoutes");
 
 // Use Routes
 
@@ -107,7 +108,8 @@ app.use("/search", searchRoutes);
 app.use("/about-us", aboutUsRoutes);
 app.use("/user", userRoutes);
 app.use("/api", subscriptionRoutes);
-app.use("/payment", coinPaymentRoutes);
+// app.use("/payment", coinPaymentRoutes);
+app.use("/sitemap", sitemapRoutes);
 
 // app.use("/institution", institution);
 
