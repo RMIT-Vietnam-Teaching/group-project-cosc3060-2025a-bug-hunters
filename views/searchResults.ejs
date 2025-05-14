@@ -1,9 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-user-theme="<%= user ? user.theme : 'light' %>">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Search Results - LearnNow</title>
+
+  <!-- Theme Loader - Must be the first script -->
+  <script src="/js/themeLoader.js"></script>
 
   <!-- Bootstrap 5 CSS CDN -->
   <link
@@ -25,11 +28,48 @@
   <link rel="stylesheet" href="/css/darkMode.css" />
   
   <style>
+    :root {
+      --bg-primary: #ffffff;
+      --bg-secondary: #f8f9fa;
+      --text-primary: #333333;
+      --text-secondary: #6c757d;
+      --border-color: #e0e0e0;
+      --card-bg: #ffffff;
+      --accent-color: #ff8c42;
+      --highlight-bg: rgba(255, 140, 66, 0.15);
+      --student-badge-bg: #4CAF50;
+      --instructor-badge-bg: #2196F3;
+      --empty-results-bg: #f8f9fa;
+      --shadow: rgba(0, 0, 0, 0.1);
+      --avatar-border: white;
+    }
+    
+    body.dark {
+      --bg-primary: #121212;
+      --bg-secondary: #1a1a1a;
+      --text-primary: #f5f5f5;
+      --text-secondary: #adb5bd;
+      --border-color: #444444;
+      --card-bg: #2d2d2d;
+      --accent-color: #ff8c42;
+      --highlight-bg: rgba(255, 140, 66, 0.25);
+      --student-badge-bg: #4CAF50;
+      --instructor-badge-bg: #2196F3;
+      --empty-results-bg: #1e1e1e;
+      --shadow: rgba(0, 0, 0, 0.2);
+      --avatar-border: #444444;
+    }
+    
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+    }
+
     .section-divider {
       margin: 40px 0;
       position: relative;
       height: 1px;
-      background-color: #e0e0e0;
+      background-color: var(--border-color);
     }
     
     .section-title {
@@ -45,32 +85,37 @@
       left: 0;
       width: 60px;
       height: 3px;
-      background-color: #ff8c42;
+      background-color: var(--accent-color);
     }
     
     .section-title h2 {
       font-weight: 700;
-      color: #333;
+      color: var(--text-primary);
+    }
+    
+    .text-muted {
+      color: var(--text-secondary) !important;
     }
     
     .empty-results {
       padding: 30px;
-      background-color: #f8f9fa;
+      background-color: var(--empty-results-bg);
       border-radius: 10px;
       text-align: center;
     }
     
     .search-header {
-      background-color: #f8f9fa;
+      background-color: var(--bg-secondary);
       padding: 30px 0;
       margin-bottom: 40px;
-      border-bottom: 1px solid #e0e0e0;
+      border-bottom: 1px solid var(--border-color);
     }
     
     .highlight {
-      background-color: rgba(255, 140, 66, 0.15);
+      background-color: var(--highlight-bg);
       padding: 0 3px;
       border-radius: 3px;
+      color: var(--text-primary);
     }
 
     /* User card styling */
@@ -78,11 +123,13 @@
       transition: all 0.3s ease;
       border-radius: 15px;
       overflow: hidden;
+      background-color: var(--card-bg);
+      border-color: var(--border-color);
     }
     
     .user-card:hover {
       transform: translateY(-5px);
-      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      box-shadow: 0 10px 20px var(--shadow);
     }
     
     .user-avatar {
@@ -90,8 +137,8 @@
       height: 80px;
       object-fit: cover;
       border-radius: 50%;
-      border: 3px solid white;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      border: 3px solid var(--avatar-border);
+      box-shadow: 0 4px 8px var(--shadow);
     }
     
     .user-role-badge {
@@ -105,17 +152,59 @@
     }
     
     .role-student {
-      background-color: #4CAF50;
+      background-color: var(--student-badge-bg);
       color: white;
     }
     
     .role-instructor {
-      background-color: #2196F3;
+      background-color: var(--instructor-badge-bg);
       color: white;
+    }
+    
+    /* Course card overrides */
+    .card {
+      background-color: var(--card-bg);
+      border-color: var(--border-color);
+    }
+    
+    .card-title {
+      color: var(--text-primary);
+    }
+    
+    .card-text {
+      color: var(--text-primary);
+    }
+    
+    .btn-outline-primary {
+      color: var(--accent-color);
+      border-color: var(--accent-color);
+    }
+    
+    .btn-outline-primary:hover {
+      background-color: var(--accent-color);
+      color: white;
+      border-color: var(--accent-color);
+    }
+    
+    /* Alert styling */
+    .alert-info {
+      background-color: rgba(13, 202, 240, 0.1);
+      color: var(--text-primary);
+      border-color: rgba(13, 202, 240, 0.2);
+    }
+    
+    .btn-primary {
+      background-color: var(--accent-color);
+      border-color: var(--accent-color);
+    }
+    
+    .btn-primary:hover {
+      background-color: #e07e3b;
+      border-color: #e07e3b;
     }
   </style>
 </head>
-<body>
+<body class="<%= user ? user.theme : 'light' %>" <% if (user && user._id) { %>data-user-id="<%= user._id %>"<% } %>>
   <%- include('partials/navbar') %>
 
   <div class="search-header">
@@ -254,8 +343,5 @@
 
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  
-  <!-- Dark Mode JavaScript -->
-  <script src="/js/darkMode.js"></script>
 </body>
 </html>

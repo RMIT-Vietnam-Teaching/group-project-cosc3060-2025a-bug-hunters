@@ -1,9 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-user-theme="<%= user ? user.theme : 'light' %>">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>My Teaching</title>
+
+        <!-- Theme Loader - Must be the first script -->
+        <script src="/js/themeLoader.js"></script>
 
         <!-- Bootstrap CSS & Icons -->
         <link
@@ -17,19 +20,53 @@
 
         <!-- Custom CSS -->
         <link rel="stylesheet" href="/css/navBarStyle.css" />
+        <link rel="stylesheet" href="/css/darkMode.css" />
         <style>
+            :root {
+                --card-bg: #fff;
+                --card-border: #e0e0e0;
+                --card-shadow: rgba(0, 0, 0, 0.05);
+                --text-primary: #212529;
+                --text-secondary: #6c757d;
+                --accent-color: #ee6c4d;
+                --accent-hover: #e95d3c;
+                --input-bg: #fff;
+                --input-border: #ced4da;
+                --icon-color: #6c757d;
+                --bg-primary: #ffffff;
+            }
+            
+            body.dark {
+                --card-bg: #2d2d2d;
+                --card-border: #444;
+                --card-shadow: rgba(0, 0, 0, 0.2);
+                --text-primary: #f5f5f5;
+                --text-secondary: #adb5bd;
+                --accent-color: #ee6c4d;
+                --accent-hover: #f27d60;
+                --input-bg: #212529;
+                --input-border: #495057;
+                --icon-color: #adb5bd;
+                --bg-primary: #121212;
+            }
+            
+            body {
+                background-color: var(--bg-primary);
+                color: var(--text-primary);
+            }
+
             .course-card {
                 border-radius: 12px;
                 overflow: hidden;
                 transition: transform 0.3s, box-shadow 0.3s;
                 margin-bottom: 20px;
-                border: 1px solid #e0e0e0;
-                background-color: #fff;
+                border: 1px solid var(--card-border);
+                background-color: var(--card-bg);
             }
 
             .course-card:hover {
                 transform: translateY(-3px);
-                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
+                box-shadow: 0 8px 16px var(--card-shadow);
             }
 
             .course-image {
@@ -40,7 +77,7 @@
             }
 
             .learn-now-btn {
-                background-color: #ee6c4d;
+                background-color: var(--accent-color);
                 color: white;
                 border: none;
                 border-radius: 20px;
@@ -49,7 +86,7 @@
             }
 
             .learn-now-btn:hover {
-                background-color: #e95d3c;
+                background-color: var(--accent-hover);
             }
 
             .enrolled-header {
@@ -57,6 +94,7 @@
                 text-align: center;
                 margin: 30px 0;
                 font-size: 2rem;
+                color: var(--text-primary);
             }
 
             .search-box {
@@ -68,18 +106,55 @@
             .search-box .form-control {
                 padding-left: 2.5rem;
                 border-radius: 20px;
+                background-color: var(--input-bg);
+                color: var(--text-primary);
+                border-color: var(--input-border);
+            }
+            
+            .search-box .form-control::placeholder {
+                color: var(--text-secondary);
             }
 
             .search-icon {
                 position: absolute;
                 left: 1rem;
                 top: 0.6rem;
-                color: #6c757d;
+                color: var(--icon-color);
+            }
+            
+            .course-title {
+                color: var(--text-primary);
+            }
+            
+            .course-description, .course-details, .text-muted {
+                color: var(--text-secondary) !important;
+            }
+            
+            .bi-star-fill, .bi-clock {
+                color: var(--accent-color);
+            }
+            
+            /* Empty state styling */
+            .bi-journal-bookmark {
+                color: var(--text-secondary);
+            }
+            
+            /* Upload course button */
+            .upload-course-btn {
+                border-radius: 50px;
+                background-color: var(--accent-color);
+                border: none;
+                color: white;
+            }
+            
+            .upload-course-btn:hover {
+                background-color: var(--accent-hover);
+                color: white;
             }
         </style>
     </head>
 
-    <body>
+    <body class="<%= user ? user.theme : 'light' %>" <% if (user && user._id) { %>data-user-id="<%= user._id %>"<% } %>>
         <%- include('partials/navbar') %>
 
         <div class="container my-5">
@@ -99,12 +174,7 @@
             <div class="text-end mb-4 d-flex justify-content-center">
                 <a
                     href="/courses/create"
-                    class="btn btn-primary px-4 py-2 fw-semibold"
-                    style="
-                        border-radius: 50px;
-                        background-color: #ee6c4d;
-                        border: none;
-                    "
+                    class="btn btn-primary px-4 py-2 fw-semibold upload-course-btn"
                 >
                     <i class="bi bi-plus-circle me-2"></i>Upload New Course
                 </a>

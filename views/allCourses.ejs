@@ -1,8 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-user-theme="<%= user ? user.theme : 'light' %>">
     <head>
         <meta charset="UTF-8" />
         <title>All Courses</title>
+
+        <!-- Theme Loader - Must be the first script -->
+        <script src="/js/themeLoader.js"></script>
 
         <!-- Bootstrap 5 CSS CDN -->
         <link
@@ -22,7 +25,7 @@
         <link rel="stylesheet" href="/css/courseSection.css" /> <!-- Important: Include your course card CSS -->
         <link rel="stylesheet" href="/css/darkMode.css" />
     </head>
-    <body>
+    <body class="<%= user ? user.theme : 'light' %>" <% if (user && user._id) { %>data-user-id="<%= user._id %>"<% } %>>
         <!-- Include Nav Bar -->
         <%- include('partials/navbar') %>
 
@@ -129,6 +132,11 @@
                 const container = document.getElementById('categoriesContainer');
                 container.scrollBy({ left: amount, behavior: 'smooth' });
             }
+            
+            // Debug log for dark mode
+            document.addEventListener('DOMContentLoaded', function() {
+                console.log('Theme loaded:', document.body.classList.contains('dark') ? 'dark' : 'light');
+            });
         </script>
     </body>
 </html>
