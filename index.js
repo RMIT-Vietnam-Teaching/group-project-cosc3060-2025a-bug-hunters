@@ -14,7 +14,7 @@ const {
     sessionMiddleware,
     setUserFromCookie,
 } = require("./middlewares/setUser");
-const cartCountMiddleware = require('./middlewares/cart');
+const cartCountMiddleware = require("./middlewares/cart");
 
 const { port } = require("./configs/keys");
 const passport = require("passport");
@@ -108,6 +108,7 @@ app.use("/search", searchRoutes);
 app.use("/about-us", aboutUsRoutes);
 app.use("/user", userRoutes);
 app.use("/api", subscriptionRoutes);
+app.use("/", chatRoutes);
 // app.use("/payment", coinPaymentRoutes);
 app.use("/sitemap", sitemapRoutes);
 

@@ -14,7 +14,6 @@
         />
         <link rel="stylesheet" href="/css/userSetting.css" />
 
-<<<<<<< HEAD
         <style>
             main {
                 position: relative; /* ok */
@@ -59,199 +58,6 @@
                     display: none;
                 }
             }
-=======
-  <style>
-    main {
-      position: relative;
-      z-index: 1;
-    }
-    
-    /* Hamburger (only show on mobile) */
-    .mobile-menu-button {
-      background: none;
-      border: none;
-      padding: 0;
-      margin-right: 10px;
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      gap: 5px;
-      width: 30px;
-      height: 30px;
-    }
-    
-    .mobile-menu-button span {
-      background-color: #000;
-      display: block;
-      width: 24px;
-      height: 3px;
-      border-radius: 2px;
-    }
-
-    /* Dark mode hamburger */
-    body.dark .mobile-menu-button span {
-      background-color: #E1E6F0;
-    }
-  
-    @media (min-width: 768px) {
-      .mobile-menu-button {
-        display: none;
-      }
-    }
-  
-    /* Dropdown Sidebar */
-    #sidebarDropdown {
-      background-color: #fff;
-      border-right: 1px solid #e0e0e0;
-      height: 100%;
-      overflow-y: auto;
-      padding: 20px 0;
-      transition: left 0.3s ease-in-out;
-    }
-    
-    /* Dark mode sidebar dropdown */
-    body.dark #sidebarDropdown {
-      background-color: #1B2B30;
-      border-right: 1px solid #397CA2;
-    }
-  
-    #sidebarDropdown .nav {
-      margin-top: 20px;
-    }
-  
-    #sidebarDropdown .nav-link {
-      padding: 10px 20px;
-      font-size: 1.1rem;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-  
-    #sidebarDropdown .nav-item {
-      margin-bottom: 20px;
-    }
-  
-    @media (max-width: 767px) {
-      #sidebarDropdown {
-        position: absolute;
-        top: 56px;
-        left: -260px;
-        width: 250px;
-        height: 100%;
-        z-index: 2000;
-      }
-      #sidebarDropdown.open {
-        left: 0;
-      }
-    }
-  
-    /* Updated orange highlight to salmon/peach color */
-    .bg-orange {
-      background-color: #F79A7C !important;
-    }
-  
-    /* Default light mode styles for left sidebar */
-    #leftMobileSidebar {
-      background-color: #fdfdfd;
-      color: #212529;
-      width: 260px;
-      transform: translateX(-100%);
-      transition: transform 0.3s ease-in-out;
-      padding: 24px 16px;
-      z-index: 1050;
-      border-right: 1px solid #e0e0e0;
-    }
-
-    /* Dark Mode overrides for left sidebar */
-    body.dark #leftMobileSidebar {
-      background-color: #1B2B30;
-      color: #E1E6F0;
-      border-right: 1px solid #397CA2;
-    }
-  
-    #leftMobileSidebar .nav-link {
-      padding: 12px 18px;
-      margin-bottom: 12px;
-      border-radius: 8px;
-      color: #212529;
-      transition: background 0.2s ease;
-    }
-  
-    #leftMobileSidebar .text-center {
-      margin-bottom: 24px;
-    }
-  
-    #leftMobileSidebar.open {
-      transform: translateX(0);
-    }
-  
-    /* Dark mode navigation links */
-    body.dark #leftMobileSidebar .nav-link {
-      color: #A8C7E7 !important;
-    }
-  
-    /* Dark mode active navigation link */
-    body.dark #leftMobileSidebar .nav-link.bg-orange {
-      background-color: #F79A7C !important;
-      color: #1B2B30 !important;
-      font-weight: bold;
-    }
-  
-    /* Dark mode user name */
-    body.dark #leftMobileSidebar h6 {
-      color: #E1E6F0 !important;
-    }
-    
-    /* Add dark mode styles for the main content area */
-    body.dark {
-      background-color: #1B2B30;
-      color: #E1E6F0;
-    }
-    
-    /* Dark mode card styles */
-    body.dark .card {
-      background-color: #397CA2;
-      border-color: #397CA2;
-    }
-    
-    /* Dark mode form elements */
-    body.dark input, 
-    body.dark select, 
-    body.dark textarea {
-      background-color: #1B2B30;
-      border-color: #397CA2;
-      color: #E1E6F0;
-    }
-    
-    /* Dark mode for buttons */
-    body.dark .btn-primary {
-      background-color: #397CA2;
-      border-color: #397CA2;
-    }
-    
-    body.dark .btn-secondary {
-      background-color: #A8C7E7;
-      border-color: #A8C7E7;
-      color: #1B2B30;
-    }
-    
-    /* Profile preferences specific styles */
-    body.dark .profile-section {
-      background-color: rgba(57, 124, 162, 0.2);
-      border-color: #397CA2;
-    }
-    
-    body.dark .form-label {
-      color: #E1E6F0;
-    }
-    
-    body.dark hr {
-      border-color: #397CA2;
-    }
-  </style>
-</head>
->>>>>>> payment
 
             /* Dropdown Sidebar */
             #sidebarDropdown {
@@ -263,7 +69,6 @@
                 transition: left 0.3s ease-in-out;
             }
 
-<<<<<<< HEAD
             #sidebarDropdown .nav {
                 margin-top: 20px;
             }
@@ -275,14 +80,6 @@
                 overflow: hidden;
                 text-overflow: ellipsis;
             }
-=======
-  <!-- layout -->
-  <div class="container-fluid">
-    <div class="row vh-100">
-      
-      <!-- Sidebar -->
-      <%- include('partials/userSettings/sideBar') %>
->>>>>>> payment
 
             #sidebarDropdown .nav-item {
                 margin-bottom: 20px;

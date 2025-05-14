@@ -34,7 +34,7 @@
             <div
                 class="w-100 d-flex flex-column flex-md-row justify-content-between align-items-center gap-3"
             >
-                <!-- Search bar (visible on all screens, centered in mobile) -->
+                <!-- Search bar -->
                 <form
                     class="d-flex justify-content-center w-100 w-md-auto"
                     id="navbar-search"
@@ -54,39 +54,32 @@
                     />
                 </form>
 
-            <!-- Icons & Profile -->
-            <div class="d-flex align-items-center gap-3">
-                <a href="/cart" class="text-dark position-relative">
-                    <i class="bi bi-cart3 fs-5"></i>
-                    <% if (cartCount > 0) { %>
-                      <span
-                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                        <%= cartCount %>
-                        <span class="visually-hidden">items in cart</span>
-                      </span>
-                    <% } %>
-                  </a>
-                <!-- <a href="#" class="text-dark"
-                    ><i class="bi bi-bell fs-5"></i
-                ></a> -->
-                <a href="/message" class="text-dark"
-                    ><i class="bi bi-chat-dots fs-5"></i
-                ></a>
-
-                <!-- Avatar Dropdown -->
-                <div class="dropdown">
-                    <!-- Trigger with avatar and black arrow -->
-                    <a
-                        href="#"
-                        id="profileMenu"
-                        data-bs-toggle="dropdown"
-                        aria-expanded="false"
-                        class="d-flex align-items-center text-dark text-decoration-none dropdown-toggle"
-                        style="gap: 6px"
-                    >
-                        <img
-                            src="<%= user.avatar %>"
-                            alt="Avatar"
+                <!-- Navigation links -->
+                <ul
+                    class="navbar-nav flex-row align-items-center gap-3"
+                    id="navbar-links"
+                >
+                    <li class="nav-item">
+                        <a class="nav-link text-dark fw-medium" href="/courses"
+                            >All Courses</a
+                        >
+                    </li>
+                    <% if (user) { %>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark fw-medium" href="/about-us"
+                            >About Us</a
+                        >
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark fw-medium" href="/forum"
+                            >Forum</a
+                        >
+                    </li>
+                    <% if (user.role === 'Student') { %>
+                    <li class="nav-item">
+                        <a
+                            class="nav-link text-white fw-semibold"
+                            href="/user/my-courses"
                             style="
                                 background-color: #ee6c4d;
                                 padding: 6px 16px;
@@ -100,7 +93,7 @@
                     <li class="nav-item">
                         <a
                             class="nav-link text-white fw-semibold"
-                            href="/instructor/my-courses"
+                            href="/user/my-teaching"
                             style="
                                 background-color: #ee6c4d;
                                 padding: 6px 16px;
@@ -110,20 +103,33 @@
                             >My Teaching</a
                         >
                     </li>
-                    <% } %>
+                    <% } %> <% } %>
                 </ul>
 
                 <!-- Icons + Avatar -->
+                <% if (user) { %>
                 <div
                     class="d-flex justify-content-center justify-content-md-end align-items-center gap-3"
                     id="navbar-icons"
                 >
-                    <a href="/cart" class="text-dark"
-                        ><i class="bi bi-cart3 fs-5"></i
-                    ></a>
-                    <a href="/message" class="text-dark"
+                    <% if (user.role === 'Student') { %>
+                    <a href="/cart" class="text-dark position-relative">
+                        <i class="bi bi-cart3 fs-5"></i>
+                        <% if (cartCount > 0) { %>
+                        <span
+                            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                        >
+                            <%= cartCount %>
+                            <span class="visually-hidden">items in cart</span>
+                        </span>
+                        <% } %>
+                    </a>
+                    <% } %>
+                    <a href="/messages" class="text-dark"
                         ><i class="bi bi-chat-dots fs-5"></i
                     ></a>
+
+                    <!-- Avatar Dropdown -->
                     <div class="dropdown">
                         <a
                             href="#"
@@ -144,7 +150,6 @@
                                 "
                             />
                         </a>
-                        <!-- Your dropdown content here -->
                         <ul
                             class="dropdown-menu dropdown-menu-end shadow"
                             aria-labelledby="profileMenu"
@@ -155,13 +160,10 @@
                             "
                         >
                             <!-- User Info -->
-                            <a
-                                href="/userProfile/<%= user._id %>"
-                                class="d-block text-decoration-none text-dark"
-                            >
-                                <li
-                                    class="px-3 py-3 d-flex align-items-center gap-2"
-                                    style="border-bottom: 1px solid #dee2e6"
+                            <li class="px-3 py-3 border-bottom">
+                                <a
+                                    href="/userProfile/<%= user._id %>"
+                                    class="text-decoration-none gap-2 text-dark d-flex align-items-center profile-hover"
                                 >
                                     <img
                                         src="<%= user.avatar %>"
@@ -174,96 +176,84 @@
                                         "
                                     />
                                     <div class="d-flex flex-column">
-                                        <span class="fw-bold">
-                                            <%= user.firstName %> <%=
-                                            user.lastName %>
-                                        </span>
+                                        <span class="fw-bold"
+                                            ><%= user.firstName %> <%=
+                                            user.lastName %></span
+                                        >
                                         <small class="text-muted"
                                             ><%= user.email %></small
                                         >
                                     </div>
-                                </li>
-                            </a>
+                                </a>
+                            </li>
 
                             <% if (user.role === 'Student') { %>
-                            <!-- Learning -->
                             <li class="py-2">
                                 <a class="dropdown-item" href="/my-courses"
-                                    >My learning</a
+                                    >My Learning</a
                                 >
                             </li>
-
-                            <!-- Cart -->
-                            <li
-                                class="py-2"
-                                style="border-bottom: 1px solid #dee2e6"
-                            >
-                                <a class="dropdown-item" href="/cart"
-                                    >My Cart</a
+                            <li class="py-2 border-bottom">
+                                <a
+                                    class="dropdown-item d-flex align-items-center justify-content-between"
+                                    href="/cart"
                                 >
+                                    My Cart
+                                </a>
                             </li>
                             <% } else if (user.role === 'Instructor') { %>
-
-                        <!-- Cart -->
-                        <li class="py-2" style="border-bottom: 1px solid #dee2e6">
-                            <a class="dropdown-item d-flex align-items-center justify-content-between" href="/cart">
-                              My Cart
-                              <% if (cartCount > 0) { %>
-                                <span class="badge bg-danger rounded-pill"><%= cartCount %></span>
-                              <% } %>
-                            </a>
-                          </li>
-                        <% } else if (user.role === 'Instructor') { %>
-
-                            <li
-                                class="py-2"
-                                style="border-bottom: 1px solid #dee2e6"
-                            >
-                                <a class="dropdown-item" href="#"
-                                    >My Course Program</a
+                            <li class="py-2 border-bottom">
+                                <a
+                                    class="dropdown-item"
+                                    href="/user/my-teaching"
+                                    >My Teaching</a
                                 >
                             </li>
                             <% } %>
 
-                            <!-- Notifications -->
-                            <!-- <li class="py-2">
-                            <a class="dropdown-item" href="#">Notifications</a>
-                        </li> -->
-
-                            <!-- Messages -->
-                            <li
-                                class="py-2"
-                                style="border-bottom: 1px solid #dee2e6"
-                            >
+                            <li class="py-2 border-bottom">
                                 <a class="dropdown-item" href="/messages"
                                     >Messages</a
                                 >
                             </li>
-
-                            <!-- Edit Profile -->
-                            <li
-                                class="py-2"
-                                style="border-bottom: 1px solid #dee2e6"
-                            >
+                            <li class="py-2 border-bottom">
                                 <a
                                     class="dropdown-item"
                                     href="/userSettings/profilePreference/<%= user._id %>"
                                     >Edit Profile</a
                                 >
                             </li>
-
-                            <!-- Logout -->
                             <li class="py-2">
                                 <a
                                     class="dropdown-item text-danger fw-semibold"
                                     href="/auth/logout"
+                                    >Logout</a
                                 >
-                                    Logout
-                                </a>
                             </li>
                         </ul>
                     </div>
                 </div>
+                <% } else { %>
+                <!-- Guest User (Not Logged In) -->
+                <div
+                    class="d-flex justify-content-center justify-content-md-end align-items-center gap-2"
+                    id="navbar-icons"
+                >
+                    <a
+                        href="/auth/login"
+                        class="btn btn-outline-dark btn-sm d-flex align-items-center gap-2 rounded-pill px-3 shadow-sm"
+                    >
+                        <i class="bi bi-box-arrow-in-right"></i> Login
+                    </a>
+                    <a
+                        href="/auth/register"
+                        class="btn btn-primary btn-sm d-flex align-items-center gap-2 rounded-pill px-3 shadow-sm"
+                        style="background-color: #ee6c4d; border: none"
+                    >
+                        <i class="bi bi-person-plus-fill"></i> Register
+                    </a>
+                </div>
+                <% } %>
             </div>
         </div>
     </div>
@@ -277,42 +267,34 @@
             justify-content: center !important;
             text-align: center;
         }
-
         #navbar-links li {
             width: 100%;
         }
-
         #navbar-search {
             padding: 10px 0;
         }
-
         #navbar-icons {
             margin-top: 10px;
         }
     }
 
-    /* Optional spacing for cleaner layout */
-    #navbar-links .nav-link {
+    .navbar-nav .nav-link {
+        white-space: nowrap;
         transition: color 0.3s ease, transform 0.2s ease;
     }
 
-    #navbar-links .nav-link:hover {
+    .navbar-nav .nav-link:hover {
         color: #e07b4f;
         transform: translateY(-1px);
     }
 
-    .navbar-nav .nav-link {
-        white-space: nowrap;
+    .profile-user-link li {
+        transition: background-color 0.2s ease;
     }
 
-    /* Hover‐state for the “User Info” row in your dropdown */
-    .profile-user-link li {
-      transition: background-color 0.2s ease;
-    }
     .profile-user-link:hover li {
-      background-color: #eceded; 
+        background-color: #eceded;
     }
 </style>
 
-<!-- //to update cart couunt in real-time -->
 <script src="/js/cart.js"></script>

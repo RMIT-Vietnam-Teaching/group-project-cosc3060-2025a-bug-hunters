@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>My Courses</title>
+    <title>My Teaching</title>
 
     <!-- Bootstrap 5 CSS CDN -->
     <link
@@ -170,7 +170,7 @@
     <%- include('partials/navbar') %>
 
     <div class="container my-5">
-      <h1 class="enrolled-header">YOUR ENROLLED COURSES</h1>
+      <h1 class="enrolled-header">YOUR TEACHING COURSES</h1>
 
       <!-- Search Box -->
       <div class="search-box mb-4">
@@ -181,6 +181,12 @@
           class="form-control"
           placeholder="Search your courses"
         />
+        <div class="text-end mb-4">
+  <a href="/courses/create" class="btn btn-primary px-4 py-2 fw-semibold" style="border-radius: 50px; background-color: #ee6c4d; border: none;">
+    <i class="bi bi-plus-circle me-2"></i>Upload New Course
+  </a>
+</div>
+
       </div>
 
       <!-- Filter Buttons -->
@@ -478,7 +484,7 @@
         filterButtons.forEach((button) => {
           button.addEventListener("click", () => {
             // Remove active class from all filter buttons
-            filterButtons.forEach((btn) => btn.classList.remove("active"));
+            filterButtons.forEach((btn) => btn.cslassList.remove("active"));
             // Add active class to clicked button
             button.classList.add("active");
 

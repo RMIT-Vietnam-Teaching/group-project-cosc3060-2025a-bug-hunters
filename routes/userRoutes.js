@@ -16,17 +16,26 @@ router.get("/my-courses", async (req, res) => {
     }
 });
 
-// User profile page - NO AUTHENTICATIO CHECK FOR DEVELOPMENT
-router.get("/profile", async (req, res) => {
-    const loggedInUserId = req.signedCookies?.userId;
-    const loggedInUser = await User.findById(loggedInUserId);
-    // For development: create a mock user object
-    const mockUser = {
-        name: "Test User",
-        email: "test@example.com",
-    };
+router.get("/my-teaching", async (req, res) => {
+    try {
+        const loggedInUserRole = req.signedCookies?.userRole;
+        console.log("Logged in user role:", loggedInUserRole);
+        if (loggedInUserRole !== "Instructor") {
+            return res
+                .status(403)
+                .send("Access denied. Only instructors can view this page.");
+        }
 
-    res.render("userProfile", { user: mockUser });
+        const courses = [];
+        const loggedInUserId = req.signedCookies?.userId;
+        const loggedInUser = await User.findById(loggedInUserId);
+        // const courses = await Course.find({ author: loggedInUserId });
+        res.render("myTeaching", { enrolledCourses: courses, loggedInUser });
+    } catch (err) {
+        console.error("Error loading your teaching courses:", err);
+        res.status(500).send("Failed to load your teaching courses");
+    }
 });
+// Course details page route
 
 module.exports = router;
