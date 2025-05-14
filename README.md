@@ -16,11 +16,11 @@
 
 ## 🔗 Website URL
 
-[https://levelup-learning.vercel.app](https://group-project-cosc3060-2025a-bug-hunters.onrender.com/)
+[LevelUp.com](https://group-project-cosc3060-2025a-bug-hunters.onrender.com/)
 
 ## 🧠 GitHub Repository
 
-[https://github.com/BugHuntersRMIT/level-up](https://github.com/RMIT-Vietnam-Teaching/group-project-cosc3060-2025a-bug-hunters.git)
+[Link for the Github Repository](https://github.com/RMIT-Vietnam-Teaching/group-project-cosc3060-2025a-bug-hunters.git)
 
 ---
 
