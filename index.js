@@ -38,6 +38,11 @@ app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(sessionMiddleware);
 app.use(setUserFromCookie);
 
+app.use((req, res, next) => {
+    res.locals.cartCount = req.session.cart ? req.session.cart.length : 0;
+    next();
+  });
+
 // Set up Mongo DB connection
 connectDB();
 
@@ -76,6 +81,9 @@ app.use("/user", userRoutes);
 app.use("/api", subscriptionRoutes);
 app.use("/", chatRoutes);
 app.use("/contact", contactRoutes);
+
+
+  
 
 // app.use("/payment", coinPaymentRoutes);
 app.use("/sitemap", sitemapRoutes);
