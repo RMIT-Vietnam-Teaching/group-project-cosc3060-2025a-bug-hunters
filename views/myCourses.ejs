@@ -210,30 +210,12 @@
             <li>
               <a class="dropdown-item" href="#" data-sort="name">Course Name</a>
             </li>
-            <li>
-              <a class="dropdown-item" href="#" data-sort="progress-high">
-                Highest Progress
-              </a>
-            </li>
-            <li>
-              <a class="dropdown-item" href="#" data-sort="progress-low">
-                Lowest Progress
-              </a>
-            </li>
+
           </ul>
         </div>
     
         <button class="btn filter-btn active" data-filter="all">
           All Courses
-        </button>
-        <button class="btn filter-btn" data-filter="in-progress">
-          In Progress
-        </button>
-        <button class="btn filter-btn" data-filter="completed">
-          Completed
-        </button>
-        <button class="btn filter-btn" data-filter="not-started">
-          Not Started
         </button>
       </div>
     
@@ -307,309 +289,124 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- Course filtering and sorting script -->
+    <!-- Course filtering and sorting script -->
     <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        // Sample enrolled courses data (remove this in production)
-        const sampleCourses = [
-          {
-            _id: "1",
-            title: "Introduction to Cybersecurity",
-            instructor: "Dr. Alina Prest",
-            description:
-              "Kickstart your career in cybersecurity – start with the essentials!",
-            duration: "350 hours",
-            rating: "4.7",
-            reviews: "10,000",
-            progress: 100,
-            category: "Cybersecurity",
-            imageUrl: "images/cybersecurity.jpg",
-            enrollmentDate: new Date("2023-12-01"),
-          },
-          {
-            _id: "2",
-            title: "Data Science 101",
-            instructor: "Dr. Alina Prest",
-            description:
-              "Learn how to analyze and visualize data using the latest techniques and tools.",
-            duration: "350 hours",
-            rating: "4.7",
-            reviews: "10,000",
-            progress: 20,
-            category: "Data Science",
-            imageUrl: "images/data-science.jpg",
-            enrollmentDate: new Date("2024-01-15"),
-          },
-          {
-            _id: "3",
-            title: "Advanced Physics - Course 2",
-            instructor: "Dr. Alina Prest",
-            description:
-              "Dive into quantum mechanics, relativity, and advanced theoretical concepts.",
-            duration: "350 hours",
-            rating: "4.7",
-            reviews: "10,000",
-            progress: 5,
-            category: "Science",
-            imageUrl: "images/physics.jpg",
-            enrollmentDate: new Date("2024-02-20"),
-          },
-          {
-            _id: "4",
-            title: "Web Development Bootcamp",
-            instructor: "John Smith",
-            description:
-              "Become a full-stack web developer with HTML, CSS, JavaScript, and more.",
-            duration: "280 hours",
-            rating: "4.9",
-            reviews: "8,500",
-            progress: 0,
-            category: "Web Development",
-            imageUrl: "images/web-dev.jpg",
-            enrollmentDate: new Date("2024-03-05"),
-          },
-          {
-            _id: "5",
-            title: "Digital Marketing Essentials",
-            instructor: "Sarah Johnson",
-            description:
-              "Master SEO, social media marketing, email campaigns, and analytics.",
-            duration: "200 hours",
-            rating: "4.6",
-            reviews: "5,200",
-            progress: 85,
-            category: "Marketing",
-            imageUrl: "images/marketing.jpg",
-            enrollmentDate: new Date("2024-01-10"),
-          },
-        ];
+ document.addEventListener("DOMContentLoaded", function () {
+  const enrolledCoursesDiv = document.getElementById("enrolledCoursesList");
+  const noCoursesDiv = document.getElementById("noCourses");
+  
+  // Get all course cards
+  const courseCards = document.querySelectorAll(".course-card");
+  
+  // Sort dropdown functionality
+  const sortOptions = document.querySelectorAll(".dropdown-item[data-sort]");
+  sortOptions.forEach((option) => {
+    option.addEventListener("click", (e) => {
+      e.preventDefault();
 
-        // Only run this code if there are no real enrolled courses
-        const enrolledCoursesDiv = document.getElementById(
-          "enrolledCoursesList"
-        );
-        const noCoursesDiv = document.getElementById("noCourses");
+      // Remove active class from all sort options
+      sortOptions.forEach((opt) => opt.classList.remove("active"));
+      // Add active class to clicked option
+      option.classList.add("active");
 
-        if (noCoursesDiv) {
-          // Clear the "no courses" message
-          enrolledCoursesDiv.innerHTML = "";
+      // Update dropdown button text
+      document.getElementById("sortDropdown").innerHTML = `<i class="bi bi-sort-down me-1"></i> ${option.textContent}`;
 
-          // Create HTML for sample courses
-          sampleCourses.forEach((course) => {
-            const progressClass =
-              course.progress < 20
-                ? "progress-low"
-                : course.progress < 70
-                ? "progress-medium"
-                : "progress-high";
-            const progressStatus =
-              course.progress === 100
-                ? "completed"
-                : course.progress > 0
-                ? "in-progress"
-                : "not-started";
+      const sortValue = option.getAttribute("data-sort");
+      const cardsArray = Array.from(courseCards);
 
-            const courseHTML = `
-            <div class="course-card" 
-                 data-name="${course.title.toLowerCase()}"
-                 data-category="${course.category.toLowerCase()}"
-                 data-progress="${course.progress}"
-                 data-progress-status="${progressStatus}"
-                 data-enrollment-date="${course.enrollmentDate.toISOString()}">
-              <div class="row g-0">
-                <div class="col-md-3">
-                  <img src="${course.imageUrl}" class="course-image" alt="${
-              course.title
-            }">
-                </div>
-                <div class="col-md-7">
-                  <div class="course-content">
-                    <h5 class="course-title">${course.title}</h5>
-                    <p class="course-instructor">Created by: ${
-                      course.instructor
-                    }</p>
-                    <p class="course-description">
-                      ${course.description}
-                    </p>
-                    <div class="course-details">
-                      <div class="mb-2">
-                        <i class="bi bi-clock me-2"></i>${course.duration}
-                      </div>
-                      <div>
-                        <i class="bi bi-star-fill me-2"></i>${course.rating} (${
-              course.reviews
-            })
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-md-2 d-flex flex-column justify-content-center align-items-center">
-                  <div class="progress-indicator ${progressClass}">
-                    ${course.progress}%
-                  </div>
-                  <a href="/courses/${
-                    course._id
-                  }/learn" class="btn learn-now-btn mt-3">Learn Now</a>
-                </div>
-              </div>
-            </div>
-          `;
-
-            enrolledCoursesDiv.innerHTML += courseHTML;
+      // Sort cards based on selected option
+      switch (sortValue) {
+        case "recent":
+          // Use current display order as fallback if no enrollment date
+          // You should add actual enrollment dates in your EJS template
+          cardsArray.sort((a, b) => {
+            // Default to current order if no date present
+            return 0;
           });
-        }
-
-        // Get all course cards
-        const courseCards = document.querySelectorAll(".course-card");
-
-        // Filter buttons functionality
-        const filterButtons = document.querySelectorAll(
-          ".filter-btn[data-filter]"
-        );
-        filterButtons.forEach((button) => {
-          button.addEventListener("click", () => {
-            // Remove active class from all filter buttons
-            filterButtons.forEach((btn) => btn.classList.remove("active"));
-            // Add active class to clicked button
-            button.classList.add("active");
-
-            const filterValue = button.getAttribute("data-filter");
-
-            // Show all courses if filter is 'all'
-            if (filterValue === "all") {
-              courseCards.forEach((card) => {
-                card.style.display = "";
-              });
-            } else {
-              // Hide all courses
-              courseCards.forEach((card) => {
-                card.style.display = "none";
-              });
-
-              // Show only courses that match the filter
-              document
-                .querySelectorAll(
-                  `.course-card[data-progress-status="${filterValue}"]`
-                )
-                .forEach((card) => {
-                  card.style.display = "";
-                });
-            }
+          break;
+        case "oldest":
+          // Same as above but reversed
+          cardsArray.sort((a, b) => {
+            // Default to current order if no date present
+            return 0;
           });
-        });
-
-        // Sort dropdown functionality
-        const sortOptions = document.querySelectorAll(
-          ".dropdown-item[data-sort]"
-        );
-        sortOptions.forEach((option) => {
-          option.addEventListener("click", (e) => {
-            e.preventDefault();
-
-            // Remove active class from all sort options
-            sortOptions.forEach((opt) => opt.classList.remove("active"));
-            // Add active class to clicked option
-            option.classList.add("active");
-
-            // Update dropdown button text
-            document.getElementById(
-              "sortDropdown"
-            ).innerHTML = `<i class="bi bi-sort-down me-1"></i> ${option.textContent}`;
-
-            const sortValue = option.getAttribute("data-sort");
-            const cardsArray = Array.from(courseCards);
-
-            // Sort cards based on selected option
-            switch (sortValue) {
-              case "recent":
-                cardsArray.sort((a, b) => {
-                  const dateA = new Date(
-                    a.getAttribute("data-enrollment-date") || 0
-                  );
-                  const dateB = new Date(
-                    b.getAttribute("data-enrollment-date") || 0
-                  );
-                  return dateB - dateA;
-                });
-                break;
-              case "oldest":
-                cardsArray.sort((a, b) => {
-                  const dateA = new Date(
-                    a.getAttribute("data-enrollment-date") || 0
-                  );
-                  const dateB = new Date(
-                    b.getAttribute("data-enrollment-date") || 0
-                  );
-                  return dateA - dateB;
-                });
-                break;
-              case "name":
-                cardsArray.sort((a, b) => {
-                  const nameA = a.getAttribute("data-name");
-                  const nameB = b.getAttribute("data-name");
-                  return nameA.localeCompare(nameB);
-                });
-                break;
-              case "progress-high":
-                cardsArray.sort((a, b) => {
-                  const progressA = parseInt(
-                    a.getAttribute("data-progress") || 0
-                  );
-                  const progressB = parseInt(
-                    b.getAttribute("data-progress") || 0
-                  );
-                  return progressB - progressA;
-                });
-                break;
-              case "progress-low":
-                cardsArray.sort((a, b) => {
-                  const progressA = parseInt(
-                    a.getAttribute("data-progress") || 0
-                  );
-                  const progressB = parseInt(
-                    b.getAttribute("data-progress") || 0
-                  );
-                  return progressA - progressB;
-                });
-                break;
-            }
-
-            // Re-append cards in the new order
-            const container = document.getElementById("enrolledCoursesList");
-            cardsArray.forEach((card) => {
-              container.appendChild(card);
-            });
+          break;
+        case "name":
+          cardsArray.sort((a, b) => {
+            const nameA = (a.querySelector(".course-title")?.textContent || "").toLowerCase();
+            const nameB = (b.querySelector(".course-title")?.textContent || "").toLowerCase();
+            return nameA.localeCompare(nameB);
           });
-        });
+          break;
+      }
 
-        // Search functionality
-        const searchInput = document.getElementById("courseSearch");
-        searchInput.addEventListener("input", () => {
-          const searchTerm = searchInput.value.toLowerCase().trim();
-
-          courseCards.forEach((card) => {
-            const title = card.getAttribute("data-name");
-            const category = card.getAttribute("data-category");
-            const description = card
-              .querySelector(".course-description")
-              .textContent.toLowerCase();
-            const instructor = card
-              .querySelector(".course-instructor")
-              .textContent.toLowerCase();
-
-            // Check if course matches search term
-            if (
-              title.includes(searchTerm) ||
-              category.includes(searchTerm) ||
-              description.includes(searchTerm) ||
-              instructor.includes(searchTerm)
-            ) {
-              card.style.display = "";
-            } else {
-              card.style.display = "none";
-            }
-          });
-        });
+      // Re-append cards in the new order
+      cardsArray.forEach((card) => {
+        enrolledCoursesDiv.appendChild(card);
       });
+    });
+  });
+
+  // Filter functionality
+  const filterButtons = document.querySelectorAll(".filter-btn[data-filter]");
+  filterButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      // Remove active class from all filter buttons
+      filterButtons.forEach((btn) => btn.classList.remove("active"));
+      // Add active class to clicked button
+      button.classList.add("active");
+
+      const filterValue = button.getAttribute("data-filter");
+      
+      // Show all courses if "all" is selected
+      if (filterValue === "all") {
+        courseCards.forEach((card) => {
+          card.style.display = "";
+        });
+        return;
+      }
+      
+      // Otherwise filter by progress status or other criteria
+      courseCards.forEach((card) => {
+        if (card.getAttribute("data-category") === filterValue || 
+            card.getAttribute("data-progress-status") === filterValue) {
+          card.style.display = "";
+        } else {
+          card.style.display = "none";
+        }
+      });
+    });
+  });
+
+  // Search functionality
+  const searchInput = document.getElementById("courseSearch");
+  if (searchInput) {
+    searchInput.addEventListener("input", () => {
+      const searchTerm = searchInput.value.toLowerCase().trim();
+
+      courseCards.forEach((card) => {
+        // Get text content from elements that definitely exist rather than attributes
+        const title = card.querySelector(".course-title")?.textContent.toLowerCase() || "";
+        const description = card.querySelector(".course-description")?.textContent.toLowerCase() || "";
+        const instructor = card.querySelector(".course-instructor")?.textContent.toLowerCase() || "";
+
+        // Check if course matches search term
+        if (
+          title.includes(searchTerm) ||
+          description.includes(searchTerm) ||
+          instructor.includes(searchTerm)
+        ) {
+          card.style.display = "";
+        } else {
+          card.style.display = "none";
+        }
+      });
+    });
+  }
+});
     </script>
+    
+
   </body>
 </html>
