@@ -96,29 +96,10 @@
       color: #28a745;
     }
     
-    .enroll-btn {
+    .cart-btn {
       background-color: #ee6c4d;
       border: none;
       color: white;
-      padding: 12px 30px;
-      font-weight: 600;
-      font-size: 1.1rem;
-      border-radius: 30px;
-      width: 100%;
-      margin-bottom: 15px;
-      transition: all 0.3s;
-    }
-    
-    .enroll-btn:hover {
-      background-color: #e95d3c;
-      transform: translateY(-3px);
-      box-shadow: 0 6px 15px rgba(238, 108, 77, 0.3);
-    }
-    
-    .cart-btn {
-      background-color: white;
-      border: 2px solid #ee6c4d;
-      color: #ee6c4d;
       padding: 12px 30px;
       font-weight: 600;
       font-size: 1.1rem;
@@ -138,7 +119,7 @@
     }
     
     .cart-btn:hover {
-      background-color: #fff8f6;
+      background-color: #e95d3c;
       transform: translateY(-3px);
       box-shadow: 0 6px 15px rgba(238, 108, 77, 0.15);
       color: #e95d3c;
@@ -332,14 +313,19 @@
   <div class="toast-container"></div>
   
   <!-- Course Header -->
-  <section class="course-header">
-    <div class="container">
+  <section class="course-header" style='background: url("<%= course.image %>") center center / cover no-repeat;'>
+    <div class="container py-5" style="background-color: rgba(255, 255, 255, 0.92); border-radius: 12px;">
       <div class="row">
         <div class="col-lg-8">
           <span class="category-badge"><%= course.category || 'General' %></span>
-          <h1 class="course-title"><%= course.title %></h1>
-          <p class="course-instructor">Created by <%= course.instructor || 'Unknown Instructor' %></p>
-          
+          <h1 class="course-title"><%= course.name %></h1>
+          <p class="course-instructor">
+            Created by 
+            <%= course.author?.firstName && course.author?.lastName 
+                  ? `${course.author.firstName} ${course.author.lastName}` 
+                  : "Unknown Instructor" %>
+          </p>                 
+  
           <div class="course-stats">
             <div class="stat-item">
               <i class="bi bi-clock stat-icon"></i>
@@ -347,59 +333,37 @@
             </div>
             <div class="stat-item">
               <i class="bi bi-star-fill stat-icon"></i>
-              <span><%= course.rating || '0' %> (<%= Math.floor(Math.random() * 1000) %> reviews)</span>
-            </div>
-            <div class="stat-item">
-              <i class="bi bi-calendar-check stat-icon"></i>
-              <span>Last updated <%= new Date(course.updatedAt || course.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) %></span>
+              <span><%= course.rating || '0' %>  reviews</span>
             </div>
           </div>
-          
-          <img src="<%= course.imageUrl || course.imageURL || '/images/course-placeholder.jpg' %>" alt="<%= course.title %>" class="course-image d-block d-lg-none">
         </div>
-        
+  
         <div class="col-lg-4">
           <div class="enroll-card">
-            <% if (course.price) { %>
-              <div class="course-price <%= course.price === 0 ? 'free' : '' %>">
-                <%= course.price === 0 ? 'Free' : '$' + course.price %>
+            <div class="course-price <%= course.price === 0 ? 'free' : '' %>">
+              <%= course.price === 0 ? 'Free' : '$' + course.price %>
+            </div>
+  
+            <% if (loggedInUser && loggedInUser.role === 'Student') { %>
+              <div class="btn-container">
+                <button class="btn cart-btn" data-id="<%= course._id %>">
+                  <i class="bi bi-cart-plus cart-icon"></i>
+                  Add to Cart
+                </button>
               </div>
-            <% } else { %>
-              <div class="course-price">$49.99</div>
+            <% } else if (loggedInUser && loggedInUser.role === 'Instructor') { %>
+              <div class="alert alert-warning text-center fw-semibold mt-3" role="alert">
+                Only students can purchase courses.
+              </div>
             <% } %>
             
-            <div class="btn-container">
-              <button class="btn enroll-btn">Enroll Now</button>
-              <button class="btn cart-btn" data-id="<%= course._id %>">
-                <i class="bi bi-cart-plus cart-icon"></i>
-                Add to Cart
-              </button>              
-            </div>
-            
-            <div class="course-includes">
-              <h5>This course includes:</h5>
-              <div class="includes-item">
-                <i class="bi bi-play-circle includes-icon"></i>
-                <span><%= Math.floor(Math.random() * 20) + 10 %> hours on-demand video</span>
-              </div>
-              <div class="includes-item">
-                <i class="bi bi-file-earmark-text includes-icon"></i>
-                <span><%= Math.floor(Math.random() * 15) + 5 %> downloadable resources</span>
-              </div>
-              <div class="includes-item">
-                <i class="bi bi-infinity includes-icon"></i>
-                <span>Full lifetime access</span>
-              </div>
-              <div class="includes-item">
-                <i class="bi bi-award includes-icon"></i>
-                <span>Certificate of completion</span>
-              </div>
-            </div>
           </div>
         </div>
       </div>
     </div>
   </section>
+  
+  
   
   <!-- Course Content -->
   <section class="course-sections">
@@ -425,17 +389,14 @@
             <div class="row">
               <div class="col-md-6">
                 <ul class="list-unstyled">
-                  <li class="mb-3"><i class="bi bi-check2-circle text-success me-2"></i> Master the fundamentals of <%= course.category || 'this subject' %></li>
-                  <li class="mb-3"><i class="bi bi-check2-circle text-success me-2"></i> Build real-world projects for your portfolio</li>
-                  <li class="mb-3"><i class="bi bi-check2-circle text-success me-2"></i> Understand advanced concepts and techniques</li>
-                </ul>
-              </div>
-              <div class="col-md-6">
-                <ul class="list-unstyled">
-                  <li class="mb-3"><i class="bi bi-check2-circle text-success me-2"></i> Follow industry best practices</li>
-                  <li class="mb-3"><i class="bi bi-check2-circle text-success me-2"></i> Solve common problems efficiently</li>
-                  <li class="mb-3"><i class="bi bi-check2-circle text-success me-2"></i> Prepare for real-world applications</li>
-                </ul>
+                  <% if (course.learningOutcomes && course.learningOutcomes.length) { %>
+                    <% course.learningOutcomes.forEach(outcome => { %>
+                      <li class="mb-3"><i class="bi bi-check2-circle text-success me-2"></i> <%= outcome %></li>
+                    <% }) %>
+                  <% } else { %>
+                    <li>No learning outcomes specified.</li>
+                  <% } %>
+                </ul>                
               </div>
             </div>
           </div>
@@ -571,7 +532,7 @@
             </div>
             <div class="col-md-9">
               <p class="instructor-bio">
-                <%= course.instructorBio || 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce euismod, nisl eget tincidunt ultricies, nunc elit ultricies nunc, vitae luctus nisl nunc eget nunc. Donec euismod, nisl eget tincidunt ultricies, nunc elit ultricies nunc, vitae luctus nisl nunc eget nunc.' %>
+                <%= course.instructorBio %>
               </p>
               <div class="instructor-stats mt-4">
                 <div class="row">

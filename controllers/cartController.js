@@ -18,29 +18,55 @@ exports.getCartCount = getCartCount;
 exports.renderCartPage = async (req, res) => {
   try {
     const userId = req.signedCookies?.userId;
-    const user   = userId ? await User.findById(userId) : null;
+    const user = userId ? await User.findById(userId) : null;
 
     let cartItems = [];
+
     if (userId) {
-      const userCart = await Cart.findOne({ userId }).populate('items');
+      const userCart = await Cart.findOne({ userId })
+      .populate({
+        path: 'items',
+        populate: [
+          {
+            path: 'author',
+            select: 'firstName lastName email avatar'
+          },
+          {
+            path: 'sections',
+            populate: {
+              path: 'lessons',
+              model: 'Lesson'
+            }
+          }
+        ]
+      });
       if (userCart) cartItems = userCart.items;
     } else {
       const sessionIds = req.session.cart || [];
       if (sessionIds.length) {
-        cartItems = await Course.find({ _id: { $in: sessionIds } });
+        cartItems = await Course.find({ _id: { $in: sessionIds } })
+          .populate('author', 'firstName lastName email avatar')
+          .populate({
+            path: 'sections',
+            populate: {
+              path: 'lessons',
+              model: 'Lesson',
+            },
+          });
       }
     }
 
     res.render('cart', {
       cartItems,
       user: user || {},
-      cartCount: await getCartCount(req) 
+      cartCount: await getCartCount(req),
     });
   } catch (err) {
     console.error('Error rendering cart page:', err);
     res.status(500).send('Internal Server Error');
   }
 };
+
 
 
 exports.addToCart = async (req, res) => {
@@ -110,8 +136,9 @@ exports.removeFromCart = async (req, res) => {
 
 
 
-exports.mergeCart = async (userId, sessionCart) => {
+exports.mergeCart = async (userId, sessionCart, req) => {
   if (!sessionCart || !sessionCart.length) return;
+
   let userCart = await Cart.findOne({ userId });
   if (!userCart) {
     userCart = new Cart({ userId, items: sessionCart });
@@ -120,9 +147,20 @@ exports.mergeCart = async (userId, sessionCart) => {
       if (!userCart.items.includes(id)) userCart.items.push(id);
     }
   }
+
   await userCart.save();
+
+  // Clear session cart after merging
+  if (req.session && req.session.cart) {
+    req.session.cart = [];
+    req.session.save(err => {
+      if (err) console.error("Failed to clear session cart:", err);
+    });
+  }
+
   return userCart;
 };
+
 
 // Clear cart items after successful purchase
 exports.clearCart = async (userId, options = {}) => {
