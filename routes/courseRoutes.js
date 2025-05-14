@@ -22,22 +22,25 @@ const upload = multer({
 
 // Get all courses with optional category filter
 router.get("/", async (req, res) => {
-    const selectedCategory = req.query.category;
-    const loggedInUserId = req.signedCookies?.userId;
-    const loggedInUser = await User.findById(loggedInUserId);
-    let filter = {};
-
-    if (selectedCategory) {
-        filter.category = selectedCategory;
-    }
-
     try {
-        const courses = await Course.find(filter);
+        const selectedCategory = req.query.category;
+        const loggedInUserId = req.signedCookies?.userId;
+        const loggedInUser = await User.findById(loggedInUserId);
+        let filter = {};
+
+        if (selectedCategory) {
+            filter.category = selectedCategory;
+        }
+
+        const courses = await Course.find(filter)
+            .populate("author", "firstName lastName _id")
+            .lean();
+
         res.render("allCourses", {
             courses,
             categories,
             selectedCategory,
-            loggedInUser,
+            user: loggedInUser,
         });
     } catch (err) {
         console.error("Error loading courses:", err);
@@ -161,7 +164,7 @@ router.post("/create", upload.single("courseImage"), async (req, res) => {
 
         await newCourse.save();
         console.log("✅ Course created:", newCourse._id);
-        res.redirect("/courses");
+        res.redirect("/user/my-teaching");
     } catch (err) {
         console.error("❌ Course creation failed:", err);
 
@@ -207,7 +210,6 @@ router.get("/:id", async (req, res) => {
         }
 
         console.log("Course found:", course);
-        
 
         res.render("courseDetail", {
             course,
