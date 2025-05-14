@@ -3,6 +3,7 @@ const router = express.Router();
 const fs = require("fs");
 const Course = require("../models/Course");
 const User = require("../models/User");
+const { categories } = require("../constants/categories");
 
 const multer = require("multer");
 const { courseStorage } = require("../utils/cloudinary");
@@ -49,30 +50,6 @@ router.get("/create", async (req, res) => {
         const instructors = await User.find({ role: "instructor" });
         const loggedInUserId = req.signedCookies?.userId;
         const loggedInUser = await User.findById(loggedInUserId);
-        const categories = [
-            "Web Development",
-            "Mobile Development",
-            "Data Science",
-            "Machine Learning",
-            "Cloud Computing",
-            "Cyber Security",
-            "Game Development",
-            "AI & Deep Learning",
-            "Blockchain",
-            "DevOps",
-            "Software Engineering",
-            "Digital Marketing",
-            "UI/UX Design",
-            "Project Management",
-            "Business Analysis",
-            "Networking",
-            "Database Management",
-            "IT Support",
-            "Quality Assurance",
-            "Data Analysis",
-            "Data Engineering",
-            "Others",
-        ];
 
         res.render("createCourse", {
             categories,
@@ -87,31 +64,6 @@ router.get("/create", async (req, res) => {
 });
 
 router.post("/create", upload.single("courseImage"), async (req, res) => {
-    const categories = [
-        "Web Development",
-        "Mobile Development",
-        "Data Science",
-        "Machine Learning",
-        "Cloud Computing",
-        "Cyber Security",
-        "Game Development",
-        "AI & Deep Learning",
-        "Blockchain",
-        "DevOps",
-        "Software Engineering",
-        "Digital Marketing",
-        "UI/UX Design",
-        "Project Management",
-        "Business Analysis",
-        "Networking",
-        "Database Management",
-        "IT Support",
-        "Quality Assurance",
-        "Data Analysis",
-        "Data Engineering",
-        "Others",
-    ];
-
     const instructors = await User.find({ role: "instructor" });
     const loggedInUserId = req.signedCookies?.userId;
     const loggedInUser = await User.findById(loggedInUserId);
