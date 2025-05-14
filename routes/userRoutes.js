@@ -6,9 +6,17 @@ const User = require("../models/User");
 // My Courses page route - NO AUTHENTICATION CHECK FOR DEVELOPMENT
 router.get("/my-courses", async (req, res) => {
     try {
-        const enrolledCourses = [];
+     
         const loggedInUserId = req.signedCookies?.userId;
         const loggedInUser = await User.findById(loggedInUserId);
+
+        const enrolledCourses = await Course.find({
+            studentsEnrolled: { $in: [loggedInUserId] }
+        })
+        .populate("author", "firstName lastName email avatar")
+        .lean();
+
+
         res.render("myCourses", { enrolledCourses, loggedInUser });
     } catch (err) {
         console.error("Error loading enrolled courses:", err);

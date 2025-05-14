@@ -102,6 +102,12 @@ const userSchema = new mongoose.Schema({
             type: String,
         },
     },
+    purchasedCourses: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Course",
+        },
+    ],
 
     following: [
         {
