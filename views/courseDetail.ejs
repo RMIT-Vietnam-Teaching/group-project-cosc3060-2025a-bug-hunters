@@ -5,46 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= course.title %> - LearnNow</title>
   
-  <!-- Bootstrap 5 CSS CDN -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  
-  <!-- Bootstrap Icons CDN -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-  
-  <!-- Custom CSS -->
   <link rel="stylesheet" href="/css/navBarStyle.css">
   <link rel="stylesheet" href="/css/darkMode.css">
   
   <style>
-    /* Flying cart icon animation */
-    .flying-cart {
-      position: fixed;
-      font-size: 1.5rem;
-      color: #ee6c4d;
-      pointer-events: none;
-      z-index: 1000;
-      transition: all 0.8s cubic-bezier(0.18, 0.89, 0.32, 1.28);
-      opacity: 0;
-    }
 
-    /* Button animation */
-    .btn-animation {
-      animation: btnPulse 1.2s ease-in-out;
-    }
-
-    @keyframes btnPulse {
-      0% {
-        transform: scale(1);
-      }
-      50% {
-        transform: scale(1.05);
-      }
-      100% {
-        transform: scale(1);
-      }
-    }
-
-    /* Cart counter styling and animation */
     .cart-counter {
       display: flex;
       align-items: center;
@@ -59,25 +26,10 @@
       height: 18px;
       font-size: 12px;
       font-weight: bold;
-      transition: all 0.3s ease;
+      /* Removed transition property */
     }
     
-    /* Dedicated pulse animation for cart counter */
-    .pulse-animation {
-      animation: counterPulse 0.6s ease-in-out;
-    }
-    
-    @keyframes counterPulse {
-      0% {
-        transform: scale(1);
-      }
-      50% {
-        transform: scale(1.5);
-      }
-      100% {
-        transform: scale(1);
-      }
-    }
+    /* Removed counterPulse animation keyframes */
 
     .course-header {
       background-color: #f8f9fa;
@@ -663,153 +615,111 @@
   <script src="/js/footer.js"></script>
   
   <!-- Course enrollment and cart script -->
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const enrollButton = document.querySelector('.enroll-btn');
-    const cartButton = document.querySelector('.cart-btn');
-    
-    // Find the navbar cart icon for animation target
-    const navbarCartIcon = document.querySelector('.navbar .bi-cart') || 
-                           document.querySelector('.navbar .bi-cart-fill') ||
-                           document.querySelector('.navbar [class*="cart"]');
-    
-    if (enrollButton) {
-      enrollButton.addEventListener('click', function() {
-        // You would handle the enrollment here
-        alert('Enrollment functionality coming soon!');
-      });
-    }
-    
-    if (cartButton) {
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const cartButton = document.querySelector('.cart-btn');
+      // Find ALL cart count badges in the navbar
+      const cartBadges = document.querySelectorAll('.navbar .badge.bg-danger');
+  
+      if (!cartButton) return;
+  
       cartButton.addEventListener('click', function() {
         const courseId = cartButton.dataset.id;
+  
+        // fire off the add-to-cart
+        fetch(`/cart/add/${courseId}`, { method: 'POST', headers: { 'Accept': 'application/json' } })
+          .then(r => r.json())
+          .then(data => {            
+          })
+          .catch(err => {
+            console.error('Error adding to cart:', err);
+            showToast('Failed to add to cart.', 'error');
+          });
+      });
+  
+      function updateAllCartBadges(count) {
+        // Update all existing badges in the navbar (no animation)
+        cartBadges.forEach(badge => {
+          badge.textContent = count;
+          // Removed animation code
+        });
         
-        // Create flying cart icon
-        const flyingCart = document.createElement('div');
-        flyingCart.className = 'flying-cart';
-        flyingCart.innerHTML = '<i class="bi bi-cart-plus"></i>';
-        document.body.appendChild(flyingCart);
-        
-        // Set initial position (where the button is)
-        const buttonRect = cartButton.getBoundingClientRect();
-        flyingCart.style.top = `${buttonRect.top + buttonRect.height/2 - 10}px`;
-        flyingCart.style.left = `${buttonRect.left + buttonRect.width/2 - 10}px`;
-        
-        // Make it visible
-        setTimeout(() => {
-          flyingCart.style.opacity = '1';
-        }, 10);
-        
-        // Set target position (where the navbar cart icon is)
-        let targetX, targetY;
+        // Also update the cart icon in navbar if it has a counter
+        const navbarCartIcon = document.querySelector('.navbar .bi-cart3') ||
+                               document.querySelector('.navbar .bi-cart') ||
+                               document.querySelector('.navbar [class*="cart"]');
         
         if (navbarCartIcon) {
-          const targetRect = navbarCartIcon.getBoundingClientRect();
-          targetX = targetRect.left + targetRect.width/2 - 10;
-          targetY = targetRect.top + targetRect.height/2 - 10;
-        } else {
-          // If no cart icon found, fly to top right corner
-          targetX = window.innerWidth - 50;
-          targetY = 20;
-        }
-        
-        // Start animation
-        setTimeout(() => {
-          flyingCart.style.transform = 'scale(0.5)';
-          flyingCart.style.top = `${targetY}px`;
-          flyingCart.style.left = `${targetX}px`;
-          flyingCart.style.opacity = '0';
-        }, 50);
-        
-        // Add button animation
-        cartButton.classList.add('btn-animation');
-        setTimeout(() => {
-          cartButton.classList.remove('btn-animation');
-        }, 1200);
-        
-        // Clean up
-        setTimeout(() => {
-          document.body.removeChild(flyingCart);
+          let badge = navbarCartIcon.parentElement.querySelector('.cart-counter');
+          const container = navbarCartIcon.parentElement;
           
-          // Update cart counter
-          updateCartCounter();
-        }, 800);
-        
-        // Send request to add to cart
-        fetch(`/cart/add/${courseId}`, {
-          method: 'POST'
-        })
-        .then(res => res.json())
-        .then(data => {
-          if (!data.success) {
-            console.error('Failed to add course to cart');
-          }
-        })
-        .catch(err => {
-          console.error('Error adding course to cart:', err);
-        });
-      });
-    }
-    
-    // Function to update cart counter
-    function updateCartCounter() {
-      const cartCounter = document.querySelector('.cart-counter');
-      if (cartCounter) {
-        // Get current count and increment
-        let count = parseInt(cartCounter.textContent || '0');
-        cartCounter.textContent = count + 1;
-        
-        // Make sure it's visible
-        cartCounter.style.display = 'flex';
-        
-        // Remove existing animation class if present
-        cartCounter.classList.remove('pulse-animation');
-        
-        // Force reflow to restart animation
-        void cartCounter.offsetWidth;
-        
-        // Add animation class
-        cartCounter.classList.add('pulse-animation');
-        
-        // Remove class when animation is done
-        setTimeout(() => {
-          cartCounter.classList.remove('pulse-animation');
-        }, 600);
-      } else {
-        // If the cart counter doesn't exist yet, we need to create it
-        const navCartIcon = document.querySelector('.navbar .bi-cart') || 
-                            document.querySelector('.navbar .bi-cart-fill') ||
-                            document.querySelector('.navbar [class*="cart"]');
-        
-        if (navCartIcon) {
-          // Find the parent element to properly position the counter
-          const iconContainer = navCartIcon.parentElement;
-          if (iconContainer) {
-            // Make sure the container has position relative for absolute positioning
-            if (window.getComputedStyle(iconContainer).position === 'static') {
-              iconContainer.style.position = 'relative';
+          if (!badge && container) {
+            // ensure parent is positioned
+            if (getComputedStyle(container).position === 'static') {
+              container.style.position = 'relative';
             }
-            
-            // Create the counter element
-            const counter = document.createElement('span');
-            counter.className = 'cart-counter';
-            counter.textContent = '1';
-            iconContainer.appendChild(counter);
-            
-            // Add animation
-            setTimeout(() => {
-              counter.classList.add('pulse-animation');
-              
-              // Remove class when animation is done
-              setTimeout(() => {
-                counter.classList.remove('pulse-animation');
-              }, 600);
-            }, 10);
+            badge = document.createElement('span');
+            badge.className = 'cart-counter';
+            container.appendChild(badge);
+          }
+          
+          if (badge) {
+            // set to exact count (no animation)
+            badge.textContent = count;
+            // Removed animation code
           }
         }
       }
-    }
-  });
-</script>
+      
+      function showToast(message, type = 'success') {
+        const toastContainer = document.querySelector('.toast-container');
+        if (!toastContainer) return;
+        
+        const toast = document.createElement('div');
+        toast.className = 'custom-toast';
+        toast.innerHTML = `
+          <div class="toast-icon">
+            <i class="bi bi-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+          </div>
+          <div class="toast-message">${message}</div>
+          <span class="toast-close">&times;</span>
+        `;
+        
+        toastContainer.appendChild(toast);
+        
+        // Auto remove after 3 seconds
+        setTimeout(() => {
+          toast.style.opacity = '0';
+          setTimeout(() => toast.remove(), 300);
+        }, 3000);
+        
+        // Close button functionality
+        toast.querySelector('.toast-close').addEventListener('click', () => {
+          toast.style.opacity = '0';
+          setTimeout(() => toast.remove(), 300);
+        });
+      }
+  
+      function updateCartCounter(count) {
+        // find or create badge
+        let badge = navbarCartIcon && navbarCartIcon.parentElement.querySelector('.cart-counter');
+        const container = navbarCartIcon ? navbarCartIcon.parentElement : null;
+        if (!badge && container) {
+          // ensure parent is positioned
+          if (getComputedStyle(container).position === 'static') {
+            container.style.position = 'relative';
+          }
+          badge = document.createElement('span');
+          badge.className = 'cart-counter';
+          container.appendChild(badge);
+        }
+        if (!badge) return;
+        // set to exact count (no animation)
+        badge.textContent = count;
+        // Removed animation code
+      }
+    });
+  </script>
+  
 </body>
 </html>

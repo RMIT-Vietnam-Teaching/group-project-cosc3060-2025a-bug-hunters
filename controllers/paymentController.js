@@ -3,6 +3,7 @@ const User   = require('../models/User');
 const Course = require('../models/Course');
 const Cart   = require('../models/Cart');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const cartController = require('../controllers/cartController'); 
 
 
 exports.renderCheckoutPage = async (req, res) => {  
@@ -44,27 +45,26 @@ exports.renderCheckoutPage = async (req, res) => {
 exports.renderConfirmationPage = async (req, res) => {
   try {
     const userId = req.signedCookies?.userId;
-    if (!userId) return res.redirect('/auth/login');
-
     const user = await User.findById(userId).lean();
-    if (!user) return res.redirect('/auth/login');
 
     const orderNumber = req.query.orderNumber || "—";
+    const isCoinTopUp = req.query.coinTopUp === 'true';
 
+    // Load cart for display (DO NOT clear if coin top-up)
     const userCart = await Cart.findOne({ userId });
     const cartIds  = userCart?.items.map(id => id.toString()) || [];
     const cartItems = await Course.find({ _id: { $in: cartIds } }).lean();
     const totalCost = cartItems.reduce((sum, c) => sum + (parseFloat(c.price)||0), 0);
 
-    const isCoinTopUp = req.query.topup === '1';
-      if (!isCoinTopUp) {
-        await User.findByIdAndUpdate(userId, {
-          $addToSet: { purchasedCourses: { $each: cartIds } }
-        });
-        await Cart.findOneAndUpdate({ userId }, { items: [] });
-        req.session.cart = [];
-      }
+    //  Only mark purchased and clear cart if not coin top-up
+    if (!isCoinTopUp) {
+      await User.findByIdAndUpdate(userId, {
+        $addToSet: { purchasedCourses: { $each: cartIds } }
+      });
 
+      await Cart.findOneAndUpdate({ userId }, { items: [] });
+      req.session.cart = [];
+    }
 
     return res.render('paymentConfirmation', {
       user,
@@ -72,7 +72,8 @@ exports.renderConfirmationPage = async (req, res) => {
       cartItems,
       totalCost,
       purchased: req.query.purchased,
-      bonus:     req.query.bonus
+      bonus: req.query.bonus,
+      coinTopUp: isCoinTopUp
     });
 
   } catch (err) {
@@ -195,8 +196,6 @@ exports.useCoin = async (req, res) => {
 
     console.log(`User coins after deduction: ${user.coin}`);
 
-    // Optional: Add purchased courses to user's course library
-    // This would depend on your schema, but might look like:
     if (!user.purchasedCourses) user.purchasedCourses = [];
     user.purchasedCourses = [...new Set([...user.purchasedCourses, ...courseIds])];
     await user.save();

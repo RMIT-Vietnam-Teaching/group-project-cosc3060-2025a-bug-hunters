@@ -11,6 +11,22 @@
     body {
       background-color: #fff;
     }
+    .cart-counter {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background-color: #ee6c4d;
+      color: white;
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      font-size: 12px;
+      font-weight: bold;
+      transition: all 0.3s ease;
+    }
     .cart-item {
       box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.1);
       border-radius: 12px;
@@ -101,19 +117,21 @@
         <% if (cartItems.length > 0) { %>
           <!-- Course Items -->
           <% cartItems.forEach(course => { %>
-            <div class="p-3 bg-white cart-item d-flex justify-content-between align-items-center">
-              <div class="d-flex align-items-center">
-                <div class="cart-img"></div>
-                <div>
-                  <div class="course-title"><%= course.title %></div>
-                  <div class="course-desc"><%= course.description %></div>
-                  <div class="course-price">$<%= course.price %></div>
-                </div>
+            <div
+            class="p-3 bg-white cart-item d-flex justify-content-between align-items-center"
+            data-course-id="<%= course._id %>"
+          >
+            <div class="d-flex align-items-center">
+              <div class="cart-img"></div>
+              <div>
+                <div class="course-title"><%= course.title %></div>
+                <div class="course-desc"><%= course.description %></div>
+                <div class="course-price">$<%= course.price %></div>
               </div>
-              <form method="POST" action="/cart/remove/<%= course._id %>">
-                <button type="submit" class="remove-btn">Remove</button>
-              </form>
             </div>
+            <button class="remove-btn">Remove</button>
+          </div>
+
           <% }) %>
         <% } else { %>
           <!-- Empty Cart Message -->
@@ -147,7 +165,52 @@
       </div>
     </div>
   </div>
-
+  <script>
+    
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelector('#cartContainer').addEventListener('click', async e => {
+        if (!e.target.matches('.remove-btn')) return;
+        e.preventDefault();
+    
+        const itemEl  = e.target.closest('.cart-item');
+        const courseId = itemEl.dataset.courseId;
+    
+        try {
+          const resp = await fetch(`/cart/remove/${courseId}`, {
+            method: 'POST',
+            headers: { 'Accept': 'application/json' }
+          });
+          const { success, cartCount } = await resp.json();
+          if (!success) throw new Error();
+    
+          // Remove the row
+          itemEl.remove();
+    
+          // Update all cart‐count badges
+          document.querySelectorAll('span.badge.bg-danger')
+            .forEach(b => b.textContent = cartCount);
+    
+          // If empty now, show the “empty cart” UI
+          if (cartCount === 0) {
+            document.querySelector('#cartContainer').innerHTML = `
+              <div class="empty-cart">
+                <i class="bi bi-cart-x"></i>
+                <h3>Your cart is empty</h3>
+                <p>Looks like you haven't added any courses to your cart yet.</p>
+                <a href="/courses" class="continue-btn mt-3">Explore Courses</a>
+              </div>
+            `;
+            document.querySelector('.order-summary')?.remove();
+          }
+        } catch (err) {
+          console.error('Failed to remove item:', err);
+          alert('Could not remove item. Please try again.');
+        }
+      });
+    });
+    </script>
+    
+    
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

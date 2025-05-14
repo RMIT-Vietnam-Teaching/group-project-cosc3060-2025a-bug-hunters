@@ -73,10 +73,10 @@
                                 <h5
                                     class="card-title fw-bold text-center fst-italic"
                                 >
-                                    <%= course.title || 'Untitled Course' %>
+                                    <%= course.name || 'Untitled Course' %>
                                 </h5>
                                 <p class="text-center fst-italic text-muted">
-                                    by <%= course.instructor %>
+                                    by <%= course.author %>
                                 </p>
                                 <p class="card-text">
                                     <% if (course.description) { %> <%=
