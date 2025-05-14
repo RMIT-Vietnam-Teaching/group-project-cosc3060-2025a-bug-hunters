@@ -35,38 +35,50 @@
                     </div>
                 </div>
 
-                <!-- Dropdown -->
-                <div class="dropdown">
-                    <i
-                        class="bi bi-three-dots-vertical fs-5"
-                        role="button"
-                        data-bs-toggle="dropdown"
-                    ></i>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li>
-                            <form
-                                action="/admin/posts/achieve/<%= post._id %>"
-                                method="POST"
-                            >
-                                <button type="submit" class="dropdown-item">
-                                    Archive
-                                </button>
-                            </form>
-                        </li>
-                        <li>
-                            <form
-                                action="/admin/posts/delete/<%= post._id %>"
-                                method="POST"
-                            >
-                                <button
-                                    type="submit"
-                                    class="dropdown-item text-danger"
+                <div class="text-end">
+                    <!-- 🔵 STATUS BADGE -->
+                    <% if (post.status === 'archived') { %>
+                    <span class="badge bg-secondary mb-2 px-3 py-1"
+                        >Archived</span
+                    ><br />
+                    <% } else { %>
+                    <span class="badge bg-success mb-2 px-3 py-1">Active</span
+                    ><br />
+                    <% } %>
+
+                    <!-- Dropdown -->
+                    <div class="dropdown">
+                        <i
+                            class="bi bi-three-dots-vertical fs-5"
+                            role="button"
+                            data-bs-toggle="dropdown"
+                        ></i>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <form
+                                    action="/admin/posts/achieve/<%= post._id %>"
+                                    method="POST"
                                 >
-                                    Delete
-                                </button>
-                            </form>
-                        </li>
-                    </ul>
+                                    <button type="submit" class="dropdown-item">
+                                        Archive
+                                    </button>
+                                </form>
+                            </li>
+                            <li>
+                                <form
+                                    action="/admin/posts/delete/<%= post._id %>"
+                                    method="POST"
+                                >
+                                    <button
+                                        type="submit"
+                                        class="dropdown-item text-danger"
+                                    >
+                                        Delete
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
 

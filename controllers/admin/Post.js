@@ -26,7 +26,7 @@ exports.renderPost = async (req, res) => {
             media: post.media && post.media.length > 0 ? post.media[0] : null,
             likes: post.likes,
             commentsCount: post.comments.length,
-            archived: post.archived || false,
+            status: post.status,
             privacy: post.privacy, // ✅ OPTIONAL but good to pass too
             comments: post.comments.map((comment) => ({
                 avatar: comment.user?.avatar || "/default-avatar.png",

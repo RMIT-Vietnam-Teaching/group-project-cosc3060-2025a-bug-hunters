@@ -96,7 +96,7 @@
                                     class="btn btn-lg rounded-pill text-white"
                                     style="background-color: #ee6c4d"
                                 >
-                                    <% if (user.role === 'Student') { %> 
+                                    <% if (user && user.role === 'Student') { %> 
                                         Enroll
                                     <% } else { %> 
                                         View     

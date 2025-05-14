@@ -16,58 +16,62 @@ exports.renderForumPage = async (req, res) => {
         const likes = await Like.find({ user: userId }).lean();
         const likedPostIds = likes.map((like) => like.post.toString());
 
-        const courses = await Course.find({}).lean();
+        let courses = [];
 
-        user.enrolledPrograms = courses.map((course) => ({
-            name: course.name,
-        }));
+        if (user.role === "Student") {
+            courses = await Course.find({
+                studentsEnrolled: { $in: [user._id] },
+            }).lean();
+        } else {
+            courses = await Course.find({ author: userId }).lean();
+            // console.log("Courses for student:", courses);
+        }
 
+        user.courses = courses;
+
+        // 👥 Recommended users (exclude current)
         const users = await User.find({ _id: { $ne: userId } }).lean();
-        const instructors = users.map((u) => ({
+        const recommendedUsers = users.map((u) => ({
             id: u._id,
             name: `${u.firstName} ${u.lastName}`,
-            avatar: u.avatar,
-            followed: false,
+            avatar: u.avatar || "/default-avatar.png",
+            profileUrl: `/userProfile/${u._id}`,
         }));
 
+        // Posts
         const posts = await Post.find({})
             .populate("author")
+            .populate({ path: "comments", populate: { path: "user" } })
             .sort({ createdAt: -1 })
-            .populate({
-                path: "comments",
-                populate: { path: "user" },
-            })
             .lean();
 
         const validPosts = posts.filter((post) => {
             if (!post.author) return false;
-
-            // If post is public → visible to all
-            if (post.privacy === "public") return true;
-
-            // If post is private → only visible to owner
-            return post.author._id.toString() === userId;
+            if (post.status === "archived") return false;
+            return (
+                post.privacy === "public" ||
+                post.author._id.toString() === userId
+            );
         });
 
-        const postsWithWeight = validPosts.map((post) => {
-            const now = new Date();
-            const ageInHours = (now - post.createdAt) / (1000 * 60 * 60);
-            const ageScore = Math.max(0, 5 - ageInHours);
-            const likesScore = post.likes * 2;
-            const randomScore = Math.random() * 10;
-            const weight = ageScore + likesScore + randomScore;
-
-            return { post, weight };
-        });
-
-        postsWithWeight.sort((a, b) => b.weight - a.weight);
+        const postsWithWeight = validPosts
+            .map((post) => {
+                const ageInHours =
+                    (Date.now() - new Date(post.createdAt)) / (1000 * 60 * 60);
+                const ageScore = Math.max(0, 5 - ageInHours);
+                const likesScore = post.likes * 2;
+                const randomScore = Math.random() * 10;
+                const weight = ageScore + likesScore + randomScore;
+                return { post, weight };
+            })
+            .sort((a, b) => b.weight - a.weight);
 
         const postsForView = postsWithWeight.map(({ post }) => ({
             _id: post._id,
             user: {
                 id: post.author._id.toString(),
                 name: `${post.author.firstName} ${post.author.lastName}`,
-                avatar: post.author.avatar,
+                avatar: post.author.avatar || "/default-avatar.png",
             },
             timeAgo: dayjs(post.createdAt).fromNow(),
             content: post.content,
@@ -81,7 +85,7 @@ exports.renderForumPage = async (req, res) => {
             comments: post.comments.map((comment) => ({
                 user: {
                     name: comment.user?.firstName || "Unknown",
-                    avatar: comment.user?.avatar || "",
+                    avatar: comment.user?.avatar || "/default-avatar.png",
                 },
                 text: comment.text,
             })),
@@ -91,7 +95,7 @@ exports.renderForumPage = async (req, res) => {
             user,
             userId,
             posts: postsForView,
-            users: instructors,
+            users: recommendedUsers,
         });
     } catch (error) {
         console.error(error);

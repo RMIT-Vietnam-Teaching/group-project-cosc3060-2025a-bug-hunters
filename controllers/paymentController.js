@@ -115,7 +115,6 @@ exports.renderAddCoin = async (req, res) => {
 };
 
 exports.createPaymentIntent = async (req, res) => {
-    console.log("🏷️  [createPaymentIntent] body:", req.body);
     const { amount } = req.body || {};
 
     // Validate amount
@@ -226,11 +225,6 @@ exports.useCoin = async (req, res) => {
             const cartResult = await Cart.findOneAndUpdate(
                 { userId: user._id },
                 { $set: { items: [] } }
-            );
-
-            console.log(
-                "Cart cleared from database:",
-                cartResult ? "success" : "no cart found"
             );
 
             // If the session is available, clear that too

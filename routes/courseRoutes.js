@@ -163,7 +163,6 @@ router.post("/create", upload.single("courseImage"), async (req, res) => {
         });
 
         await newCourse.save();
-        console.log("✅ Course created:", newCourse._id);
         res.redirect("/user/my-teaching");
     } catch (err) {
         console.error("❌ Course creation failed:", err);
@@ -208,8 +207,6 @@ router.get("/:id", async (req, res) => {
         if (!course) {
             return res.status(404).send("Course not found");
         }
-
-        console.log("Course found:", course);
 
         res.render("courseDetail", {
             course,

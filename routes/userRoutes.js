@@ -21,8 +21,6 @@ router.get("/my-teaching", async (req, res) => {
         const loggedInUserRole = req.signedCookies?.userRole;
         const loggedInUserId = req.signedCookies?.userId;
 
-        console.log("Logged in user role:", loggedInUserRole);
-
         if (loggedInUserRole !== "Instructor") {
             return res
                 .status(403)
