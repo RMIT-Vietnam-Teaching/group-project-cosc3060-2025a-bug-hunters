@@ -23,7 +23,7 @@ const upload = multer({
 });
 
 // Get all courses with optional category filter
-router.get("/", preventAuthAccess, async (req, res) => {
+router.get("/", async (req, res) => {
     try {
         const selectedCategory = req.query.category;
         const loggedInUserId = req.signedCookies?.userId;
@@ -57,7 +57,7 @@ router.get("/", preventAuthAccess, async (req, res) => {
 });
 
 // Display course creation form
-router.get("/create", preventAuthAccess, async (req, res) => {
+router.get("/create", async (req, res) => {
     try {
         // Fetch instructors (users with instructor role)
         const instructors = await User.find({ role: "instructor" });
@@ -199,7 +199,7 @@ router.post("/create", upload.single("courseImage"), async (req, res) => {
 });
 
 // Modify the course detail route
-router.get("/:id", preventAuthAccess, async (req, res) => {
+router.get("/:id", async (req, res) => {
     try {
         const course = await Course.findById(req.params.id)
             .populate("author", "firstName lastName avatar")
@@ -213,9 +213,12 @@ router.get("/:id", preventAuthAccess, async (req, res) => {
         );
         const isEnrolled = userId && enrolledIds.includes(userId);
 
+        // const user = userId ? await User.findById(userId).lean() : null;
+
         res.render("courseDetail", {
             course,
             isEnrolled,
+            // user,
         });
     } catch (err) {
         console.error("Error loading course:", err);

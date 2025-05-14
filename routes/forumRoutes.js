@@ -25,7 +25,7 @@ const {
 } = require("../controllers/forum");
 
 // Render forum Page
-router.get("/", preventAuthAccess, renderForumPage);
+router.get("/", renderForumPage);
 
 // Create post
 router.post("/post", upload.array("media", 1), createPost);
@@ -34,7 +34,7 @@ router.post("/post", upload.array("media", 1), createPost);
 router.post("/like/:postId", likeAndUnlikePost);
 
 // Render single post
-router.get("/:postId",preventAuthAccess, renderSinglePost);
+router.get("/:postId", renderSinglePost);
 
 // Post comment
 router.post("/:postId/comment", commentOnPost);

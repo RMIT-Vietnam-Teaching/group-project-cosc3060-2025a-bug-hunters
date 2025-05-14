@@ -1,5 +1,21 @@
 <!-- Left Hamburger Menu Toggle -->
 <style> 
+
+#leftMobileSidebar,
+#sidebarDropdown {
+  min-height: 100vh;       /* Full viewport height */
+  position: sticky;        /* Or `position: fixed; top: 0;` if you prefer */
+  top: 0;
+  background-color: #fdfdfd;  /* Your light‐mode background */
+  z-index: 1050;           /* Sit above main content */
+}
+
+/* In dark mode too */
+body.dark #leftMobileSidebar,
+body.dark #sidebarDropdown {
+  background-color: #1f1f1f;
+}
+
   body.dark .form-control {
     background-color: #1B2B30;
     border-color: #397CA2;
