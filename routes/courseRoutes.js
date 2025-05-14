@@ -7,6 +7,7 @@ const Section = require("../models/Section");
 const Lesson = require("../models/Lesson");
 const { categories } = require("../constants/categories");
 const { sampleCourses } = require("./homeRoutes"); // Import sample courses
+const Cart = require("../models/Cart");
 
 
 const multer = require("multer");
@@ -27,7 +28,11 @@ router.get("/", async (req, res) => {
     try {
         const selectedCategory = req.query.category;
         const loggedInUserId = req.signedCookies?.userId;
-        const loggedInUser = await User.findById(loggedInUserId);
+        const loggedInUser = await User.findById(loggedInUserId).lean();
+            if (loggedInUser?.purchasedCourses) {
+            loggedInUser.purchasedCourses = loggedInUser.purchasedCourses.map(id => id.toString());
+            }
+
         let filter = {};
 
         if (selectedCategory) {
@@ -195,33 +200,31 @@ router.post("/create", upload.single("courseImage"), async (req, res) => {
 // Modify the course detail route
 router.get("/:id", async (req, res) => {
     try {
-        const loggedInUserId = req.signedCookies?.userId;
-        const loggedInUser = await User.findById(loggedInUserId);
-
-        const course = await Course.findById(req.params.id)
-            .populate("author", "firstName lastName email avatar") // show author info
-            .populate({
-                path: "sections",
-                populate: {
-                    path: "lessons",
-                    model: "Lesson",
-                },
-            });
-
-        if (!course) {
-            return res.status(404).send("Course not found");
-        }
-
-        console.log("Course found:", course);
-
-        res.render("courseDetail", {
-            course,
-            loggedInUser,
-        });
+      const course = await Course.findById(req.params.id)
+        .populate("author", "firstName lastName avatar")
+        .populate("studentsEnrolled", "_id")    // load that field
+        .lean();
+      if (!course) return res.status(404).send("Course not found");
+  
+      const userId = req.signedCookies?.userId;
+      const enrolledIds = (course.studentsEnrolled || [])
+        .map(u => u._id.toString());
+      const isEnrolled = userId && enrolledIds.includes(userId);
+  
+      res.render("courseDetail", {
+        course,
+        isEnrolled
+      });
     } catch (err) {
-        console.error("Error loading course:", err);
-        res.status(500).send("Failed to load course");
+      console.error("Error loading course:", err);
+      res.status(500).send("Failed to load course");
     }
-});
+  });
+  
+  
+  
+  
+  
+  
 
 module.exports = router;

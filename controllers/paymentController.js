@@ -81,7 +81,10 @@ exports.renderConfirmationPage = async (req, res) => {
             await User.findByIdAndUpdate(userId, {
                 $addToSet: { purchasedCourses: { $each: cartIds } },
             });
-
+            await Course.updateMany(
+                { _id: { $in: cartIds } },
+                { $addToSet: { studentsEnrolled: userId } }
+              );
             await Cart.findOneAndUpdate({ userId }, { items: [] });
             req.session.cart = [];
         }
@@ -258,7 +261,10 @@ exports.useCoin = async (req, res) => {
         } catch (cartErr) {
             console.error("Error clearing cart:", cartErr);
         }
-
+        await Course.updateMany(
+           { _id: { $in: courseIds } },
+            { $addToSet: { studentsEnrolled: user._id } }
+             );
         // Success response
         return res.json({
             success: true,
@@ -275,17 +281,17 @@ exports.useCoin = async (req, res) => {
 
 exports.updateUserCoin = async (req, res) => {
     const { userId, coins } = req.body;
-    console.log("🔄 Updating coins:", { userId, coins });
+  if (!userId || coins == null) {
+    return res.status(400).send("Missing data");
+  }
 
-    if (!userId || coins == null) {
-        return res.status(400).send("Missing data");
-    }
-
-    try {
-        await User.findByIdAndUpdate(userId, { $inc: { coin: coins } });
-        return res.json({ success: true });
-    } catch (err) {
-        console.error("Coin update error:", err);
-        return res.status(500).json({ error: "Failed to update coins" });
-    }
+  try {
+    await User.findByIdAndUpdate(userId, {
+      $inc: { coin: coins }
+    });
+    return res.json({ success: true });
+  } catch (err) {
+    console.error("Coin update error:", err);
+    return res.status(500).json({ error: "Failed to update coins" });
+  }
 };

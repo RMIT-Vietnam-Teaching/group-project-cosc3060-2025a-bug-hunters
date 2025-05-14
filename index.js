@@ -14,8 +14,8 @@ const path = require("path");
 
 const connectDB = require("./utils/db");
 const {
-    sessionMiddleware,
-    setUserFromCookie,
+  sessionMiddleware,
+  setUserFromCookie,
 } = require("./middlewares/setUser");
 
 const { port } = require("./configs/keys");
@@ -56,7 +56,9 @@ const courseRoutes = require("./routes/courseRoutes");
 const userRoutes = require("./routes/userRoutes");
 const subscriptionRoutes = require("./routes/subscriptionRoutes");
 const chatRoutes = require("./routes/chatRoutes");
+const contactRoutes = require("./routes/contactRoutes");
 const uploadRoutes = require("./routes/uploadRoutes");
+// const coinPaymentRoutes = require("./routes/coinPayment");
 const sitemapRoutes = require("./routes/sitemapRoutes");
 const aboutUsRoutes = require("./routes/aboutUsRoutes");
 
@@ -73,6 +75,9 @@ app.use("/about-us", aboutUsRoutes);
 app.use("/user", userRoutes);
 app.use("/api", subscriptionRoutes);
 app.use("/", chatRoutes);
+app.use("/contact", contactRoutes);
+
+// app.use("/payment", coinPaymentRoutes);
 app.use("/sitemap", sitemapRoutes);
 
 // Create HTTP server with Express app
