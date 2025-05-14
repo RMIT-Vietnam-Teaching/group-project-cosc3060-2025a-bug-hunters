@@ -19,23 +19,29 @@ router.get("/my-courses", async (req, res) => {
 router.get("/my-teaching", async (req, res) => {
     try {
         const loggedInUserRole = req.signedCookies?.userRole;
+        const loggedInUserId = req.signedCookies?.userId;
+
         console.log("Logged in user role:", loggedInUserRole);
+
         if (loggedInUserRole !== "Instructor") {
             return res
                 .status(403)
                 .send("Access denied. Only instructors can view this page.");
         }
 
-        const courses = [];
-        const loggedInUserId = req.signedCookies?.userId;
         const loggedInUser = await User.findById(loggedInUserId);
-        // const courses = await Course.find({ author: loggedInUserId });
-        res.render("myTeaching", { enrolledCourses: courses, loggedInUser });
+
+        // ✅ Get all courses where the logged-in instructor is the author
+        const courses = await Course.find({ author: loggedInUserId });
+
+        res.render("myTeaching", {
+            enrolledCourses: courses,
+            loggedInUser,
+        });
     } catch (err) {
         console.error("Error loading your teaching courses:", err);
         res.status(500).send("Failed to load your teaching courses");
     }
 });
-// Course details page route
 
 module.exports = router;

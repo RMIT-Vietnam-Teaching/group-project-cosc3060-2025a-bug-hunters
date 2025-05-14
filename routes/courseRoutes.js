@@ -3,6 +3,8 @@ const router = express.Router();
 const fs = require("fs");
 const Course = require("../models/Course");
 const User = require("../models/User");
+const Section = require("../models/Section");
+const Lesson = require("../models/Lesson");
 const { categories } = require("../constants/categories");
 const { sampleCourses } = require("./homeRoutes"); // Import sample courses
 
@@ -22,22 +24,25 @@ const upload = multer({
 
 // Get all courses with optional category filter
 router.get("/", async (req, res) => {
-    const selectedCategory = req.query.category;
-    const loggedInUserId = req.signedCookies?.userId;
-    const loggedInUser = await User.findById(loggedInUserId);
-    let filter = {};
-
-    if (selectedCategory) {
-        filter.category = selectedCategory;
-    }
-
     try {
-        const courses = await Course.find(filter);
+        const selectedCategory = req.query.category;
+        const loggedInUserId = req.signedCookies?.userId;
+        const loggedInUser = await User.findById(loggedInUserId);
+        let filter = {};
+
+        if (selectedCategory) {
+            filter.category = selectedCategory;
+        }
+
+        const courses = await Course.find(filter)
+            .populate("author", "firstName lastName _id")
+            .lean();
+
         res.render("allCourses", {
             courses,
             categories,
             selectedCategory,
-            loggedInUser,
+            user: loggedInUser,
         });
     } catch (err) {
         console.error("Error loading courses:", err);
@@ -79,7 +84,7 @@ router.post("/create", upload.single("courseImage"), async (req, res) => {
             price,
             learningOutcomes,
             sections = {},
-        } = req.body;
+        } = formData;
 
         if (!req.file) throw new Error("Please upload a course image");
 
@@ -96,12 +101,21 @@ router.post("/create", upload.single("courseImage"), async (req, res) => {
         const sectionIds = [];
 
         for (const [secIndex, sectionData] of Object.entries(sections)) {
-            const sectionTitle = sectionData.title;
+            const sectionTitle = sectionData.title?.trim();
+            if (!sectionTitle)
+                throw new Error(`Section ${secIndex} is missing a title.`);
+
             const lessonsInput = sectionData.lessons || {};
             const lessonIds = [];
 
             for (const [lesIndex, lessonData] of Object.entries(lessonsInput)) {
                 const { title: lessonTitle, duration, type } = lessonData;
+
+                if (!lessonTitle || !duration || !type) {
+                    throw new Error(
+                        `Lesson ${lesIndex} in section ${secIndex} is incomplete.`
+                    );
+                }
 
                 // Calculate time in seconds
                 const parts = duration.split(":").map(Number).reverse();
@@ -112,10 +126,12 @@ router.post("/create", upload.single("courseImage"), async (req, res) => {
                 totalSeconds += seconds;
 
                 const lesson = new Lesson({
-                    title: lessonTitle,
-                    duration, // keep as "MM:SS" or "HH:MM:SS"
-                    content: "", // optional field for future content (video/pdf/text)
+                    title: lessonTitle.trim(),
+                    duration,
+                    type,
+                    content: "", // optional field
                 });
+
                 await lesson.save();
                 lessonIds.push(lesson._id);
             }
@@ -124,6 +140,7 @@ router.post("/create", upload.single("courseImage"), async (req, res) => {
                 title: sectionTitle,
                 lessons: lessonIds,
             });
+
             await section.save();
             sectionIds.push(section._id);
         }
@@ -136,26 +153,35 @@ router.post("/create", upload.single("courseImage"), async (req, res) => {
         }${totalMinutes}m`;
 
         const newCourse = new Course({
-            name: title,
-            description,
+            name: title.trim(),
+            description: description.trim(),
             author: loggedInUser._id,
             category,
             price,
-            image: req.file.path, // Cloudinary path
+            image: req.file.path,
             learningOutcomes: parsedOutcomes,
             duration: durationFormatted.trim(),
             sections: sectionIds,
         });
 
         await newCourse.save();
-        console.log("Course created:", newCourse._id);
-
-        res.redirect("/courses");
+        console.log("✅ Course created:", newCourse._id);
+        res.redirect("/user/my-teaching");
     } catch (err) {
-        console.error("Course creation failed:", err);
-        if (req.file?.path) {
-            // Optional: delete failed Cloudinary image if needed
+        console.error("❌ Course creation failed:", err);
+
+        // Optional Cloudinary cleanup
+        if (req.file?.filename) {
+            try {
+                await cloudinary.uploader.destroy(req.file.filename);
+            } catch (deleteErr) {
+                console.error(
+                    "⚠️ Failed to delete Cloudinary image:",
+                    deleteErr.message
+                );
+            }
         }
+
         res.status(500).render("createCourse", {
             categories,
             instructors,
@@ -171,47 +197,27 @@ router.get("/:id", async (req, res) => {
     try {
         const loggedInUserId = req.signedCookies?.userId;
         const loggedInUser = await User.findById(loggedInUserId);
-        
-        // Check if it's a sample course ID
-        if (req.params.id.startsWith("sample-course-")) {
-            const sampleCourse = sampleCourses.find(course => course._id === req.params.id);
-            
-            if (sampleCourse) {
-                // Convert sample course to match the Course schema format expected by the courseDetail template
-                const adaptedCourse = {
-                    _id: sampleCourse._id,
-                    name: sampleCourse.title,
-                    description: sampleCourse.description,
-                    author: sampleCourse.instructor,
-                    image: sampleCourse.imageUrl,
-                    category: sampleCourse.category,
-                    duration: sampleCourse.duration,
-                    rating: sampleCourse.rating || 0,
-                    price: sampleCourse.price || 49.99,
-                    dateCreated: sampleCourse.createdAt || new Date(),
-                    status: "Not Started",
-                    studentsEnrolled: [],
-                    reviews: [],
-                    learningOutcomes: [
-                        "This is a sample course",
-                        "Actual learning outcomes would be listed here", 
-                        "For real courses created in the platform"
-                    ],
-                    sections: []
-                };
-                
-                return res.render("courseDetail", { course: adaptedCourse, loggedInUser });
-            }
-        }
-        
-        // If not a sample course, try to find in the database
-        const course = await Course.findById(req.params.id);
-        
+
+        const course = await Course.findById(req.params.id)
+            .populate("author", "firstName lastName email avatar") // show author info
+            .populate({
+                path: "sections",
+                populate: {
+                    path: "lessons",
+                    model: "Lesson",
+                },
+            });
+
         if (!course) {
             return res.status(404).send("Course not found");
         }
-        
-        res.render("courseDetail", { course, loggedInUser });
+
+        console.log("Course found:", course);
+
+        res.render("courseDetail", {
+            course,
+            loggedInUser,
+        });
     } catch (err) {
         console.error("Error loading course:", err);
         res.status(500).send("Failed to load course");
