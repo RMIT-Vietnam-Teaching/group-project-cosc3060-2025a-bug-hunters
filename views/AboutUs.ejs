@@ -206,6 +206,23 @@
     </div>
   </section>
 
+
+  <section class="country-section py-5 bg-light">
+    <div class="container">
+      <h2 class="text-center mb-4">We Reach Learners From</h2>
+      <div class="row justify-content-center">
+        <% asianCountries.forEach(country => { %>
+          <div class="col-6 col-sm-4 col-md-3 col-lg-2 text-center mb-4">
+            <img src="<%= country.flag %>" alt="<%= country.name %> Flag" class="img-fluid border rounded shadow-sm" style="height: 60px; object-fit: contain;">
+            <p class="mt-2 mb-0 fw-medium"><%= country.name %></p>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+  </section>
+  
+  
+
  
 
 <script>
